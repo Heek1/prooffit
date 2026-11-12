@@ -45,11 +45,17 @@ public class Analysis
 /// </summary>
 /// <param name="GitHub">What the candidate's public code showed. Null when no login was given or GitHub could not be read.</param>
 /// <param name="GitHubNote">Why GitHub evidence is absent although a login was given, worded for the user.</param>
+/// <param name="EngineNote">Set when the configured model could not be used and the keyword engine stepped in.</param>
+/// <param name="Usage">What the model calls for this analysis cost. Null when no model was called.</param>
 public record AnalysisResult(
     int Score,
     IReadOnlyList<RequirementMatch> Requirements,
     GitHubEvidence? GitHub,
-    string? GitHubNote);
+    string? GitHubNote,
+    string? EngineNote,
+    LlmUsage? Usage);
+
+public record LlmUsage(string Model, int Calls, int InputTokens, int OutputTokens, int DurationMs);
 
 /// <summary>A requirement from the vacancy and the verdict on it.</summary>
 /// <param name="Id">Stable within one analysis: "R1", "R2", and so on.</param>
