@@ -45,6 +45,14 @@ public class KeywordRequirementMatcherTests
     }
 
     [Fact]
+    public async Task Says_or_when_several_skills_are_all_absent()
+    {
+        var match = await Match("Kafka or RabbitMQ");
+
+        Assert.Equal("Found no evidence of Kafka or RabbitMQ.", match.Reason);
+    }
+
+    [Fact]
     public async Task Cannot_check_a_requirement_that_names_no_known_skill()
     {
         var match = await Match("Fluent spoken communication");

@@ -53,16 +53,16 @@ public class KeywordRequirementMatcher : IRequirementMatcher
         var (status, reason) = (found.Count, absent.Count) switch
         {
             (_, 0) => (MatchStatus.Confirmed, $"Found evidence of {Join(found)}."),
-            (0, _) => (MatchStatus.Missing, $"Found no evidence of {Join(absent)}."),
-            _ => (MatchStatus.Partial, $"Found evidence of {Join(found)}, but none of {Join(absent)}."),
+            (0, _) => (MatchStatus.Missing, $"Found no evidence of {Join(absent, "or")}."),
+            _ => (MatchStatus.Partial, $"Found evidence of {Join(found)}, but none of {Join(absent, "or")}."),
         };
         return new ProposedMatch(requirement.Id, status, reason, lines, facts);
     }
 
-    private static string Join(IReadOnlyList<string> names) => names.Count switch
+    private static string Join(IReadOnlyList<string> names, string conjunction = "and") => names.Count switch
     {
         1 => names[0],
-        2 => $"{names[0]} and {names[1]}",
-        _ => string.Join(", ", names.Take(names.Count - 1)) + $" and {names[^1]}",
+        2 => $"{names[0]} {conjunction} {names[1]}",
+        _ => string.Join(", ", names.Take(names.Count - 1)) + $" {conjunction} {names[^1]}",
     };
 }
