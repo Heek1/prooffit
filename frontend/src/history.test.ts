@@ -1,0 +1,63 @@
+import { describe, expect, it } from 'vitest'
+import { listRecent, remember, type RecentComparison } from './history.ts'
+
+/** The part of the Storage interface the history uses, backed by a map. */
+function memoryStorage(initial: Record<string, string> = {}): Storage {
+  const items = new Map(Object.entries(initial))
+  return {
+    getItem: (key: string) => items.get(key) ?? null,
+    setItem: (key: string, value: string) => void items.set(key, value),
+  } as Storage
+}
+
+function comparison(id: string, score: number | null = null): RecentComparison {
+  return { id, title: `Vacancy ${id}`, createdAt: '2026-11-12T08:00:00Z', score }
+}
+
+describe('recent comparisons', () => {
+  it('lists the newest first', () => {
+    const storage = memoryStorage()
+
+    remember(comparison('a'), storage)
+    remember(comparison('b'), storage)
+
+    expect(listRecent(storage).map((entry) => entry.id)).toEqual(['b', 'a'])
+  })
+
+  it('updates a comparison that is already listed instead of repeating it', () => {
+    const storage = memoryStorage()
+    remember(comparison('a'), storage)
+    remember(comparison('b'), storage)
+
+    remember(comparison('a', 76), storage)
+
+    expect(listRecent(storage)).toEqual([comparison('a', 76), comparison('b')])
+  })
+
+  it('keeps only the ten most recent', () => {
+    const storage = memoryStorage()
+
+    for (let index = 1; index <= 12; index++) remember(comparison(String(index)), storage)
+
+    const ids = listRecent(storage).map((entry) => entry.id)
+    expect(ids).toHaveLength(10)
+    expect(ids[0]).toBe('12')
+    expect(ids).not.toContain('1')
+  })
+
+  it('is empty when storage holds something that is not a list', () => {
+    expect(listRecent(memoryStorage({ 'prooffit.recent': 'not json' }))).toEqual([])
+    expect(listRecent(memoryStorage({ 'prooffit.recent': '{"a":1}' }))).toEqual([])
+  })
+
+  it('carries on when storage refuses to save', () => {
+    const full = {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('QuotaExceededError')
+      },
+    } as unknown as Storage
+
+    expect(() => remember(comparison('a'), full)).not.toThrow()
+  })
+})

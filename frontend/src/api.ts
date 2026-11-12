@@ -17,13 +17,65 @@ export type Vacancy = {
   createdAt: string
 }
 
+export type AnalysisStatus = 'queued' | 'running' | 'completed' | 'failed'
+export type AnalysisStage = 'queued' | 'readingVacancy' | 'collectingGitHub' | 'matching' | 'done'
+export type Importance = 'mustHave' | 'niceToHave'
+export type MatchStatus = 'confirmed' | 'partial' | 'missing'
+
+export type RequirementMatch = {
+  id: string
+  text: string
+  importance: Importance
+  /** 1-based line of the vacancy the requirement came from. */
+  vacancyLine: number | null
+  status: MatchStatus
+  reason: string
+  /** 1-based lines of the resume that support the verdict. */
+  resumeLines: number[]
+  /** Ids of the GitHub facts that support the verdict. */
+  gitHubFacts: string[]
+}
+
+export type GitHubFact = {
+  id: string
+  skill: string
+  repositories: { name: string; url: string }[]
+}
+
+export type AnalysisResult = {
+  score: number
+  requirements: RequirementMatch[]
+  gitHub: { login: string; repositoriesScanned: number; facts: GitHubFact[] } | null
+  gitHubNote: string | null
+  engineNote: string | null
+  usage: { model: string; calls: number; inputTokens: number; outputTokens: number; durationMs: number } | null
+}
+
+export type Analysis = {
+  id: string
+  gitHubLogin: string | null
+  status: AnalysisStatus
+  stage: AnalysisStage
+  engine: string | null
+  error: string | null
+  createdAt: string
+  completedAt: string | null
+  resume: Resume
+  vacancy: Vacancy
+  result: AnalysisResult | null
+}
+
+export type AnalysisProgress = Pick<Analysis, 'status' | 'stage'>
+
 /** A failed request, carrying messages that are ready to show to the user. */
 export class ApiError extends Error {
   readonly messages: string[]
+  readonly status: number | null
 
-  constructor(messages: string[]) {
+  constructor(messages: string[], status: number | null = null) {
     super(messages.join(' '))
     this.messages = messages
+    this.status = status
   }
 }
 
@@ -34,11 +86,44 @@ export function uploadResume(file: File): Promise<Resume> {
 }
 
 export function createVacancy(vacancy: { title: string; text: string }): Promise<Vacancy> {
-  return send<Vacancy>('/api/vacancies', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(vacancy),
+  return send<Vacancy>('/api/vacancies', json(vacancy))
+}
+
+export function createAnalysis(request: {
+  resumeId: string
+  vacancyId: string
+  gitHubLogin: string | null
+}): Promise<Analysis> {
+  return send<Analysis>('/api/analyses', json(request))
+}
+
+export function getAnalysis(id: string): Promise<Analysis> {
+  return send<Analysis>(`/api/analyses/${id}`, {})
+}
+
+/**
+ * Follows an analysis as it runs. The server closes the stream when the analysis ends, and
+ * the browser would then reconnect, so the stream is closed here on the final event.
+ * Returns a function that stops listening.
+ */
+export function watchAnalysis(
+  id: string,
+  onProgress: (progress: AnalysisProgress) => void,
+  onError: () => void,
+): () => void {
+  const events = new EventSource(`${base}/api/analyses/${id}/events`)
+
+  events.addEventListener('progress', (event) => {
+    const progress = JSON.parse((event as MessageEvent<string>).data) as AnalysisProgress
+    if (progress.status === 'completed' || progress.status === 'failed') events.close()
+    onProgress(progress)
   })
+  events.onerror = () => {
+    events.close()
+    onError()
+  }
+
+  return () => events.close()
 }
 
 /** True when the API is up and can reach its database. */
@@ -47,6 +132,14 @@ export async function isServerReady(): Promise<boolean> {
     return (await fetch(`${base}/health/ready`)).ok
   } catch {
     return false
+  }
+}
+
+function json(body: unknown): RequestInit {
+  return {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
   }
 }
 
@@ -59,7 +152,7 @@ async function send<T>(path: string, init: RequestInit): Promise<T> {
   }
 
   if (!response.ok) {
-    throw new ApiError(await problemMessages(response))
+    throw new ApiError(await problemMessages(response), response.status)
   }
   return (await response.json()) as T
 }
