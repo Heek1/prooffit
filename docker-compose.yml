@@ -8,7 +8,7 @@ name: prooffit
 
 services:
   db:
-    image: pgvector/pgvector:pg17
+    image: postgres:17
     environment:
       POSTGRES_DB: prooffit
       POSTGRES_USER: prooffit

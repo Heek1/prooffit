@@ -11,9 +11,6 @@ namespace ProofFit.Api.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:vector", ",,");
-
             migrationBuilder.CreateTable(
                 name: "Resumes",
                 columns: table => new
