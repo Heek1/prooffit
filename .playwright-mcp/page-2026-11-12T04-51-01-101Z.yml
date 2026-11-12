@@ -1,0 +1,319 @@
+- generic [ref=f2e3]:
+  - navigation [ref=f2e4]:
+    - link "ProofFit" [ref=f2e5] [cursor=pointer]:
+      - /url: /
+    - link "New comparison" [ref=f2e6] [cursor=pointer]:
+      - /url: /
+  - main [ref=f2e7]:
+    - generic [ref=f2e8]:
+      - paragraph [ref=f2e9]: Full-stack developer (.NET, React)
+      - heading "6 of 10 requirements proven" [level=1] [ref=f2e10]
+      - paragraph [ref=f2e11]: 1 partly proven, 3 without evidence. Score 76 out of 100, with must-haves counting double.
+    - generic [ref=f2e13]:
+      - img "6 proven, 1 partly proven, 3 without evidence" [ref=f2e14]:
+        - 'generic "2+ years of commercial experience with ASP.NET Core: Proven" [ref=f2e15]'
+        - 'generic "Entity Framework Core: Proven" [ref=f2e16]'
+        - 'generic "PostgreSQL and Redis: Partly proven" [ref=f2e17]'
+        - 'generic "React with TypeScript: Proven" [ref=f2e18]'
+        - 'generic "Docker and CI/CD pipelines: Proven" [ref=f2e19]'
+        - 'generic "Experience integrating LLM APIs: Proven" [ref=f2e20]'
+        - 'generic "English at B2 level or higher: Proven" [ref=f2e21]'
+        - 'generic "Kubernetes: No evidence" [ref=f2e22]'
+        - 'generic "Kafka or RabbitMQ: No evidence" [ref=f2e23]'
+        - 'generic "Angular: No evidence" [ref=f2e24]'
+      - list [ref=f2e25]:
+        - listitem [ref=f2e26]: Proven
+        - listitem [ref=f2e28]: Partly proven
+        - listitem [ref=f2e30]: No evidence
+    - generic [ref=f2e32]:
+      - generic [ref=f2e33]:
+        - generic [ref=f2e34]:
+          - heading "Must have" [level=2] [ref=f2e35]
+          - list [ref=f2e36]:
+            - listitem [ref=f2e37]:
+              - button "2+ years of commercial experience with ASP.NET Core Proven" [pressed] [ref=f2e38] [cursor=pointer]:
+                - generic [ref=f2e40]: 2+ years of commercial experience with ASP.NET Core
+                - generic [ref=f2e41]: Proven
+              - generic [ref=f2e42]:
+                - paragraph [ref=f2e43]: Found evidence of ASP.NET Core.
+                - list [ref=f2e44]:
+                  - listitem [ref=f2e45]:
+                    - generic [ref=f2e46]:
+                      - generic [ref=f2e47]: Resume line
+                      - text: "4"
+                    - generic [ref=f2e48]: Three years building web products with ASP.NET Core and React.
+                  - listitem [ref=f2e49]:
+                    - generic [ref=f2e50]:
+                      - generic [ref=f2e51]: Resume line
+                      - text: "7"
+                    - generic [ref=f2e52]: Built a payments API with ASP.NET Core, Entity Framework Core and PostgreSQL.
+                  - listitem [ref=f2e53]:
+                    - text: "On GitHub: ASP.NET Core in"
+                    - link "prooffit" [ref=f2e55] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+                    - generic [ref=f2e56]:
+                      - text: ","
+                      - link "AI-Prompt-Management-System" [ref=f2e57] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/AI-Prompt-Management-System
+                    - generic [ref=f2e58]:
+                      - text: ","
+                      - link "SmartEquipmentRentalSystem" [ref=f2e59] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/SmartEquipmentRentalSystem
+                    - text: and 12 more
+            - listitem [ref=f2e60]:
+              - button "Entity Framework Core Proven" [ref=f2e61] [cursor=pointer]:
+                - generic [ref=f2e63]: Entity Framework Core
+                - generic [ref=f2e64]: Proven
+              - generic [ref=f2e65]:
+                - paragraph [ref=f2e66]: Found evidence of Entity Framework Core.
+                - list [ref=f2e67]:
+                  - listitem [ref=f2e68]:
+                    - generic [ref=f2e69]:
+                      - generic [ref=f2e70]: Resume line
+                      - text: "7"
+                    - generic [ref=f2e71]: Built a payments API with ASP.NET Core, Entity Framework Core and PostgreSQL.
+                  - listitem [ref=f2e72]:
+                    - text: "On GitHub: Entity Framework Core in"
+                    - link "prooffit" [ref=f2e74] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+                    - generic [ref=f2e75]:
+                      - text: ","
+                      - link "AI-Prompt-Management-System" [ref=f2e76] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/AI-Prompt-Management-System
+                    - generic [ref=f2e77]:
+                      - text: ","
+                      - link "TimeTracker" [ref=f2e78] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/TimeTracker
+                    - text: and 6 more
+            - listitem [ref=f2e79]:
+              - button "PostgreSQL and Redis Partly proven" [ref=f2e80] [cursor=pointer]:
+                - generic [ref=f2e82]: PostgreSQL and Redis
+                - generic [ref=f2e83]: Partly proven
+              - generic [ref=f2e84]:
+                - paragraph [ref=f2e85]: Found evidence of PostgreSQL, but none of Redis.
+                - list [ref=f2e86]:
+                  - listitem [ref=f2e87]:
+                    - generic [ref=f2e88]:
+                      - generic [ref=f2e89]: Resume line
+                      - text: "7"
+                    - generic [ref=f2e90]: Built a payments API with ASP.NET Core, Entity Framework Core and PostgreSQL.
+                  - listitem [ref=f2e91]:
+                    - text: "On GitHub: PostgreSQL in"
+                    - link "prooffit" [ref=f2e93] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+            - listitem [ref=f2e94]:
+              - button "React with TypeScript Proven" [ref=f2e95] [cursor=pointer]:
+                - generic [ref=f2e97]: React with TypeScript
+                - generic [ref=f2e98]: Proven
+              - generic [ref=f2e99]:
+                - paragraph [ref=f2e100]: Found evidence of TypeScript and React.
+                - list [ref=f2e101]:
+                  - listitem [ref=f2e102]:
+                    - generic [ref=f2e103]:
+                      - generic [ref=f2e104]: Resume line
+                      - text: "4"
+                    - generic [ref=f2e105]: Three years building web products with ASP.NET Core and React.
+                  - listitem [ref=f2e106]:
+                    - generic [ref=f2e107]:
+                      - generic [ref=f2e108]: Resume line
+                      - text: "8"
+                    - generic [ref=f2e109]: Wrote the React and TypeScript admin console used by the support team.
+                  - listitem [ref=f2e110]:
+                    - text: "On GitHub: TypeScript in"
+                    - link "prooffit" [ref=f2e112] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+                    - generic [ref=f2e113]:
+                      - text: ","
+                      - link "magna-hackathon-2026" [ref=f2e114] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/magna-hackathon-2026
+                    - generic [ref=f2e115]:
+                      - text: ","
+                      - link "Heek1.github.io" [ref=f2e116] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/Heek1.github.io
+                  - listitem [ref=f2e117]:
+                    - text: "On GitHub: React in"
+                    - link "prooffit" [ref=f2e119] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+                    - generic [ref=f2e120]:
+                      - text: ","
+                      - link "magna-hackathon-2026" [ref=f2e121] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/magna-hackathon-2026
+                    - generic [ref=f2e122]:
+                      - text: ","
+                      - link "Heek1.github.io" [ref=f2e123] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/Heek1.github.io
+                    - text: and 1 more
+            - listitem [ref=f2e124]:
+              - button "Docker and CI/CD pipelines Proven" [ref=f2e125] [cursor=pointer]:
+                - generic [ref=f2e127]: Docker and CI/CD pipelines
+                - generic [ref=f2e128]: Proven
+              - generic [ref=f2e129]:
+                - paragraph [ref=f2e130]: Found evidence of Docker and CI/CD.
+                - list [ref=f2e131]:
+                  - listitem [ref=f2e132]:
+                    - generic [ref=f2e133]:
+                      - generic [ref=f2e134]: Resume line
+                      - text: "9"
+                    - generic [ref=f2e135]: Set up GitHub Actions pipelines that build, test and deploy Docker images.
+                  - listitem [ref=f2e136]:
+                    - text: "On GitHub: Docker in"
+                    - link "prooffit" [ref=f2e138] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+                    - generic [ref=f2e139]:
+                      - text: ","
+                      - link "magna-hackathon-2026" [ref=f2e140] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/magna-hackathon-2026
+                    - generic [ref=f2e141]:
+                      - text: ","
+                      - link "Ai-study-assistant" [ref=f2e142] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/Ai-study-assistant
+                    - text: and 1 more
+                  - listitem [ref=f2e143]:
+                    - text: "On GitHub: CI/CD in"
+                    - link "prooffit" [ref=f2e145] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/prooffit
+                    - generic [ref=f2e146]:
+                      - text: ","
+                      - link "magna-hackathon-2026" [ref=f2e147] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/magna-hackathon-2026
+                    - generic [ref=f2e148]:
+                      - text: ","
+                      - link "Heek1.github.io" [ref=f2e149] [cursor=pointer]:
+                        - /url: https://github.com/Heek1/Heek1.github.io
+            - listitem [ref=f2e150]:
+              - button "Experience integrating LLM APIs Proven" [ref=f2e151] [cursor=pointer]:
+                - generic [ref=f2e153]: Experience integrating LLM APIs
+                - generic [ref=f2e154]: Proven
+              - generic [ref=f2e155]:
+                - paragraph [ref=f2e156]: Found evidence of LLM APIs.
+                - list [ref=f2e157]:
+                  - listitem [ref=f2e158]:
+                    - generic [ref=f2e159]:
+                      - generic [ref=f2e160]: Resume line
+                      - text: "10"
+                    - generic [ref=f2e161]: Added an assistant that answers support questions with the Gemini API.
+                  - listitem [ref=f2e162]:
+                    - text: "On GitHub: LLM APIs in"
+                    - link "Ai-study-assistant" [ref=f2e164] [cursor=pointer]:
+                      - /url: https://github.com/Heek1/Ai-study-assistant
+            - listitem [ref=f2e165]:
+              - button "English at B2 level or higher Proven" [ref=f2e166] [cursor=pointer]:
+                - generic [ref=f2e168]: English at B2 level or higher
+                - generic [ref=f2e169]: Proven
+              - generic [ref=f2e170]:
+                - paragraph [ref=f2e171]: Found evidence of English.
+                - list [ref=f2e172]:
+                  - listitem [ref=f2e173]:
+                    - generic [ref=f2e174]:
+                      - generic [ref=f2e175]: Resume line
+                      - text: "16"
+                    - generic [ref=f2e176]: Ukrainian (native), English (B2)
+        - generic [ref=f2e177]:
+          - heading "Nice to have" [level=2] [ref=f2e178]
+          - list [ref=f2e179]:
+            - listitem [ref=f2e180]:
+              - button "Kubernetes No evidence" [ref=f2e181] [cursor=pointer]:
+                - generic [ref=f2e183]: Kubernetes
+                - generic [ref=f2e184]: No evidence
+              - paragraph [ref=f2e186]: Found no evidence of Kubernetes.
+            - listitem [ref=f2e187]:
+              - button "Kafka or RabbitMQ No evidence" [ref=f2e188] [cursor=pointer]:
+                - generic [ref=f2e190]: Kafka or RabbitMQ
+                - generic [ref=f2e191]: No evidence
+              - paragraph [ref=f2e193]: Found no evidence of Kafka and RabbitMQ.
+            - listitem [ref=f2e194]:
+              - button "Angular No evidence" [ref=f2e195] [cursor=pointer]:
+                - generic [ref=f2e197]: Angular
+                - generic [ref=f2e198]: No evidence
+              - paragraph [ref=f2e200]: Found no evidence of Angular.
+      - complementary "Evidence" [ref=f2e201]:
+        - region "Resume" [ref=f2e202]:
+          - generic [ref=f2e204]:
+            - heading "Resume" [level=2] [ref=f2e205]
+            - paragraph [ref=f2e206]: sample-resume.pdf
+          - list "Resume text" [ref=f2e208]:
+            - listitem [ref=f2e209]: Olena Koval
+            - listitem [ref=f2e210]: Full-stack developer (sample resume)
+            - listitem [ref=f2e211]: Summary
+            - listitem [ref=f2e212]: Three years building web products with ASP.NET Core and React.
+            - listitem [ref=f2e213]: Experience
+            - listitem [ref=f2e214]: Full-stack developer, fintech startup, 2024 to 2026
+            - listitem [ref=f2e215]: Built a payments API with ASP.NET Core, Entity Framework Core and PostgreSQL.
+            - listitem [ref=f2e216]: Wrote the React and TypeScript admin console used by the support team.
+            - listitem [ref=f2e217]: Set up GitHub Actions pipelines that build, test and deploy Docker images.
+            - listitem [ref=f2e218]: Added an assistant that answers support questions with the Gemini API.
+            - listitem [ref=f2e219]: Junior developer, web studio, 2023 to 2024
+            - listitem [ref=f2e220]: Delivered marketing sites with JavaScript, HTML and CSS.
+            - listitem [ref=f2e221]: Education
+            - listitem [ref=f2e222]: BSc in Computer Science, 2023
+            - listitem [ref=f2e223]: Languages
+            - listitem [ref=f2e224]: Ukrainian (native), English (B2)
+        - region "GitHub" [ref=f2e225]:
+          - generic [ref=f2e227]:
+            - heading "GitHub" [level=2] [ref=f2e228]
+            - paragraph [ref=f2e229]: Heek1, 20 repositories scanned
+          - list "Skills found on GitHub" [ref=f2e231]:
+            - listitem [ref=f2e232]:
+              - generic [ref=f2e233]: C#
+              - generic [ref=f2e234]: 15 repositories
+            - listitem [ref=f2e235]:
+              - generic [ref=f2e236]: .NET
+              - generic [ref=f2e237]: 15 repositories
+            - listitem [ref=f2e238]:
+              - generic [ref=f2e239]: JavaScript
+              - generic [ref=f2e240]: Ai-study-assistant
+            - listitem [ref=f2e241]:
+              - generic [ref=f2e242]: TypeScript
+              - generic [ref=f2e243]: 3 repositories
+            - listitem [ref=f2e244]:
+              - generic [ref=f2e245]: Python
+              - generic [ref=f2e246]: 4 repositories
+            - listitem [ref=f2e247]:
+              - generic [ref=f2e248]: CSS
+              - generic [ref=f2e249]: 2 repositories
+            - listitem [ref=f2e250]:
+              - generic [ref=f2e251]: React
+              - generic [ref=f2e252]: 4 repositories
+            - listitem [ref=f2e253]:
+              - generic [ref=f2e254]: Next.js
+              - generic [ref=f2e255]: Heek1.github.io
+            - listitem [ref=f2e256]:
+              - generic [ref=f2e257]: Tailwind CSS
+              - generic [ref=f2e258]: 3 repositories
+            - listitem [ref=f2e259]:
+              - generic [ref=f2e260]: ASP.NET Core
+              - generic [ref=f2e261]: 15 repositories
+            - listitem [ref=f2e262]:
+              - generic [ref=f2e263]: Entity Framework Core
+              - generic [ref=f2e264]: 9 repositories
+            - listitem [ref=f2e265]:
+              - generic [ref=f2e266]: FastAPI
+              - generic [ref=f2e267]: 3 repositories
+            - listitem [ref=f2e268]:
+              - generic [ref=f2e269]: Authentication
+              - generic [ref=f2e270]: 3 repositories
+            - listitem [ref=f2e271]:
+              - generic [ref=f2e272]: PostgreSQL
+              - generic [ref=f2e273]: prooffit
+            - listitem [ref=f2e274]:
+              - generic [ref=f2e275]: SQL Server
+              - generic [ref=f2e276]: 2 repositories
+            - listitem [ref=f2e277]:
+              - generic [ref=f2e278]: SQLite
+              - generic [ref=f2e279]: 7 repositories
+            - listitem [ref=f2e280]:
+              - generic [ref=f2e281]: MongoDB
+              - generic [ref=f2e282]: Application-processing-system
+            - listitem [ref=f2e283]:
+              - generic [ref=f2e284]: Docker
+              - generic [ref=f2e285]: 4 repositories
+            - listitem [ref=f2e286]:
+              - generic [ref=f2e287]: CI/CD
+              - generic [ref=f2e288]: 3 repositories
+            - listitem [ref=f2e289]:
+              - generic [ref=f2e290]: Automated testing
+              - generic [ref=f2e291]: 2 repositories
+            - listitem [ref=f2e292]:
+              - generic [ref=f2e293]: LLM APIs
+              - generic [ref=f2e294]: Ai-study-assistant
+    - generic [ref=f2e295]: Analysed by keyword matching, without a language model.

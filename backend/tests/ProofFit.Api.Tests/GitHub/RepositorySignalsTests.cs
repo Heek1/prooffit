@@ -118,7 +118,7 @@ public class RepositorySignalsTests
         // with a misspelt skill would produce evidence nothing can ever cite.
         var catalog = SkillCatalog.All.Select(skill => skill.Name).ToHashSet();
 
-        Assert.Empty(RepositorySignals.SkillNames().Where(name => !catalog.Contains(name)));
+        Assert.DoesNotContain(RepositorySignals.SkillNames(), name => !catalog.Contains(name));
     }
 
     private static string[] Detect(string[] paths, params (string Path, string Content)[] manifests) =>
