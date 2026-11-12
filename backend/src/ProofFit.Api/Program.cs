@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using ProofFit.Api;
 using ProofFit.Api.Data;
+using ProofFit.Api.Features.Analyses;
+using ProofFit.Api.Features.Analyses.Matching;
 using ProofFit.Api.Features.Resumes;
 using ProofFit.Api.Features.Vacancies;
 
@@ -9,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddValidation();
+builder.Services.ConfigureHttpJsonOptions(options => ApiJson.Configure(options.SerializerOptions));
 
 // The connection string is read when the context is first resolved rather than here, so
 // configuration added after this point (integration tests, container env) still applies.
@@ -19,6 +23,12 @@ builder.Services.AddHealthChecks()
     .AddDbContextCheck<AppDbContext>("database", tags: ["ready"]);
 
 builder.Services.AddSingleton<PdfTextExtractor>();
+
+builder.Services.AddSingleton<IRequirementExtractor, KeywordRequirementExtractor>();
+builder.Services.AddSingleton<IRequirementMatcher, KeywordRequirementMatcher>();
+builder.Services.AddScoped<AnalysisRunner>();
+builder.Services.AddSingleton<AnalysisQueue>();
+builder.Services.AddHostedService<AnalysisWorker>();
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
     .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [])
@@ -48,5 +58,6 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check 
 
 app.MapResumeEndpoints();
 app.MapVacancyEndpoints();
+app.MapAnalysisEndpoints();
 
 app.Run();

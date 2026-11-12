@@ -7,13 +7,15 @@ namespace ProofFit.Api.Features.Vacancies;
 
 public class CreateVacancyRequest
 {
-    // Trimming in the setters means the length rules below judge the text that gets stored,
-    // not the padding around it.
+    // Normalising in the setters means the length rules below judge the text that gets
+    // stored, not the padding around it.
     [Required, StringLength(Limits.VacancyTitleLength)]
     public string Title { get; set => field = value?.Trim() ?? ""; } = "";
 
+    // Line endings become "\n" so that line numbers, which evidence is cited by, mean the
+    // same thing here and in the browser.
     [Required, StringLength(Limits.VacancyTextMaxLength, MinimumLength = Limits.VacancyTextMinLength)]
-    public string Text { get; set => field = value?.Trim() ?? ""; } = "";
+    public string Text { get; set => field = value?.ReplaceLineEndings("\n").Trim() ?? ""; } = "";
 }
 
 public record VacancyResponse(Guid Id, string Title, string Text, DateTimeOffset CreatedAt)

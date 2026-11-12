@@ -10,7 +10,7 @@ namespace ProofFit.Api.Tests;
 /// </summary>
 public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("pgvector/pgvector:pg17").Build();
+    private readonly PostgreSqlContainer _database = new PostgreSqlBuilder("postgres:17").Build();
 
     public Task InitializeAsync() => _database.StartAsync();
 

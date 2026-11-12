@@ -23,7 +23,7 @@ line by line. Those line numbers are what the match report will cite.
 
 ## Stack
 
-- **Backend:** ASP.NET Core 10 minimal APIs, EF Core, PostgreSQL with pgvector, PdfPig
+- **Backend:** ASP.NET Core 10 minimal APIs, EF Core, PostgreSQL, PdfPig
 - **Frontend:** React 19, TypeScript, Vite, Tailwind CSS
 - **Tests:** xUnit; integration tests run the real API against PostgreSQL in Testcontainers
 - **Infrastructure:** Docker Compose, GitHub Actions
