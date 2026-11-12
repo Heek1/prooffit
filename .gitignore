@@ -17,5 +17,6 @@ dist/
 .idea/
 .vscode/
 .claude/
+.playwright-mcp/
 .DS_Store
 Thumbs.db
