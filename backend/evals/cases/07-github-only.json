@@ -1,0 +1,19 @@
+{
+  "name": "github-only",
+  "resume": [
+    "Software engineer",
+    "Worked on internal tools"
+  ],
+  "gitHubFacts": [
+    { "id": "G1", "skill": "Docker", "repositories": [{ "name": "shop-api", "url": "https://github.com/example/shop-api" }] },
+    { "id": "G2", "skill": "React", "repositories": [{ "name": "portal", "url": "https://github.com/example/portal" }, { "name": "admin", "url": "https://github.com/example/admin" }] },
+    { "id": "G3", "skill": "Automated testing", "repositories": [{ "name": "shop-api", "url": "https://github.com/example/shop-api" }] }
+  ],
+  "requirements": [
+    { "text": "Docker", "importance": "mustHave", "expected": "confirmed", "why": "Fact G1: a Dockerfile in a public repository." },
+    { "text": "React", "importance": "mustHave", "expected": "confirmed", "why": "Fact G2: two repositories." },
+    { "text": "Automated testing", "importance": "niceToHave", "expected": "confirmed", "why": "Fact G3." },
+    { "text": "PostgreSQL", "importance": "mustHave", "expected": "missing", "why": "Neither the resume nor GitHub shows it." },
+    { "text": "TypeScript", "importance": "mustHave", "expected": "missing", "why": "React code does not prove TypeScript." }
+  ]
+}

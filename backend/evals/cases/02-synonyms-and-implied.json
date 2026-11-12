@@ -1,0 +1,17 @@
+{
+  "name": "synonyms-and-implied",
+  "resume": [
+    "Frontend engineer",
+    "Built the customer portal in Next.js with strict typing throughout",
+    "Wrote pipelines that build, test and deploy on every merge",
+    "Stored data in Postgres",
+    "Covered business logic with xUnit"
+  ],
+  "requirements": [
+    { "text": "React", "importance": "mustHave", "expected": "confirmed", "why": "Next.js is a React framework; building a portal in it is React work." },
+    { "text": "CI/CD", "importance": "mustHave", "expected": "confirmed", "why": "Line 3 describes a CI/CD pipeline without using the term." },
+    { "text": "Relational databases", "importance": "mustHave", "expected": "confirmed", "why": "Postgres is a relational database." },
+    { "text": "Automated testing", "importance": "mustHave", "expected": "confirmed", "why": "xUnit tests over business logic." },
+    { "text": "TypeScript", "importance": "mustHave", "expected": "partial", "why": "\"Strict typing\" in a Next.js project points to TypeScript but does not name it." }
+  ]
+}

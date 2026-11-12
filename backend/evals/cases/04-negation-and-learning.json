@@ -1,0 +1,16 @@
+{
+  "name": "negation-and-learning",
+  "resume": [
+    "Java developer",
+    "No production experience with Kubernetes yet; completed an introductory course",
+    "Currently learning Go in my spare time",
+    "Spring Boot services on AWS"
+  ],
+  "requirements": [
+    { "text": "Kubernetes in production", "importance": "mustHave", "expected": "missing", "why": "The resume says outright that there is no production experience." },
+    { "text": "Go", "importance": "mustHave", "expected": "partial", "why": "Being learned, not yet used in work." },
+    { "text": "Spring", "importance": "mustHave", "expected": "confirmed", "why": "Spring Boot services on line 4." },
+    { "text": "AWS", "importance": "mustHave", "expected": "confirmed", "why": "Services run on AWS, line 4." },
+    { "text": "Java", "importance": "mustHave", "expected": "confirmed", "why": "Job title and Spring Boot work." }
+  ]
+}

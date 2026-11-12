@@ -1,0 +1,16 @@
+{
+  "name": "alternatives",
+  "resume": [
+    "Full-stack developer",
+    "Vue 3 single-page applications",
+    "Node.js services with Express.js",
+    "MySQL"
+  ],
+  "requirements": [
+    { "text": "React or Vue", "importance": "mustHave", "expected": "confirmed", "why": "Either satisfies the requirement, and Vue is on line 2." },
+    { "text": "PostgreSQL or MySQL", "importance": "mustHave", "expected": "confirmed", "why": "Either satisfies the requirement, and MySQL is on line 4." },
+    { "text": "Node.js", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 3." },
+    { "text": "Angular", "importance": "niceToHave", "expected": "missing", "why": "Not mentioned." },
+    { "text": "GraphQL", "importance": "niceToHave", "expected": "missing", "why": "Not mentioned." }
+  ]
+}

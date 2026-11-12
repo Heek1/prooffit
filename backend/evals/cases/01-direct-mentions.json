@@ -1,0 +1,16 @@
+{
+  "name": "direct-mentions",
+  "resume": [
+    "Backend developer, four years",
+    "Built REST APIs with ASP.NET Core and Entity Framework Core",
+    "Ran PostgreSQL and Redis in production",
+    "Docker, GitHub Actions"
+  ],
+  "requirements": [
+    { "text": "ASP.NET Core", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 2." },
+    { "text": "Entity Framework Core", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 2." },
+    { "text": "PostgreSQL", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 3, in production." },
+    { "text": "Docker and Kubernetes", "importance": "mustHave", "expected": "partial", "why": "Docker is on line 4; Kubernetes is nowhere." },
+    { "text": "Kafka", "importance": "niceToHave", "expected": "missing", "why": "Not mentioned." }
+  ]
+}

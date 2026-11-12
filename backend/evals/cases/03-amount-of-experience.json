@@ -1,0 +1,14 @@
+{
+  "name": "amount-of-experience",
+  "resume": [
+    "Python developer",
+    "One year of commercial experience with Django",
+    "Personal projects in FastAPI"
+  ],
+  "requirements": [
+    { "text": "3+ years of commercial Python experience", "importance": "mustHave", "expected": "partial", "why": "Python, but one commercial year where three are asked for." },
+    { "text": "Django", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 2 with commercial experience." },
+    { "text": "Commercial experience with FastAPI", "importance": "mustHave", "expected": "partial", "why": "FastAPI appears only in personal projects." },
+    { "text": "Flask", "importance": "niceToHave", "expected": "missing", "why": "Not mentioned." }
+  ]
+}

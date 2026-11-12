@@ -1,0 +1,17 @@
+{
+  "name": "ukrainian-resume",
+  "resume": [
+    "Розробник повного стеку",
+    "Створив API на ASP.NET Core та Entity Framework Core",
+    "Фронтенд на React і TypeScript",
+    "Налаштував Docker і GitHub Actions",
+    "Англійська: Upper-Intermediate"
+  ],
+  "requirements": [
+    { "text": "ASP.NET Core", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 2." },
+    { "text": "React with TypeScript", "importance": "mustHave", "expected": "confirmed", "why": "Both named on line 3." },
+    { "text": "CI/CD", "importance": "mustHave", "expected": "confirmed", "why": "GitHub Actions set up, line 4." },
+    { "text": "English at B2 or higher", "importance": "mustHave", "expected": "confirmed", "why": "Upper-Intermediate is B2; the line is in Ukrainian." },
+    { "text": "Kubernetes", "importance": "niceToHave", "expected": "missing", "why": "Not mentioned." }
+  ]
+}
