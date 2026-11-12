@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Both families cover Cyrillic: resumes and vacancies are often in Ukrainian. */
+  --font-sans: 'Geologica Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Literata Variable', ui-serif, Georgia, serif;
+
+  --color-desk: #e4e8ef;
+  --color-sheet: #ffffff;
+  --color-ink: #1d2b4f;
+  --color-ink-soft: #525d75;
+  --color-rule: #c3cbd9;
+  --color-marker: #ffe14d;
+  --color-marker-deep: #f5cf00;
+  --color-fail: #b0361f;
+}
+
+@layer base {
+  body {
+    background: var(--color-desk);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 350;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* The file input inside the drop zone is visually hidden, so the zone shows its focus. */
+  .dropzone:has(:focus-visible) {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  /* Document text with numbered lines. The numbers are what the match report will cite. */
+  .document {
+    counter-reset: line;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .document > li {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+    align-items: baseline;
+    min-height: 1lh;
+    overflow-wrap: anywhere;
+  }
+
+  .document > li::before {
+    counter-increment: line;
+    content: counter(line);
+    color: var(--color-ink-soft);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    user-select: none;
+  }
+}
