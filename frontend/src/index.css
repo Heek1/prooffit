@@ -63,4 +63,56 @@
     text-align: right;
     user-select: none;
   }
+
+  /* A line the selected requirement cites, marked the way a highlighter would. */
+  .document > li.is-cited {
+    background: var(--color-marker);
+  }
+
+  .document > li.is-cited::before {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  /*
+   * A verdict as a box: filled when proven, half-filled when partly proven, empty when
+   * there is no evidence. The shape carries the meaning, so it does not depend on colour.
+   * The proof bar stretches the same boxes into segments.
+   */
+  .mark {
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 1.5px solid var(--color-ink);
+    border-radius: 2px;
+  }
+
+  .mark-confirmed {
+    background: var(--color-ink);
+  }
+
+  .mark-partial {
+    background: linear-gradient(to right, var(--color-ink) 50%, transparent 50%);
+  }
+
+  .mark-missing {
+    border-color: var(--color-ink-soft);
+    background: var(--color-sheet);
+  }
+
+  /* The step an analysis is on. */
+  @media (prefers-reduced-motion: no-preference) {
+    .mark-working {
+      animation: working 1s ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes working {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0.35;
+    }
+  }
 }
