@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Resume> Resumes => Set<Resume>();
     public DbSet<Vacancy> Vacancies => Set<Vacancy>();
     public DbSet<Analysis> Analyses => Set<Analysis>();
+    public DbSet<GitHubProfile> GitHubProfiles => Set<GitHubProfile>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +23,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             analysis.Property(a => a.Status).HasConversion<string>().HasMaxLength(20);
             analysis.Property(a => a.Stage).HasConversion<string>().HasMaxLength(30);
             analysis.Property(a => a.Engine).HasMaxLength(100);
+            analysis.Property(a => a.GitHubLogin).HasMaxLength(Limits.GitHubLoginLength);
 
             analysis.Property(a => a.Result)
                 .HasColumnType("jsonb")
@@ -31,6 +33,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // The worker looks for unfinished analyses by status on every start.
             analysis.HasIndex(a => a.Status);
+        });
+
+        modelBuilder.Entity<GitHubProfile>(profile =>
+        {
+            profile.HasKey(p => p.Login);
+            profile.Property(p => p.Login).HasMaxLength(Limits.GitHubLoginLength);
+
+            profile.Property(p => p.Evidence)
+                .HasColumnType("jsonb")
+                .HasConversion(
+                    evidence => JsonSerializer.Serialize(evidence, ApiJson.Options),
+                    json => JsonSerializer.Deserialize<GitHubEvidence>(json, ApiJson.Options)!);
         });
     }
 }

@@ -10,10 +10,17 @@ public record Requirement(string Id, string Text, Importance Importance, int? Va
 
 /// <summary>
 /// A matcher's verdict before it has been checked. Matchers, the language model above all,
-/// can cite lines that do not exist, so nothing here is trusted until
+/// can cite lines and facts that do not exist, so nothing here is trusted until
 /// <see cref="EvidenceValidator"/> has confirmed the evidence.
 /// </summary>
-public record ProposedMatch(string RequirementId, MatchStatus Status, string Reason, IReadOnlyList<int> ResumeLines);
+/// <param name="ResumeLines">1-based resume lines offered as evidence. Null counts as none.</param>
+/// <param name="GitHubFacts">Ids of GitHub facts offered as evidence. Null counts as none.</param>
+public record ProposedMatch(
+    string RequirementId,
+    MatchStatus Status,
+    string Reason,
+    IReadOnlyList<int>? ResumeLines = null,
+    IReadOnlyList<string>? GitHubFacts = null);
 
 public interface IRequirementExtractor
 {
@@ -26,7 +33,13 @@ public interface IRequirementMatcher
     /// <summary>Recorded on the analysis so a report says what produced it.</summary>
     string EngineName { get; }
 
-    /// <summary>Judges each requirement against the resume. May omit requirements; they count as missing.</summary>
+    /// <summary>
+    /// Judges each requirement against the resume and the candidate's GitHub facts. May omit
+    /// requirements; they count as missing.
+    /// </summary>
     Task<IReadOnlyList<ProposedMatch>> MatchAsync(
-        IReadOnlyList<Requirement> requirements, NumberedText resume, CancellationToken ct);
+        IReadOnlyList<Requirement> requirements,
+        NumberedText resume,
+        IReadOnlyList<GitHubFact> gitHubFacts,
+        CancellationToken ct);
 }

@@ -3,7 +3,7 @@ namespace ProofFit.Api.Domain;
 public enum AnalysisStatus { Queued, Running, Completed, Failed }
 
 /// <summary>The step a running analysis is on, shown to the user as progress.</summary>
-public enum AnalysisStage { Queued, ReadingVacancy, Matching, Done }
+public enum AnalysisStage { Queued, ReadingVacancy, CollectingGitHub, Matching, Done }
 
 public enum Importance { MustHave, NiceToHave }
 
@@ -19,6 +19,9 @@ public class Analysis
 
     public Guid VacancyId { get; set; }
     public Vacancy Vacancy { get; set; } = null!;
+
+    /// <summary>The candidate's GitHub login, when they want their public code used as evidence.</summary>
+    public string? GitHubLogin { get; set; }
 
     public AnalysisStatus Status { get; set; }
     public AnalysisStage Stage { get; set; }
@@ -40,12 +43,19 @@ public class Analysis
 /// The finished report. Stored as one JSON document: it is written once and always read
 /// whole, so separate tables for requirements and evidence would add joins and no queries.
 /// </summary>
-public record AnalysisResult(int Score, IReadOnlyList<RequirementMatch> Requirements);
+/// <param name="GitHub">What the candidate's public code showed. Null when no login was given or GitHub could not be read.</param>
+/// <param name="GitHubNote">Why GitHub evidence is absent although a login was given, worded for the user.</param>
+public record AnalysisResult(
+    int Score,
+    IReadOnlyList<RequirementMatch> Requirements,
+    GitHubEvidence? GitHub,
+    string? GitHubNote);
 
 /// <summary>A requirement from the vacancy and the verdict on it.</summary>
 /// <param name="Id">Stable within one analysis: "R1", "R2", and so on.</param>
 /// <param name="VacancyLine">1-based line of the vacancy the requirement came from, when known.</param>
-/// <param name="ResumeLines">1-based resume lines that support the verdict. Empty when missing.</param>
+/// <param name="ResumeLines">1-based resume lines that support the verdict.</param>
+/// <param name="GitHubFacts">Ids of the GitHub facts that support the verdict.</param>
 public record RequirementMatch(
     string Id,
     string Text,
@@ -53,4 +63,5 @@ public record RequirementMatch(
     int? VacancyLine,
     MatchStatus Status,
     string Reason,
-    IReadOnlyList<int> ResumeLines);
+    IReadOnlyList<int> ResumeLines,
+    IReadOnlyList<string> GitHubFacts);

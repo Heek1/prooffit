@@ -41,6 +41,10 @@ namespace ProofFit.Api.Data.Migrations
                     b.Property<string>("Error")
                         .HasColumnType("text");
 
+                    b.Property<string>("GitHubLogin")
+                        .HasMaxLength(39)
+                        .HasColumnType("character varying(39)");
+
                     b.Property<string>("Result")
                         .HasColumnType("jsonb");
 
@@ -69,6 +73,24 @@ namespace ProofFit.Api.Data.Migrations
                     b.HasIndex("VacancyId");
 
                     b.ToTable("Analyses");
+                });
+
+            modelBuilder.Entity("ProofFit.Api.Domain.GitHubProfile", b =>
+                {
+                    b.Property<string>("Login")
+                        .HasMaxLength(39)
+                        .HasColumnType("character varying(39)");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTimeOffset>("FetchedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Login");
+
+                    b.ToTable("GitHubProfiles");
                 });
 
             modelBuilder.Entity("ProofFit.Api.Domain.Resume", b =>

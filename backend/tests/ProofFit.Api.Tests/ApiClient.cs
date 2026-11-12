@@ -29,10 +29,21 @@ public static class ApiClient
         return await response.ReadAsync<VacancyResponse>();
     }
 
-    public static async Task<AnalysisResponse> StartAnalysisAsync(this HttpClient client, Guid resumeId, Guid vacancyId)
+    public static async Task<AnalysisResponse> StartAnalysisAsync(
+        this HttpClient client, Guid resumeId, Guid vacancyId, string? gitHubLogin = null)
     {
-        var response = await client.PostAsJsonAsync("/api/analyses", new { resumeId, vacancyId });
+        var response = await client.PostAsJsonAsync("/api/analyses", new { resumeId, vacancyId, gitHubLogin });
         return await response.ReadAsync<AnalysisResponse>();
+    }
+
+    /// <summary>Uploads the documents, starts an analysis and waits for it to end.</summary>
+    public static async Task<AnalysisResponse> AnalyseAsync(
+        this HttpClient client, string[] resumeLines, string vacancyText, string? gitHubLogin = null)
+    {
+        var resume = await client.UploadResumeAsync(resumeLines);
+        var vacancy = await client.CreateVacancyAsync(vacancyText);
+        var started = await client.StartAnalysisAsync(resume.Id, vacancy.Id, gitHubLogin);
+        return await client.WaitForAnalysisAsync(started.Id);
     }
 
     /// <summary>Polls until the analysis has completed or failed.</summary>

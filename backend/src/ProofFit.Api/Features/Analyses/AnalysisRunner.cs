@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ProofFit.Api.Data;
 using ProofFit.Api.Domain;
 using ProofFit.Api.Features.Analyses.Matching;
+using ProofFit.Api.Features.GitHub;
 
 namespace ProofFit.Api.Features.Analyses;
 
@@ -13,6 +14,7 @@ public class AnalysisRunner(
     AppDbContext db,
     IRequirementExtractor extractor,
     IRequirementMatcher matcher,
+    IGitHubEvidenceSource gitHub,
     ILogger<AnalysisRunner> logger)
 {
     public async Task RunAsync(Guid analysisId, CancellationToken ct)
@@ -62,12 +64,33 @@ public class AnalysisRunner(
             .Select((r, index) => new Requirement($"R{index + 1}", r.Text, r.Importance, r.VacancyLine))
             .ToList();
 
+        var (evidence, gitHubNote) = await CollectGitHubAsync(analysis, ct);
+        var facts = evidence?.Facts ?? [];
+
         await EnterStageAsync(analysis, AnalysisStage.Matching, ct);
         var resume = new NumberedText(analysis.Resume.Text);
-        var proposed = await matcher.MatchAsync(requirements, resume, ct);
-        var matches = EvidenceValidator.Validate(requirements, proposed, resume);
+        var proposed = await matcher.MatchAsync(requirements, resume, facts, ct);
+        var matches = EvidenceValidator.Validate(requirements, proposed, resume, facts);
 
-        return new AnalysisResult(Scoring.Score(matches), matches);
+        return new AnalysisResult(Scoring.Score(matches), matches, evidence, gitHubNote);
+    }
+
+    // GitHub is extra evidence, never a precondition: when it cannot be read, the analysis
+    // goes ahead on the resume alone and the report says why GitHub is absent.
+    private async Task<(GitHubEvidence? Evidence, string? Note)> CollectGitHubAsync(Analysis analysis, CancellationToken ct)
+    {
+        if (analysis.GitHubLogin is not { } login) return (null, null);
+
+        await EnterStageAsync(analysis, AnalysisStage.CollectingGitHub, ct);
+        try
+        {
+            return (await gitHub.GetAsync(login, ct), null);
+        }
+        catch (GitHubUnavailableException ex)
+        {
+            logger.LogWarning(ex, "GitHub evidence for {Login} is unavailable", login);
+            return (null, ex.Message);
+        }
     }
 
     // Saved at once so anyone watching the analysis sees the step it is on.

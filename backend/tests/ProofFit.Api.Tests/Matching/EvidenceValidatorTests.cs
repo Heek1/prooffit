@@ -41,7 +41,7 @@ public class EvidenceValidatorTests
 
         Assert.Equal(MatchStatus.Missing, match.Status);
         Assert.Empty(match.ResumeLines);
-        Assert.Equal("No line in the resume supports this.", match.Reason);
+        Assert.Equal("No line in the resume or fact from GitHub supports this.", match.Reason);
     }
 
     [Fact]
@@ -84,6 +84,42 @@ public class EvidenceValidatorTests
         Assert.EndsWith("…", match.Reason);
     }
 
+    [Fact]
+    public void Accepts_a_github_fact_as_evidence_when_no_resume_line_is_cited()
+    {
+        var match = Assert.Single(Validate([Containers],
+            new ProposedMatch("R2", MatchStatus.Confirmed, "Dockerfile in two repositories.", GitHubFacts: ["G1"])));
+
+        Assert.Equal(MatchStatus.Confirmed, match.Status);
+        Assert.Empty(match.ResumeLines);
+        Assert.Equal(["G1"], match.GitHubFacts);
+    }
+
+    [Fact]
+    public void Drops_github_facts_that_were_never_gathered()
+    {
+        var match = Assert.Single(Validate([Containers],
+            new ProposedMatch("R2", MatchStatus.Confirmed, "Seen on GitHub.", [3], ["G7", "G1", "G1"])));
+
+        Assert.Equal(["G1"], match.GitHubFacts);
+        Assert.Equal([3], match.ResumeLines);
+    }
+
+    [Fact]
+    public void Turns_a_verdict_resting_only_on_an_invented_github_fact_into_missing()
+    {
+        var match = Assert.Single(Validate([Containers],
+            new ProposedMatch("R2", MatchStatus.Confirmed, "Seen on GitHub.", GitHubFacts: ["G7"])));
+
+        Assert.Equal(MatchStatus.Missing, match.Status);
+        Assert.Empty(match.GitHubFacts);
+    }
+
+    private static readonly GitHubFact[] Facts =
+    [
+        new("G1", "Docker", [new RepositoryRef("shop-api", "https://github.com/octo-dev/shop-api")]),
+    ];
+
     private static IReadOnlyList<RequirementMatch> Validate(Requirement[] requirements, params ProposedMatch[] proposed) =>
-        EvidenceValidator.Validate(requirements, proposed, Resume);
+        EvidenceValidator.Validate(requirements, proposed, Resume, Facts);
 }
