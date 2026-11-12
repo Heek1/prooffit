@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using ProofFit.Api.Data;
 using ProofFit.Api.Domain;
+using ProofFit.Api.Features.GitHub;
 using ProofFit.Api.Features.Resumes;
 using ProofFit.Api.Features.Vacancies;
 
 namespace ProofFit.Api.Features.Analyses;
 
-public record CreateAnalysisRequest(Guid ResumeId, Guid VacancyId);
+/// <param name="GitHubLogin">Optional. A username, "@username" or profile URL whose public code is used as evidence.</param>
+public record CreateAnalysisRequest(Guid ResumeId, Guid VacancyId, string? GitHubLogin = null);
 
 /// <summary>An analysis with the two documents it compares, so a report can quote them.</summary>
 public record AnalysisResponse(
     Guid Id,
+    string? GitHubLogin,
     AnalysisStatus Status,
     AnalysisStage Stage,
     string? Engine,
@@ -24,7 +27,7 @@ public record AnalysisResponse(
     AnalysisResult? Result)
 {
     public static AnalysisResponse From(Analysis analysis) => new(
-        analysis.Id, analysis.Status, analysis.Stage, analysis.Engine, analysis.Error,
+        analysis.Id, analysis.GitHubLogin, analysis.Status, analysis.Stage, analysis.Engine, analysis.Error,
         analysis.CreatedAt, analysis.CompletedAt,
         ResumeResponse.From(analysis.Resume), VacancyResponse.From(analysis.Vacancy), analysis.Result);
 }
@@ -52,16 +55,24 @@ public static class AnalysisEndpoints
         var resume = await db.Resumes.FindAsync([request.ResumeId], ct);
         var vacancy = await db.Vacancies.FindAsync([request.VacancyId], ct);
 
-        var errors = new Dictionary<string, string[]>();
-        if (resume is null) errors["resumeId"] = ["There is no resume with this id."];
-        if (vacancy is null) errors["vacancyId"] = ["There is no vacancy with this id."];
-        if (resume is null || vacancy is null) return TypedResults.ValidationProblem(errors);
+        var gitHubLogin = string.IsNullOrWhiteSpace(request.GitHubLogin) ? null : GitHubClient.ParseLogin(request.GitHubLogin);
+        var gitHubLoginIsInvalid = gitHubLogin is null && !string.IsNullOrWhiteSpace(request.GitHubLogin);
+
+        if (resume is null || vacancy is null || gitHubLoginIsInvalid)
+        {
+            var errors = new Dictionary<string, string[]>();
+            if (resume is null) errors["resumeId"] = ["There is no resume with this id."];
+            if (vacancy is null) errors["vacancyId"] = ["There is no vacancy with this id."];
+            if (gitHubLoginIsInvalid) errors["gitHubLogin"] = ["This does not look like a GitHub username."];
+            return TypedResults.ValidationProblem(errors);
+        }
 
         var analysis = new Analysis
         {
             Id = Guid.CreateVersion7(),
             Resume = resume,
             Vacancy = vacancy,
+            GitHubLogin = gitHubLogin,
             Status = AnalysisStatus.Queued,
             Stage = AnalysisStage.Queued,
             CreatedAt = Timestamp.Now(),

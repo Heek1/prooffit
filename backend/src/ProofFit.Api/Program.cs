@@ -4,6 +4,7 @@ using ProofFit.Api;
 using ProofFit.Api.Data;
 using ProofFit.Api.Features.Analyses;
 using ProofFit.Api.Features.Analyses.Matching;
+using ProofFit.Api.Features.GitHub;
 using ProofFit.Api.Features.Resumes;
 using ProofFit.Api.Features.Vacancies;
 
@@ -29,6 +30,17 @@ builder.Services.AddSingleton<IRequirementMatcher, KeywordRequirementMatcher>();
 builder.Services.AddScoped<AnalysisRunner>();
 builder.Services.AddSingleton<AnalysisQueue>();
 builder.Services.AddHostedService<AnalysisWorker>();
+
+builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
+builder.Services.AddHttpClient<GitHubClient>(client =>
+    {
+        // GitHub rejects requests that do not say who is asking.
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("ProofFit");
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+    })
+    .AddStandardResilienceHandler();
+builder.Services.AddScoped<GitHubScanner>();
+builder.Services.AddScoped<IGitHubEvidenceSource, GitHubEvidenceSource>();
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
     .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [])

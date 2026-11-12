@@ -11,6 +11,9 @@ public class KeywordRequirementMatcherTests
         "React and TypeScript frontends",
         "PostgreSQL, Docker"));
 
+    private static readonly GitHubFact Kubernetes =
+        new("G1", "Kubernetes", [new RepositoryRef("infra", "https://github.com/octo-dev/infra")]);
+
     [Fact]
     public async Task Confirms_a_requirement_when_every_named_skill_is_in_the_resume()
     {
@@ -18,7 +21,7 @@ public class KeywordRequirementMatcherTests
 
         Assert.Equal(MatchStatus.Confirmed, match.Status);
         Assert.Equal([2, 2], match.ResumeLines);
-        Assert.Equal("The resume mentions ASP.NET Core and Entity Framework Core.", match.Reason);
+        Assert.Equal("Found evidence of ASP.NET Core and Entity Framework Core.", match.Reason);
     }
 
     [Fact]
@@ -28,7 +31,7 @@ public class KeywordRequirementMatcherTests
 
         Assert.Equal(MatchStatus.Partial, match.Status);
         Assert.Equal([4], match.ResumeLines);
-        Assert.Equal("The resume mentions Docker, but not Kubernetes.", match.Reason);
+        Assert.Equal("Found evidence of Docker, but none of Kubernetes.", match.Reason);
     }
 
     [Fact]
@@ -37,7 +40,8 @@ public class KeywordRequirementMatcherTests
         var match = await Match("Kafka");
 
         Assert.Equal(MatchStatus.Missing, match.Status);
-        Assert.Empty(match.ResumeLines);
+        Assert.Empty(match.ResumeLines!);
+        Assert.Equal("Found no evidence of Kafka.", match.Reason);
     }
 
     [Fact]
@@ -49,10 +53,31 @@ public class KeywordRequirementMatcherTests
         Assert.Contains("could not be checked", match.Reason);
     }
 
-    private static async Task<ProposedMatch> Match(string requirement)
+    [Fact]
+    public async Task Counts_a_github_fact_as_evidence_of_a_skill_the_resume_never_mentions()
+    {
+        var match = await Match("Docker and Kubernetes", Kubernetes);
+
+        Assert.Equal(MatchStatus.Confirmed, match.Status);
+        Assert.Equal([4], match.ResumeLines);
+        Assert.Equal(["G1"], match.GitHubFacts);
+    }
+
+    [Fact]
+    public async Task Cites_both_the_resume_and_github_when_both_show_a_skill()
+    {
+        var docker = new GitHubFact("G2", "Docker", [new RepositoryRef("shop-api", "https://github.com/octo-dev/shop-api")]);
+
+        var match = await Match("Docker", Kubernetes, docker);
+
+        Assert.Equal([4], match.ResumeLines);
+        Assert.Equal(["G2"], match.GitHubFacts);
+    }
+
+    private static async Task<ProposedMatch> Match(string requirement, params GitHubFact[] facts)
     {
         var matches = await new KeywordRequirementMatcher().MatchAsync(
-            [new Requirement("R1", requirement, Importance.MustHave, null)], Resume, CancellationToken.None);
+            [new Requirement("R1", requirement, Importance.MustHave, null)], Resume, facts, CancellationToken.None);
         return Assert.Single(matches);
     }
 }

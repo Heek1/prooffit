@@ -45,5 +45,5 @@ public class ScoringTests
     }
 
     private static RequirementMatch Match(Importance importance, MatchStatus status) =>
-        new("R1", "requirement", importance, null, status, "reason", []);
+        new("R1", "requirement", importance, null, status, "reason", [], []);
 }
