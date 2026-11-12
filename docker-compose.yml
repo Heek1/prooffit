@@ -28,6 +28,9 @@ services:
     environment:
       ConnectionStrings__Default: Host=db;Port=5432;Database=prooffit;Username=prooffit;Password=prooffit
       Database__MigrateOnStartup: "true"
+      # Optional, read from .env (see .env.example).
+      Llm__ApiKey: ${LLM_API_KEY:-}
+      GitHub__Token: ${GITHUB_TOKEN:-}
     depends_on:
       db:
         condition: service_healthy

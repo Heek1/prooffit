@@ -3,6 +3,7 @@ using ProofFit.Api.Data;
 using ProofFit.Api.Domain;
 using ProofFit.Api.Features.Analyses.Matching;
 using ProofFit.Api.Features.GitHub;
+using ProofFit.Api.Features.Llm;
 
 namespace ProofFit.Api.Features.Analyses;
 
@@ -10,13 +11,23 @@ namespace ProofFit.Api.Features.Analyses;
 public class AnalysisFailedException(string message) : Exception(message);
 
 /// <summary>Carries one analysis from queued to completed or failed.</summary>
+/// <param name="extractor">The configured extractor: model-based when a model is set up, keyword otherwise.</param>
+/// <param name="matcher">The configured matcher, chosen the same way.</param>
+/// <param name="keywordExtractor">Steps in when the model cannot be used.</param>
+/// <param name="keywordMatcher">Steps in when the model cannot be used.</param>
 public class AnalysisRunner(
     AppDbContext db,
     IRequirementExtractor extractor,
     IRequirementMatcher matcher,
+    KeywordRequirementExtractor keywordExtractor,
+    KeywordRequirementMatcher keywordMatcher,
     IGitHubEvidenceSource gitHub,
+    LlmUsageRecorder llmUsage,
     ILogger<AnalysisRunner> logger)
 {
+    private const string FallbackNote =
+        "The language model was unavailable, so this report was produced by keyword matching.";
+
     public async Task RunAsync(Guid analysisId, CancellationToken ct)
     {
         var analysis = await db.Analyses
@@ -30,8 +41,7 @@ public class AnalysisRunner(
         try
         {
             analysis.Status = AnalysisStatus.Running;
-            analysis.Result = await AnalyseAsync(analysis, ct);
-            analysis.Engine = matcher.EngineName;
+            (analysis.Result, analysis.Engine) = await AnalyseAsync(analysis, ct);
             analysis.Status = AnalysisStatus.Completed;
             analysis.Stage = AnalysisStage.Done;
         }
@@ -50,10 +60,27 @@ public class AnalysisRunner(
         await db.SaveChangesAsync(ct);
     }
 
-    private async Task<AnalysisResult> AnalyseAsync(Analysis analysis, CancellationToken ct)
+    private async Task<(AnalysisResult Result, string Engine)> AnalyseAsync(Analysis analysis, CancellationToken ct)
     {
+        // A model that is down must not cost the user their report. From the first failed
+        // call on, the keyword engine does the rest and the report says so.
+        var activeMatcher = matcher;
+        string? engineNote = null;
+
         await EnterStageAsync(analysis, AnalysisStage.ReadingVacancy, ct);
-        var extracted = await extractor.ExtractAsync(new NumberedText(analysis.Vacancy.Text), ct);
+        var vacancy = new NumberedText(analysis.Vacancy.Text);
+        IReadOnlyList<ExtractedRequirement> extracted;
+        try
+        {
+            extracted = await extractor.ExtractAsync(vacancy, ct);
+        }
+        catch (LlmUnavailableException ex)
+        {
+            logger.LogWarning(ex, "Model unavailable while reading the vacancy of analysis {AnalysisId}", analysis.Id);
+            (activeMatcher, engineNote) = (keywordMatcher, FallbackNote);
+            extracted = await keywordExtractor.ExtractAsync(vacancy, ct);
+        }
+
         if (extracted.Count == 0)
         {
             throw new AnalysisFailedException(
@@ -69,10 +96,22 @@ public class AnalysisRunner(
 
         await EnterStageAsync(analysis, AnalysisStage.Matching, ct);
         var resume = new NumberedText(analysis.Resume.Text);
-        var proposed = await matcher.MatchAsync(requirements, resume, facts, ct);
-        var matches = EvidenceValidator.Validate(requirements, proposed, resume, facts);
+        IReadOnlyList<ProposedMatch> proposed;
+        try
+        {
+            proposed = await activeMatcher.MatchAsync(requirements, resume, facts, ct);
+        }
+        catch (LlmUnavailableException ex)
+        {
+            logger.LogWarning(ex, "Model unavailable while matching analysis {AnalysisId}", analysis.Id);
+            (activeMatcher, engineNote) = (keywordMatcher, FallbackNote);
+            proposed = await keywordMatcher.MatchAsync(requirements, resume, facts, ct);
+        }
 
-        return new AnalysisResult(Scoring.Score(matches), matches, evidence, gitHubNote);
+        var matches = EvidenceValidator.Validate(requirements, proposed, resume, facts);
+        var result = new AnalysisResult(
+            Scoring.Score(matches), matches, evidence, gitHubNote, engineNote, llmUsage.Summarise());
+        return (result, activeMatcher.EngineName);
     }
 
     // GitHub is extra evidence, never a precondition: when it cannot be read, the analysis

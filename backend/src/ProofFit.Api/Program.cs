@@ -5,6 +5,7 @@ using ProofFit.Api.Data;
 using ProofFit.Api.Features.Analyses;
 using ProofFit.Api.Features.Analyses.Matching;
 using ProofFit.Api.Features.GitHub;
+using ProofFit.Api.Features.Llm;
 using ProofFit.Api.Features.Resumes;
 using ProofFit.Api.Features.Vacancies;
 
@@ -25,13 +26,37 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddSingleton<PdfTextExtractor>();
 
-builder.Services.AddSingleton<IRequirementExtractor, KeywordRequirementExtractor>();
-builder.Services.AddSingleton<IRequirementMatcher, KeywordRequirementMatcher>();
+// The model is called through its own HttpClient. Its timeouts are long because one call
+// reads a whole resume and vacancy, and the sampling window must cover two attempts.
+builder.Services.AddOptions<LlmOptions>().BindConfiguration("Llm");
+builder.Services.AddHttpClient<GeminiClient>(client => client.Timeout = Timeout.InfiniteTimeSpan)
+    .AddStandardResilienceHandler(resilience =>
+    {
+        resilience.Retry.MaxRetryAttempts = 2;
+        resilience.AttemptTimeout.Timeout = TimeSpan.FromSeconds(60);
+        resilience.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(120);
+        resilience.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(150);
+    });
+builder.Services.AddScoped<ILlmClient>(services => services.GetRequiredService<GeminiClient>());
+builder.Services.AddScoped<LlmUsageRecorder>();
+
+// Analyses use the model when one is configured and the keyword engine otherwise. The
+// choice is made when an analysis runs, so configuration added later still applies.
+builder.Services.AddSingleton<KeywordRequirementExtractor>();
+builder.Services.AddSingleton<KeywordRequirementMatcher>();
+builder.Services.AddScoped<LlmRequirementExtractor>();
+builder.Services.AddScoped<LlmRequirementMatcher>();
+builder.Services.AddScoped<IRequirementExtractor>(services => UsesModel(services)
+    ? services.GetRequiredService<LlmRequirementExtractor>()
+    : services.GetRequiredService<KeywordRequirementExtractor>());
+builder.Services.AddScoped<IRequirementMatcher>(services => UsesModel(services)
+    ? services.GetRequiredService<LlmRequirementMatcher>()
+    : services.GetRequiredService<KeywordRequirementMatcher>());
 builder.Services.AddScoped<AnalysisRunner>();
 builder.Services.AddSingleton<AnalysisQueue>();
 builder.Services.AddHostedService<AnalysisWorker>();
 
-builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
+builder.Services.AddOptions<GitHubOptions>().BindConfiguration("GitHub");
 builder.Services.AddHttpClient<GitHubClient>(client =>
     {
         // GitHub rejects requests that do not say who is asking.
@@ -73,3 +98,6 @@ app.MapVacancyEndpoints();
 app.MapAnalysisEndpoints();
 
 app.Run();
+
+static bool UsesModel(IServiceProvider services) =>
+    services.GetRequiredService<Microsoft.Extensions.Options.IOptions<LlmOptions>>().Value.IsConfigured;
