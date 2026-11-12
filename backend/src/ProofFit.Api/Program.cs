@@ -19,7 +19,8 @@ builder.Services.ConfigureHttpJsonOptions(options => ApiJson.Configure(options.S
 // The connection string is read when the context is first resolved rather than here, so
 // configuration added after this point (integration tests, container env) still applies.
 builder.Services.AddDbContext<AppDbContext>((services, options) =>
-    options.UseNpgsql(services.GetRequiredService<IConfiguration>().GetConnectionString("Default")));
+    options.UseNpgsql(PostgresConnection.Normalise(
+        services.GetRequiredService<IConfiguration>().GetConnectionString("Default"))));
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<AppDbContext>("database", tags: ["ready"]);

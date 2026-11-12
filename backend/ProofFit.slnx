@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/evals/">
+    <Project Path="evals/ProofFit.Evals/ProofFit.Evals.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/ProofFit.Api/ProofFit.Api.csproj" />
   </Folder>

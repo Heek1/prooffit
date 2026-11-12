@@ -1,0 +1,15 @@
+{
+  "name": "mentioned-not-practised",
+  "resume": [
+    "Marketing manager",
+    "Worked alongside developers who used React and Docker",
+    "Managed the budget for an AWS migration",
+    "Advanced Excel"
+  ],
+  "requirements": [
+    { "text": "React", "importance": "mustHave", "expected": "missing", "why": "Other people used it; the candidate did not." },
+    { "text": "Docker", "importance": "mustHave", "expected": "missing", "why": "Other people used it; the candidate did not." },
+    { "text": "Hands-on experience with AWS", "importance": "mustHave", "expected": "missing", "why": "Managing a budget is not hands-on work with the platform." },
+    { "text": "Python", "importance": "niceToHave", "expected": "missing", "why": "Not mentioned." }
+  ]
+}

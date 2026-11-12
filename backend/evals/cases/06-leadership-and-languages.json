@@ -1,0 +1,16 @@
+{
+  "name": "leadership-and-languages",
+  "resume": [
+    "Led a team of five engineers for two years",
+    "English: C1, Ukrainian: native",
+    "Ran sprint planning and retrospectives",
+    "C# and .NET"
+  ],
+  "requirements": [
+    { "text": "Experience leading a team", "importance": "mustHave", "expected": "confirmed", "why": "Line 1 states it directly." },
+    { "text": "English at B2 or higher", "importance": "mustHave", "expected": "confirmed", "why": "C1 is above B2." },
+    { "text": "Agile ways of working", "importance": "niceToHave", "expected": "confirmed", "why": "Sprint planning and retrospectives are agile practice." },
+    { "text": "German", "importance": "niceToHave", "expected": "missing", "why": "Not among the languages listed." },
+    { "text": ".NET", "importance": "mustHave", "expected": "confirmed", "why": "Named on line 4." }
+  ]
+}

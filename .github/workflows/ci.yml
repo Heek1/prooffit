@@ -20,6 +20,8 @@ jobs:
       - run: dotnet build --no-restore -warnaserror
       # The integration tests start PostgreSQL in Docker, which the runner provides.
       - run: dotnet test --no-build
+      # The keyword baseline is deterministic, so a drop in its accuracy is a regression.
+      - run: dotnet run --project evals/ProofFit.Evals --no-build -- --min-accuracy 0.6
 
   frontend:
     runs-on: ubuntu-latest
