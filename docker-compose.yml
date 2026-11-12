@@ -1,0 +1,43 @@
+# Development: `docker compose up -d db`, then run the API and the frontend on the host.
+# Everything in containers: `docker compose up --build`, then open http://localhost:8080.
+#
+# The database credentials below are for this local container only.
+
+# A fixed name keeps containers and the data volume the same wherever the folder lives.
+name: prooffit
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: prooffit
+      POSTGRES_USER: prooffit
+      POSTGRES_PASSWORD: prooffit
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prooffit -d prooffit"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    environment:
+      ConnectionStrings__Default: Host=db;Port=5432;Database=prooffit;Username=prooffit;Password=prooffit
+      Database__MigrateOnStartup: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  db-data:
