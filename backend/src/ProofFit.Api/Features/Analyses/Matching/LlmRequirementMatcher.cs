@@ -22,6 +22,8 @@ public class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
 
         The evidence is the numbered resume lines and the GitHub facts below, and nothing else. In resumeLines and gitHubFacts, cite every line number and fact id your verdict rests on. A confirmed or partial verdict that cites nothing will be discarded. Do not assume a skill that is not stated: a job title or a general claim is not evidence of a specific technology.
 
+        Only the candidate's own hands-on work is evidence. Work that other people did, or that the candidate only managed or paid for, is not. When the resume says the candidate lacks what is asked for, the status is missing.
+
         Write reason as one plain sentence of at most 25 words, saying what the evidence shows or what is absent.
 
         Answer for every requirement, using its id.

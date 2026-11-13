@@ -79,13 +79,18 @@ Ukrainian, skills that are mentioned but not practised.
 | Engine | Accuracy | Unsupported claims |
 |---|---|---|
 | Keyword baseline | 27 of 43 (62.8%) | 4 |
-| Model (Gemini) | not measured yet | not measured yet |
+| Model (`gemini-3.5-flash`) | 38 of 43 (88.4%) | 4, all as "partly proven" |
 
 An unsupported claim is a requirement reported as proven or partly proven when the label
-says there is no evidence: the mistake that matters most here. The baseline's four all come
-from text that names a technology the candidate has not used: a negation ("no production
+says there is no evidence: the mistake that matters most here. All of them, for both engines,
+come from text that names a technology the candidate has not used: a negation ("no production
 experience with Kubernetes") and other people's work ("worked alongside developers who used
-React").
+React"). The baseline reports these as proven; the model reported them as partly proven.
+
+After that run the matcher's prompt gained a rule that only the candidate's own hands-on work
+counts. With it, the eight cases that ran before the free daily quota ended scored 38 of 39,
+and the negation case was fixed. The last case has not been measured again, so the table
+keeps the complete run.
 
 The set is small and written by one person. It is there to catch regressions and to compare
 engines, not to stand as a benchmark. CI fails if the baseline drops below 60%.
@@ -133,7 +138,7 @@ anonymously.
 | Setting | Effect |
 |---|---|
 | `Llm:ApiKey` | A Gemini API key. Turns on the model engine. |
-| `Llm:Model` | The model to call. Defaults to `gemini-flash-latest`. |
+| `Llm:Model` | The model to call. Defaults to `gemini-3.5-flash`. |
 | `GitHub:Token` | A token with public read access. Raises the limit from 60 to 5,000 requests an hour. |
 | `ConnectionStrings:Default` | The database, as a connection string or a `postgres://` URL. |
 | `Cors:AllowedOrigins` | Origins allowed to call the API, when the frontend is served from another host. |
@@ -204,9 +209,10 @@ docker-compose.yml
 
 ## Status and limits
 
-- **The model engine has not been run against the live Gemini API.** It is covered by tests
-  against a stub that speaks Gemini's response format, but no API key was available while it
-  was written. Its accuracy on the evaluation set is therefore unknown.
+- **The model engine depends on a hosted API.** It has been run against the live Gemini API,
+  both through the app and on the evaluation set. On the free tier Gemini allows about 20
+  requests a day per model, and an analysis uses two; past that, or when the model is
+  overloaded, the keyword engine takes over.
 - **Reports are not private.** There are no accounts; a report can be opened by anyone who
   has its address. Do not upload a resume you would not share.
 - **Scanned PDFs are not supported.** The resume has to contain selectable text.

@@ -69,7 +69,7 @@ foreach (var evalCase in cases)
     var facts = evalCase.GitHubFacts ?? [];
 
     // The same path an analysis takes: the matcher proposes, the validator decides.
-    var proposed = await matcher.MatchAsync(requirements, resume, facts, CancellationToken.None);
+    var proposed = await WithRetriesAsync(() => matcher.MatchAsync(requirements, resume, facts, CancellationToken.None));
     var verdicts = EvidenceValidator.Validate(requirements, proposed, resume, facts);
 
     var correct = 0;
@@ -108,6 +108,23 @@ if (accuracy < minAccuracy)
     return 1;
 }
 return 0;
+
+// A hosted model is sometimes briefly overloaded. One refused call should not throw away
+// a whole evaluation run, so each case gets a few attempts.
+static async Task<T> WithRetriesAsync<T>(Func<Task<T>> call)
+{
+    for (var attempt = 1; ; attempt++)
+    {
+        try
+        {
+            return await call();
+        }
+        catch (LlmUnavailableException) when (attempt < 4)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5 * attempt));
+        }
+    }
+}
 
 string? Option(string name)
 {
