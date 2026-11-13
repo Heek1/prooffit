@@ -8,7 +8,7 @@ public class LlmOptions
     /// <summary>Empty means no model is configured and analyses use the keyword engine.</summary>
     public string? ApiKey { get; set; }
 
-    public string Model { get; set; } = "gemini-flash-latest";
+    public string Model { get; set; } = "gemini-3.5-flash";
 
     public string BaseUrl { get; set; } = "https://generativelanguage.googleapis.com/v1beta/";
 
