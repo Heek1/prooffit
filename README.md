@@ -2,6 +2,9 @@
 
 **Does your resume prove what the vacancy asks for?**
 
+**Live demo:** [prooffit.onrender.com](https://prooffit.onrender.com). Press "Load a sample resume and
+vacancy", then Compare. It runs on free hosting, so the first request can take up to a minute.
+
 ProofFit compares a resume with a job posting and backs every verdict with evidence. A
 requirement counts as met only when the report can point at a line of the resume or at
 something in the candidate's public GitHub repositories. The matcher proposes; plain code
@@ -218,4 +221,6 @@ docker-compose.yml
 - **Scanned PDFs are not supported.** The resume has to contain selectable text.
 - **The keyword engine knows a fixed list of technologies.** A requirement that names none of
   them is reported as unchecked.
-- **Not deployed.** The app runs locally and in Docker Compose.
+- **The demo runs on free tiers.** The server sleeps when idle, the database is a free
+  instance that expires after a month, and the model has a small daily quota, after which
+  reports come from the keyword engine and say so.
