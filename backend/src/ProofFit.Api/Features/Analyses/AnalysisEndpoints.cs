@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ProofFit.Api.Data;
 using ProofFit.Api.Domain;
 using ProofFit.Api.Features.GitHub;
@@ -13,6 +14,7 @@ namespace ProofFit.Api.Features.Analyses;
 public record CreateAnalysisRequest(Guid ResumeId, Guid VacancyId, string? GitHubLogin = null);
 
 /// <summary>An analysis with the two documents it compares, so a report can quote them.</summary>
+/// <param name="ExpiresAt">When the comparison and its documents are deleted automatically.</param>
 public record AnalysisResponse(
     Guid Id,
     string? GitHubLogin,
@@ -22,13 +24,14 @@ public record AnalysisResponse(
     string? Error,
     DateTimeOffset CreatedAt,
     DateTimeOffset? CompletedAt,
+    DateTimeOffset ExpiresAt,
     ResumeResponse Resume,
     VacancyResponse Vacancy,
     AnalysisResult? Result)
 {
-    public static AnalysisResponse From(Analysis analysis) => new(
+    public static AnalysisResponse From(Analysis analysis, TimeSpan lifetime) => new(
         analysis.Id, analysis.GitHubLogin, analysis.Status, analysis.Stage, analysis.Engine, analysis.Error,
-        analysis.CreatedAt, analysis.CompletedAt,
+        analysis.CreatedAt, analysis.CompletedAt, analysis.CreatedAt + lifetime,
         ResumeResponse.From(analysis.Resume), VacancyResponse.From(analysis.Vacancy), analysis.Result);
 }
 
@@ -45,12 +48,14 @@ public static class AnalysisEndpoints
         group.MapPost("/", Create);
         group.MapGet("/{id:guid}", Get).WithName("GetAnalysis");
         group.MapGet("/{id:guid}/events", Events);
+        group.MapDelete("/{id:guid}", Delete);
 
         return app;
     }
 
     private static async Task<Results<AcceptedAtRoute<AnalysisResponse>, ValidationProblem>> Create(
-        CreateAnalysisRequest request, AppDbContext db, AnalysisQueue queue, CancellationToken ct)
+        CreateAnalysisRequest request, AppDbContext db, AnalysisQueue queue,
+        IOptions<RetentionOptions> retention, CancellationToken ct)
     {
         var resume = await db.Resumes.FindAsync([request.ResumeId], ct);
         var vacancy = await db.Vacancies.FindAsync([request.VacancyId], ct);
@@ -84,10 +89,12 @@ public static class AnalysisEndpoints
         // worker finds the row on its next start.
         queue.Enqueue(analysis.Id);
 
-        return TypedResults.AcceptedAtRoute(AnalysisResponse.From(analysis), "GetAnalysis", new { id = analysis.Id });
+        return TypedResults.AcceptedAtRoute(
+            AnalysisResponse.From(analysis, retention.Value.Lifetime), "GetAnalysis", new { id = analysis.Id });
     }
 
-    private static async Task<Results<Ok<AnalysisResponse>, NotFound>> Get(Guid id, AppDbContext db, CancellationToken ct)
+    private static async Task<Results<Ok<AnalysisResponse>, NotFound>> Get(
+        Guid id, AppDbContext db, IOptions<RetentionOptions> retention, CancellationToken ct)
     {
         var analysis = await db.Analyses
             .AsNoTracking()
@@ -95,7 +102,16 @@ public static class AnalysisEndpoints
             .Include(a => a.Vacancy)
             .SingleOrDefaultAsync(a => a.Id == id, ct);
 
-        return analysis is null ? TypedResults.NotFound() : TypedResults.Ok(AnalysisResponse.From(analysis));
+        return analysis is null
+            ? TypedResults.NotFound()
+            : TypedResults.Ok(AnalysisResponse.From(analysis, retention.Value.Lifetime));
+    }
+
+    // Lets someone remove their documents as soon as they have read the report, without
+    // waiting for the automatic cleanup.
+    private static async Task<Results<NoContent, NotFound>> Delete(Guid id, RetentionCleaner cleaner, CancellationToken ct)
+    {
+        return await cleaner.DeleteAsync(id, ct) ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 
     private static async Task<Results<ServerSentEventsResult<AnalysisProgress>, NotFound>> Events(

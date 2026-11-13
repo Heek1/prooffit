@@ -85,7 +85,8 @@ export function ComparePage() {
         </h1>
         <p className="mt-5 max-w-[58ch] text-lg text-ink-soft">
           Upload your resume and paste a vacancy. Each requirement is checked against a line in your resume or
-          your public code on GitHub, so a match is never a guess.
+          your public code on GitHub, so a match is never a guess. Your documents and the report are deleted
+          after 24 hours.
         </p>
         <p className="mt-4">
           Nothing at hand?{' '}

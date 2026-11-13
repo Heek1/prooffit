@@ -54,6 +54,11 @@ builder.Services.AddScoped<IRequirementMatcher>(services => UsesModel(services)
     ? services.GetRequiredService<LlmRequirementMatcher>()
     : services.GetRequiredService<KeywordRequirementMatcher>());
 builder.Services.AddScoped<AnalysisRunner>();
+
+// Comparisons and their documents are deleted a day after they are made.
+builder.Services.AddOptions<RetentionOptions>().BindConfiguration("Retention");
+builder.Services.AddScoped<RetentionCleaner>();
+builder.Services.AddHostedService<RetentionWorker>();
 builder.Services.AddSingleton<AnalysisQueue>();
 builder.Services.AddHostedService<AnalysisWorker>();
 

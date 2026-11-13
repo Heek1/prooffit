@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
-import type { Analysis, AnalysisResult } from '../api.ts'
+import { Link, useNavigate, useParams } from 'react-router'
+import { deleteAnalysis, type Analysis, type AnalysisResult } from '../api.ts'
 import { DocumentText } from '../components/DocumentText.tsx'
 import { GitHubPanel } from '../components/GitHubPanel.tsx'
 import { Notice, PageShell } from '../components/PageShell.tsx'
@@ -8,7 +8,7 @@ import { ProgressSteps } from '../components/ProgressSteps.tsx'
 import { ProofBar } from '../components/ProofBar.tsx'
 import { RequirementList } from '../components/RequirementList.tsx'
 import { Sheet } from '../components/Sheet.tsx'
-import { remember } from '../history.ts'
+import { forget, remember } from '../history.ts'
 import { useAnalysis } from '../hooks/useAnalysis.ts'
 import { engineSentence, firstWithEvidence, headline, remainder } from '../report.ts'
 
@@ -123,9 +123,66 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
       </div>
 
       <footer className="mt-12 border-t border-rule pt-4 text-sm text-ink-soft">
-        {engineSentence(analysis.engine, result.usage)}
+        <p>{engineSentence(analysis.engine, result.usage)}</p>
+        <Lifetime analysis={analysis} />
       </footer>
     </>
+  )
+}
+
+/** Says when the comparison disappears, and lets its owner remove it now. */
+function Lifetime({ analysis }: { analysis: Analysis }) {
+  const navigate = useNavigate()
+  const [step, setStep] = useState<'idle' | 'confirming' | 'deleting' | 'failed'>('idle')
+  const expires = new Date(analysis.expiresAt).toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short' })
+
+  async function remove() {
+    setStep('deleting')
+    try {
+      await deleteAnalysis(analysis.id)
+      forget(analysis.id)
+      await navigate('/')
+    } catch {
+      setStep('failed')
+    }
+  }
+
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+      {step === 'idle' || step === 'failed' ? (
+        <>
+          <p>This report and its documents are deleted automatically on {expires}.</p>
+          <button type="button" onClick={() => setStep('confirming')} className={`cursor-pointer text-ink ${linkStyle}`}>
+            Delete now
+          </button>
+          {step === 'failed' && (
+            <p role="alert" className="font-medium text-fail">
+              The report could not be deleted. Try again.
+            </p>
+          )}
+        </>
+      ) : (
+        <>
+          <p className="text-ink">Delete this report, the resume and the vacancy? This cannot be undone.</p>
+          <button
+            type="button"
+            onClick={() => void remove()}
+            disabled={step === 'deleting'}
+            className="cursor-pointer rounded-sm border border-fail px-3 py-1 font-medium text-fail hover:bg-fail hover:text-white disabled:opacity-60"
+          >
+            {step === 'deleting' ? 'Deleting…' : 'Delete'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setStep('idle')}
+            disabled={step === 'deleting'}
+            className={`cursor-pointer text-ink ${linkStyle}`}
+          >
+            Keep
+          </button>
+        </>
+      )}
+    </div>
   )
 }
 

@@ -14,12 +14,25 @@ export type RecentComparison = {
 const KEY = 'prooffit.recent'
 const MAX_ENTRIES = 10
 
-export function listRecent(storage: Storage = localStorage): RecentComparison[] {
+// The server deletes a comparison a day after it is made, so older entries lead nowhere.
+const LIFETIME_MS = 24 * 60 * 60 * 1000
+
+export function listRecent(storage: Storage = localStorage, now: number = Date.now()): RecentComparison[] {
   try {
     const parsed: unknown = JSON.parse(storage.getItem(KEY) ?? '[]')
-    return Array.isArray(parsed) ? (parsed as RecentComparison[]) : []
+    if (!Array.isArray(parsed)) return []
+    return (parsed as RecentComparison[]).filter((entry) => now - Date.parse(entry.createdAt) < LIFETIME_MS)
   } catch {
     return []
+  }
+}
+
+/** Drops a comparison from the list, as when it has been deleted. */
+export function forget(id: string, storage: Storage = localStorage): void {
+  try {
+    storage.setItem(KEY, JSON.stringify(listRecent(storage).filter((entry) => entry.id !== id)))
+  } catch {
+    // Nothing to do: a list that cannot be saved is rebuilt from what the server still has.
   }
 }
 

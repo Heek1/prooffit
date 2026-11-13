@@ -60,6 +60,8 @@ export type Analysis = {
   error: string | null
   createdAt: string
   completedAt: string | null
+  /** When the comparison and its documents are deleted automatically. */
+  expiresAt: string
   resume: Resume
   vacancy: Vacancy
   result: AnalysisResult | null
@@ -99,6 +101,11 @@ export function createAnalysis(request: {
 
 export function getAnalysis(id: string): Promise<Analysis> {
   return send<Analysis>(`/api/analyses/${id}`, {})
+}
+
+/** Deletes a comparison and its documents at once. */
+export function deleteAnalysis(id: string): Promise<void> {
+  return send<void>(`/api/analyses/${id}`, { method: 'DELETE' })
 }
 
 /**
@@ -154,6 +161,8 @@ async function send<T>(path: string, init: RequestInit): Promise<T> {
   if (!response.ok) {
     throw new ApiError(await problemMessages(response), response.status)
   }
+  // A successful delete has no body to read.
+  if (response.status === 204) return undefined as T
   return (await response.json()) as T
 }
 
