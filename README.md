@@ -144,6 +144,7 @@ anonymously.
 | `Llm:Model` | The model to call. Defaults to `gemini-3.5-flash`. |
 | `GitHub:Token` | A token with public read access. Raises the limit from 60 to 5,000 requests an hour. |
 | `ConnectionStrings:Default` | The database, as a connection string or a `postgres://` URL. |
+| `Retention:Lifetime` | How long a comparison and its documents are kept. Defaults to 24 hours. |
 | `Cors:AllowedOrigins` | Origins allowed to call the API, when the frontend is served from another host. |
 
 For local development, keep secrets out of the repository with user secrets:
@@ -178,6 +179,7 @@ cd frontend && npm run lint && npm test && npm run build
 | `POST` | `/api/analyses` | Start a comparison: `{ "resumeId", "vacancyId", "gitHubLogin"? }`; returns 202 |
 | `GET` | `/api/analyses/{id}` | A comparison with its documents and, once finished, its report |
 | `GET` | `/api/analyses/{id}/events` | Progress as server-sent events; closes when the comparison ends |
+| `DELETE` | `/api/analyses/{id}` | Delete a comparison and its documents now |
 | `GET` | `/health/live` | The process is up |
 | `GET` | `/health/ready` | The process is up and can reach the database |
 
@@ -216,8 +218,9 @@ docker-compose.yml
   both through the app and on the evaluation set. On the free tier Gemini allows about 20
   requests a day per model, and an analysis uses two; past that, or when the model is
   overloaded, the keyword engine takes over.
-- **Reports are not private.** There are no accounts; a report can be opened by anyone who
-  has its address. Do not upload a resume you would not share.
+- **Reports are not private, but they are short-lived.** There are no accounts, so a report
+  can be opened by anyone who has its address. A comparison and its documents are deleted
+  automatically after 24 hours, and the report page has a button to delete them at once.
 - **Scanned PDFs are not supported.** The resume has to contain selectable text.
 - **The keyword engine knows a fixed list of technologies.** A requirement that names none of
   them is reported as unchecked.
