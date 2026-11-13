@@ -41,7 +41,16 @@ public sealed class AnalysisWorker(
         {
             // Each analysis gets its own scope, and so its own DbContext.
             await using var scope = scopes.CreateAsyncScope();
-            await scope.ServiceProvider.GetRequiredService<AnalysisRunner>().RunAsync(analysisId, ct);
+            try
+            {
+                await scope.ServiceProvider.GetRequiredService<AnalysisRunner>().RunAsync(analysisId, ct);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // The runner handles its own failures. What reaches here is the analysis
+                // vanishing mid-run, as when it is deleted; that must not stop the worker.
+                logger.LogWarning(ex, "Analysis {AnalysisId} could not be finished", analysisId);
+            }
         });
     }
 
