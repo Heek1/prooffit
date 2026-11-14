@@ -26,9 +26,13 @@ export function DocumentText({ text, label, cited = [], maxHeight = 'max-h-112' 
 
   return (
     // tabIndex makes the scrollable area reachable from the keyboard.
-    <ol ref={list} aria-label={label} tabIndex={0} className={`document relative overflow-y-auto ${maxHeight}`}>
+    <ol ref={list} aria-label={label} tabIndex={0} data-evidence-scroll className={`document relative overflow-y-auto ${maxHeight}`}>
       {text.split('\n').map((line, index) => (
-        <li key={index} className={cited.includes(index + 1) ? 'is-cited' : undefined}>
+        <li
+          key={index}
+          className={cited.includes(index + 1) ? 'is-cited' : undefined}
+          data-cited={cited.includes(index + 1) ? '' : undefined}
+        >
           {line}
         </li>
       ))}

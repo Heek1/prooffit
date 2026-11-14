@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { deleteAnalysis, type Analysis, type AnalysisResult } from '../api.ts'
 import { DocumentText } from '../components/DocumentText.tsx'
+import { EvidenceThreads } from '../components/EvidenceThreads.tsx'
 import { GitHubPanel } from '../components/GitHubPanel.tsx'
 import { Notice, PageShell } from '../components/PageShell.tsx'
 import { ProgressSteps } from '../components/ProgressSteps.tsx'
@@ -54,12 +55,21 @@ function AnalysisView({ analysis }: { analysis: Analysis }) {
 
   if (analysis.status !== 'completed' || !analysis.result) {
     return (
-      <div className="max-w-xl">
-        <h1 className="text-3xl leading-tight font-medium tracking-tight text-balance">
-          Comparing your resume with “{analysis.vacancy.title}”
-        </h1>
-        <div className="mt-8" role="status">
-          <ProgressSteps stage={analysis.stage} usesGitHub={analysis.gitHubLogin !== null} />
+      <div className="grid items-start gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+        <div className="max-w-xl">
+          <h1 className="text-3xl leading-tight font-medium tracking-tight text-balance">
+            Comparing your resume with “{analysis.vacancy.title}”
+          </h1>
+          <div className="mt-8" role="status">
+            <ProgressSteps stage={analysis.stage} usesGitHub={analysis.gitHubLogin !== null} />
+          </div>
+        </div>
+
+        {/* The resume being read, with a band passing over it for as long as the analysis runs. */}
+        <div className="scanning">
+          <Sheet title="Resume" detail={analysis.resume.fileName}>
+            <DocumentText text={analysis.resume.text} label="Resume text" maxHeight="max-h-88" />
+          </Sheet>
         </div>
       </div>
     )
@@ -100,7 +110,9 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
         </div>
       )}
 
-      <div className="mt-10 grid items-start gap-x-8 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+      <div
+        className="relative mt-10 grid items-start gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]"
+      >
         <RequirementList
           requirements={result.requirements}
           resumeLines={analysis.resume.text.split('\n')}
@@ -120,6 +132,8 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
           </Sheet>
           {result.gitHub && <GitHubPanel evidence={result.gitHub} cited={selected?.gitHubFacts ?? []} />}
         </aside>
+
+        <EvidenceThreads selectedId={selectedId} />
       </div>
 
       <footer className="mt-12 border-t border-rule pt-4 text-sm text-ink-soft">

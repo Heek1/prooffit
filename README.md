@@ -10,7 +10,7 @@ requirement counts as met only when the report can point at a line of the resume
 something in the candidate's public GitHub repositories. The matcher proposes; plain code
 checks the evidence and computes the score.
 
-![A report: six of ten requirements proven, with the cited resume lines highlighted](docs/screenshots/report.png)
+![A report: six of ten requirements proven, with threads from the chosen requirement to the lines that back it](docs/screenshots/report.png)
 
 ## What it does
 
@@ -21,10 +21,11 @@ checks the evidence and computes the score.
   reason and the evidence quoted in place.
 - **Scores the match** from 0 to 100, with must-haves counting double.
 
-Choosing a requirement in the report marks the lines it cites in the resume and the facts it
-cites from GitHub. A sample resume and vacancy are one click away on the start page.
+Choosing a requirement in the report draws a thread to each line it cites in the resume and
+each fact it cites from GitHub. The start page runs a small example of this, and a sample
+resume and vacancy are one click away.
 
-![The start page with a resume uploaded and a vacancy pasted](docs/screenshots/start.png)
+![The start page: a running example of a requirement reaching for its evidence, above the upload form](docs/screenshots/start.png)
 
 ## How it works
 

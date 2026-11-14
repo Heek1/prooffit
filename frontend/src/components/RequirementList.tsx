@@ -57,7 +57,10 @@ function RequirementRow({ requirement, resumeLines, facts, selected, onSelect }:
   const hasEvidence = requirement.resumeLines.length > 0 || cited.length > 0
 
   return (
-    <li className={`border-l-2 py-4 pr-2 pl-3 ${selected ? 'border-l-ink bg-desk/50' : 'border-l-transparent'}`}>
+    <li
+      data-requirement={requirement.id}
+      className={`border-l-2 py-4 pr-2 pl-3 ${selected ? 'border-l-ink bg-desk/50' : 'border-l-transparent'}`}
+    >
       {/* Choosing a requirement marks its evidence in the resume and GitHub panels. */}
       <button
         type="button"
