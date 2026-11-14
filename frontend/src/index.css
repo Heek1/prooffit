@@ -64,9 +64,12 @@
     user-select: none;
   }
 
-  /* A line the selected requirement cites, marked the way a highlighter would. */
-  .document > li.is-cited {
-    background: var(--color-marker);
+  /*
+   * Evidence the selected requirement cites, marked the way a highlighter would. The mark
+   * is a background image so that it can be drawn across the line from left to right.
+   */
+  .is-cited {
+    background: linear-gradient(var(--color-marker), var(--color-marker)) left / 100% 100% no-repeat;
   }
 
   .document > li.is-cited::before {
@@ -100,10 +103,67 @@
     background: var(--color-sheet);
   }
 
-  /* The step an analysis is on. */
+  /* Not judged yet. */
+  .mark-pending {
+    border-style: dashed;
+    border-color: var(--color-ink-soft);
+  }
+
+  /* A thread from a requirement to its evidence. pathLength is 1, so 1 is the whole line. */
+  .thread {
+    stroke-dasharray: 1;
+  }
+
+  /* A resume being read: a band passes down the sheet while the analysis runs. */
+  .scanning {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Motion shows what changed and what is in progress. It is all optional. */
   @media (prefers-reduced-motion: no-preference) {
     .mark-working {
       animation: working 1s ease-in-out infinite alternate;
+    }
+
+    .is-cited {
+      animation: sweep 450ms ease-out backwards;
+    }
+
+    .thread {
+      animation: draw 450ms ease-out backwards;
+    }
+
+    .scanning::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      height: 4rem;
+      border-bottom: 2px solid var(--color-marker-deep);
+      background: linear-gradient(to bottom, transparent, rgb(255 225 77 / 0.5));
+      pointer-events: none;
+      animation: scan 1.8s linear infinite;
+    }
+  }
+
+  @keyframes sweep {
+    from {
+      background-size: 0% 100%;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  @keyframes scan {
+    from {
+      top: -4rem;
+    }
+    to {
+      top: 100%;
     }
   }
 

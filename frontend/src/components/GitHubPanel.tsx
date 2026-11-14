@@ -32,12 +32,14 @@ export function GitHubPanel({ evidence, cited }: GitHubPanelProps) {
           ref={list}
           tabIndex={0}
           aria-label="Skills found on GitHub"
+          data-evidence-scroll
           className="relative max-h-56 space-y-0.5 overflow-y-auto text-sm"
         >
           {evidence.facts.map((fact) => (
             <li
               key={fact.id}
-              className={`flex items-baseline justify-between gap-4 px-2 py-1 ${cited.includes(fact.id) ? 'bg-marker' : ''}`}
+              data-cited={cited.includes(fact.id) ? '' : undefined}
+              className={`flex items-baseline justify-between gap-4 px-2 py-1 ${cited.includes(fact.id) ? 'is-cited' : ''}`}
             >
               <span className="font-medium">{fact.skill}</span>
               <span className="text-right text-ink-soft">

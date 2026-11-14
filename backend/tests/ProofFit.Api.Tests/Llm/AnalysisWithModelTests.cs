@@ -35,9 +35,9 @@ public class AnalysisWithModelTests(ApiFactory factory)
         // leadership on a GitHub fact that was never gathered. Only Docker is real.
         _gemini.MatchAnswer = """
             { "matches": [
-                { "requirement": "R1", "status": "confirmed", "reason": "Kubernetes experience on line 7.", "resumeLines": [7], "gitHubFacts": [] },
-                { "requirement": "R2", "status": "partial", "reason": "Leads projects on GitHub.", "resumeLines": [], "gitHubFacts": ["G9"] },
-                { "requirement": "R3", "status": "confirmed", "reason": "Containerised services with Docker.", "resumeLines": [2], "gitHubFacts": [] }
+                { "requirementId": "R1", "status": "confirmed", "reason": "Kubernetes experience on line 7.", "resumeLines": [7], "gitHubFacts": [] },
+                { "requirementId": "R2", "status": "partial", "reason": "Leads projects on GitHub.", "resumeLines": [], "gitHubFacts": ["G9"] },
+                { "requirementId": "R3", "status": "confirmed", "reason": "Containerised services with Docker.", "resumeLines": [2], "gitHubFacts": [] }
             ] }
             """;
 

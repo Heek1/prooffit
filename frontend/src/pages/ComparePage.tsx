@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { ApiError, createAnalysis, createVacancy, isServerReady, uploadResume, type Resume } from '../api.ts'
 import { PageShell } from '../components/PageShell.tsx'
+import { ProofDemo } from '../components/ProofDemo.tsx'
 import { RecentComparisons } from '../components/RecentComparisons.tsx'
 import { ResumeSheet } from '../components/ResumeSheet.tsx'
 import { ErrorList, TextButton } from '../components/Sheet.tsx'
@@ -79,22 +80,26 @@ export function ComparePage() {
 
   return (
     <PageShell>
-      <header className="mt-8 max-w-3xl">
-        <h1 className="text-4xl leading-[1.08] font-medium tracking-tight text-balance sm:text-5xl">
-          Does your resume prove what the vacancy asks for?
-        </h1>
-        <p className="mt-5 max-w-[58ch] text-lg text-ink-soft">
-          Upload your resume and paste a vacancy. Each requirement is checked against a line in your resume or
-          your public code on GitHub, so a match is never a guess. Your documents and the report are deleted
-          after 24 hours.
-        </p>
-        <p className="mt-4">
-          Nothing at hand?{' '}
-          <TextButton onClick={() => void loadSample()}>
-            {busy === 'sample' ? 'Loading the sample…' : 'Load a sample resume and vacancy'}
-          </TextButton>
-        </p>
-      </header>
+      <div className="mt-8 grid items-center gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <header>
+          <h1 className="text-4xl leading-[1.08] font-medium tracking-tight text-balance sm:text-5xl">
+            Does your resume prove what the vacancy asks for?
+          </h1>
+          <p className="mt-5 max-w-[58ch] text-lg text-ink-soft">
+            Upload your resume and paste a vacancy. Each requirement is checked against a line in your resume or
+            your public code on GitHub, so a match is never a guess. Your documents and the report are deleted
+            after 24 hours.
+          </p>
+          <p className="mt-4">
+            Nothing at hand?{' '}
+            <TextButton onClick={() => void loadSample()}>
+              {busy === 'sample' ? 'Loading the sample…' : 'Load a sample resume and vacancy'}
+            </TextButton>
+          </p>
+        </header>
+
+        <ProofDemo />
+      </div>
 
       {serverDown && (
         <p role="alert" className="mt-8 rounded-sm border border-fail bg-sheet px-4 py-3 font-medium text-fail">
