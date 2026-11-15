@@ -61,7 +61,7 @@ export function ResumeSheet({ resume, onChange }: ResumeSheetProps) {
         onDragLeave={() => setDragging(false)}
         onDrop={drop}
         className={`dropzone flex min-h-72 cursor-pointer flex-col items-center justify-center gap-2 rounded-sm border-2 border-dashed px-6 py-10 text-center ${
-          dragging ? 'border-ink bg-marker/40' : 'border-rule hover:border-ink'
+          dragging ? 'border-ink bg-marker/40' : 'border-field hover:border-ink'
         }`}
       >
         <input

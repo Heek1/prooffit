@@ -15,11 +15,14 @@ export function countByStatus(requirements: RequirementMatch[]): StatusCounts {
   return counts
 }
 
-/** "6 of 10 requirements proven", with the singular handled. */
-export function headline(requirements: RequirementMatch[]): string {
+/**
+ * "6 of 10 requirements proven", with the singular handled. `shown` replaces the count
+ * while the report counts up to it.
+ */
+export function headline(requirements: RequirementMatch[], shown?: number): string {
   const { confirmed } = countByStatus(requirements)
   const noun = requirements.length === 1 ? 'requirement' : 'requirements'
-  return `${confirmed} of ${requirements.length} ${noun} proven`
+  return `${shown ?? confirmed} of ${requirements.length} ${noun} proven`
 }
 
 /** The verdicts other than "proven", as a sentence. Empty when everything is proven. */

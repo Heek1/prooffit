@@ -13,7 +13,7 @@ export function Sheet({ title, detail, action, children }: SheetProps) {
   const headingId = useId()
 
   return (
-    <section aria-labelledby={headingId} className="rounded-sm border border-rule bg-sheet">
+    <section aria-labelledby={headingId} className="rounded-sm border border-rule bg-sheet shadow-paper">
       <header className="flex min-h-16 items-center justify-between gap-4 border-b border-rule px-5 py-2">
         <div className="min-w-0">
           <h2 id={headingId} className="font-semibold">

@@ -13,6 +13,14 @@
   --color-marker: #ffe14d;
   --color-marker-deep: #f5cf00;
   --color-fail: #b0361f;
+  /* The edge of a field or drop zone: dark enough to show against a white sheet (3:1). */
+  --color-field: #7f8aa0;
+
+  /* A sheet of paper lying on the desk: a contact shadow, then two softer ones. */
+  --shadow-paper:
+    0 1px 1px rgb(29 43 79 / 0.06), 0 4px 10px rgb(29 43 79 / 0.07), 0 18px 36px rgb(29 43 79 / 0.1);
+  /* The hard lower edge of the primary button. */
+  --shadow-edge: 0 3px 0 var(--color-ink);
 }
 
 @layer base {
@@ -70,6 +78,16 @@
    */
   .is-cited {
     background: linear-gradient(var(--color-marker), var(--color-marker)) left / 100% 100% no-repeat;
+    /* A highlighter never leaves a perfect rectangle: the ends are slightly off square. */
+    clip-path: polygon(0 5%, 100% 0, calc(100% - 2px) 100%, 1.5px 95%);
+  }
+
+  /* The word the product is about, marked in the headline the way evidence is marked. */
+  .marked {
+    padding-inline: 0.1em;
+    margin-inline: -0.04em;
+    background: linear-gradient(var(--color-marker), var(--color-marker)) left 62% / 100% 74% no-repeat;
+    clip-path: polygon(0 6%, 100% 0, calc(100% - 0.07em) 100%, 0.05em 96%);
   }
 
   .document > li.is-cited::before {
@@ -130,6 +148,15 @@
       animation: sweep 450ms ease-out backwards;
     }
 
+    .marked {
+      animation: sweep-word 600ms 250ms ease-out backwards;
+    }
+
+    /* The resume sliding up from the bottom edge on a narrow screen. */
+    .slide-up {
+      animation: slide-up 220ms ease-out;
+    }
+
     .thread {
       animation: draw 450ms ease-out backwards;
     }
@@ -149,6 +176,18 @@
   @keyframes sweep {
     from {
       background-size: 0% 100%;
+    }
+  }
+
+  @keyframes sweep-word {
+    from {
+      background-size: 0% 74%;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
     }
   }
 

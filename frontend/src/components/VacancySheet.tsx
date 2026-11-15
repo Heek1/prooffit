@@ -9,7 +9,7 @@ type VacancySheetProps = {
 }
 
 const field =
-  'mt-1 block w-full rounded-sm border border-rule bg-white px-3 py-2 text-base font-normal hover:border-ink'
+  'mt-1 block w-full rounded-sm border border-field bg-white px-3 py-2 text-base font-normal hover:border-ink'
 
 /** The vacancy being written. It is saved when the comparison starts, not before. */
 export function VacancySheet({ draft, onChange }: VacancySheetProps) {

@@ -9,9 +9,11 @@ import { ProgressSteps } from '../components/ProgressSteps.tsx'
 import { ProofBar } from '../components/ProofBar.tsx'
 import { RequirementList } from '../components/RequirementList.tsx'
 import { Sheet } from '../components/Sheet.tsx'
+import { StillToProve } from '../components/StillToProve.tsx'
 import { forget, remember } from '../history.ts'
 import { useAnalysis } from '../hooks/useAnalysis.ts'
-import { engineSentence, firstWithEvidence, headline, remainder } from '../report.ts'
+import { useCountUp } from '../hooks/useCountUp.ts'
+import { countByStatus, engineSentence, firstWithEvidence, headline, remainder } from '../report.ts'
 
 const linkStyle = 'font-medium underline underline-offset-4 hover:decoration-2'
 
@@ -81,6 +83,16 @@ function AnalysisView({ analysis }: { analysis: Analysis }) {
 function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResult }) {
   const [selectedId, setSelectedId] = useState(() => firstWithEvidence(result.requirements)?.id ?? null)
   const selected = result.requirements.find((requirement) => requirement.id === selectedId)
+  // The verdict arrives rather than just being there: the count runs up to its number once.
+  const shown = useCountUp(countByStatus(result.requirements).confirmed)
+  // On a narrow screen the resume sits below the whole list, so choosing a requirement
+  // brings the resume up from the bottom edge instead.
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  function choose(id: string) {
+    setSelectedId(id)
+    setSheetOpen(true)
+  }
 
   // Keeps the score in the list of recent comparisons on the start page.
   useEffect(() => {
@@ -89,10 +101,13 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
 
   return (
     <>
-      <header className="max-w-3xl">
+      <header className="max-w-4xl">
         <p className="font-medium">{analysis.vacancy.title}</p>
-        <h1 className="mt-2 text-4xl leading-[1.08] font-medium tracking-tight text-balance sm:text-5xl">
-          {headline(result.requirements)}
+        <h1
+          aria-label={headline(result.requirements)}
+          className="mt-2 text-4xl leading-[1.05] font-medium tracking-tight text-balance tabular-nums sm:text-6xl"
+        >
+          {headline(result.requirements, shown)}
         </h1>
         <p className="mt-4 text-lg text-ink-soft">
           {remainder(result.requirements)} Score {result.score} out of 100, with must-haves counting double.
@@ -113,13 +128,16 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
       <div
         className="relative mt-10 grid items-start gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]"
       >
-        <RequirementList
-          requirements={result.requirements}
-          resumeLines={analysis.resume.text.split('\n')}
-          facts={result.gitHub?.facts ?? []}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
+        <div className="space-y-8">
+          <StillToProve requirements={result.requirements} onSelect={choose} />
+          <RequirementList
+            requirements={result.requirements}
+            resumeLines={analysis.resume.text.split('\n')}
+            facts={result.gitHub?.facts ?? []}
+            selectedId={selectedId}
+            onSelect={choose}
+          />
+        </div>
 
         <aside className="space-y-4 lg:sticky lg:top-6" aria-label="Evidence">
           <Sheet title="Resume" detail={analysis.resume.fileName}>
@@ -140,6 +158,44 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
         <p>{engineSentence(analysis.engine, result.usage)}</p>
         <Lifetime analysis={analysis} />
       </footer>
+
+      {sheetOpen && selected && (
+        <>
+          {/* Keeps the end of the page reachable above the sheet. */}
+          <div className="h-80 lg:hidden" aria-hidden="true" />
+          <section
+            aria-label="Resume lines for the chosen requirement"
+            className="slide-up fixed inset-x-0 bottom-0 z-10 rounded-t-2xl border-t border-rule bg-sheet shadow-[0_-12px_40px_rgb(29_43_79/0.2)] lg:hidden"
+          >
+            <div className="mx-auto mt-2 h-1 w-9 rounded-full bg-rule" aria-hidden="true" />
+            <header className="flex items-center justify-between gap-4 border-b border-rule px-4 pb-2">
+              <div className="min-w-0">
+                <h2 className="font-semibold">Resume</h2>
+                <p className="truncate text-sm text-ink-soft">
+                  {selected.resumeLines.length > 0
+                    ? analysis.resume.fileName
+                    : 'No line of the resume backs this requirement.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSheetOpen(false)}
+                className={`min-h-11 shrink-0 cursor-pointer px-2 text-sm ${linkStyle}`}
+              >
+                Close
+              </button>
+            </header>
+            <div className="px-2 py-3">
+              <DocumentText
+                text={analysis.resume.text}
+                label="Resume text for the chosen requirement"
+                cited={selected.resumeLines}
+                maxHeight="max-h-56"
+              />
+            </div>
+          </section>
+        </>
+      )}
     </>
   )
 }
