@@ -30,7 +30,7 @@ public static class VacancyEndpoints
     {
         var group = app.MapGroup("/api/vacancies").WithTags("Vacancies");
 
-        group.MapPost("/", Create);
+        group.MapPost("/", Create).RequireRateLimiting(RateLimits.Uploads);
         group.MapGet("/{id:guid}", Get).WithName("GetVacancy");
 
         return app;

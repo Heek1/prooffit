@@ -73,6 +73,8 @@ builder.Services.AddHttpClient<GitHubClient>(client =>
 builder.Services.AddScoped<GitHubScanner>();
 builder.Services.AddScoped<IGitHubEvidenceSource, GitHubEvidenceSource>();
 
+builder.Services.AddClientRateLimits();
+
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
     .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [])
     .AllowAnyHeader()
@@ -86,9 +88,11 @@ if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
     await scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
 }
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseCors();
+app.UseRateLimiter();
 
 if (app.Environment.IsDevelopment())
 {

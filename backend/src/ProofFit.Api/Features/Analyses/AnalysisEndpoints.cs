@@ -45,7 +45,7 @@ public static class AnalysisEndpoints
     {
         var group = app.MapGroup("/api/analyses").WithTags("Analyses");
 
-        group.MapPost("/", Create);
+        group.MapPost("/", Create).RequireRateLimiting(RateLimits.Analyses);
         group.MapGet("/{id:guid}", Get).WithName("GetAnalysis");
         group.MapGet("/{id:guid}/events", Events);
         group.MapDelete("/{id:guid}", Delete);
