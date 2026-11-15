@@ -70,7 +70,7 @@ export function ProofDemo() {
           })}
         </ul>
 
-        <div className="rounded-sm border border-rule bg-sheet px-4 py-3">
+        <div className="rounded-sm border border-rule bg-sheet px-4 py-3 shadow-paper">
           <ol className="document">
             {RESUME.map((line, position) => {
               const cited = active.lines.includes(position + 1)
@@ -96,7 +96,7 @@ export function ProofDemo() {
         <button
           type="button"
           onClick={() => setPlaying((value) => !value)}
-          className="shrink-0 cursor-pointer px-1 py-1 font-medium text-ink underline underline-offset-4 hover:decoration-2"
+          className="min-h-11 shrink-0 cursor-pointer px-2 font-medium text-ink underline underline-offset-4 hover:decoration-2"
         >
           {playing ? 'Pause' : 'Play'}
         </button>

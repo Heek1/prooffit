@@ -59,7 +59,7 @@ function RequirementRow({ requirement, resumeLines, facts, selected, onSelect }:
   return (
     <li
       data-requirement={requirement.id}
-      className={`border-l-2 py-4 pr-2 pl-3 ${selected ? 'border-l-ink bg-desk/50' : 'border-l-transparent'}`}
+      className={`border-l-2 py-4 pr-2 pl-3 ${selected ? 'border-l-ink bg-sheet/70' : 'border-l-transparent'}`}
     >
       {/* Choosing a requirement marks its evidence in the resume and GitHub panels. */}
       <button
