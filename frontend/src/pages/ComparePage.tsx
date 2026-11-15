@@ -27,16 +27,19 @@ export function ComparePage() {
   const [errors, setErrors] = useState<string[]>([])
   // Which action the errors belong to, so they are shown next to the button that caused them.
   const [failed, setFailed] = useState<'sample' | 'compare'>('compare')
-  const [serverDown, setServerDown] = useState(false)
+  // "slow" is a check still unanswered after a few seconds: a sleeping server waking up.
+  const [server, setServer] = useState<'checking' | 'slow' | 'ready' | 'down'>('checking')
   const [recent] = useState(() => listRecent())
 
   useEffect(() => {
     let cancelled = false
+    const slow = window.setTimeout(() => setServer((state) => (state === 'checking' ? 'slow' : state)), 3000)
     void isServerReady().then((ready) => {
-      if (!cancelled) setServerDown(!ready)
+      if (!cancelled) setServer(ready ? 'ready' : 'down')
     })
     return () => {
       cancelled = true
+      window.clearTimeout(slow)
     }
   }, [])
 
@@ -127,7 +130,7 @@ export function ComparePage() {
         <ProofDemo />
       </div>
 
-      {serverDown && (
+      {(server === 'slow' || server === 'down') && (
         <p role="status" className="mt-10 rounded-sm border border-rule bg-sheet px-4 py-3 text-ink-soft">
           The server is waking up or can&apos;t be reached. On free hosting the first request can take up to a
           minute. If this message stays, reload the page.
