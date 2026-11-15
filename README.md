@@ -83,18 +83,18 @@ Ukrainian, skills that are mentioned but not practised.
 | Engine | Accuracy | Unsupported claims |
 |---|---|---|
 | Keyword baseline | 27 of 43 (62.8%) | 4 |
-| Model (`gemini-3.5-flash`) | 38 of 43 (88.4%) | 4, all as "partly proven" |
+| Model (`gemini-3.5-flash`) | 42 of 43 (97.7%) | 0 |
 
 An unsupported claim is a requirement reported as proven or partly proven when the label
-says there is no evidence: the mistake that matters most here. All of them, for both engines,
-come from text that names a technology the candidate has not used: a negation ("no production
+says there is no evidence: the mistake that matters most here. The baseline's four all come
+from text that names a technology the candidate has not used: a negation ("no production
 experience with Kubernetes") and other people's work ("worked alongside developers who used
-React"). The baseline reports these as proven; the model reported them as partly proven.
+React").
 
-After that run the matcher's prompt gained a rule that only the candidate's own hands-on work
-counts. With it, the eight cases that ran before the free daily quota ended scored 38 of 39,
-and the negation case was fixed. The last case has not been measured again, so the table
-keeps the complete run.
+The model's first run scored 38 of 43 and made the same four mistakes, as "partly proven".
+The matcher's prompt then gained one rule, that only the candidate's own hands-on work
+counts, which is what the table shows. Its one remaining miss is a judgement call: "strict
+typing" in a Next.js project, read as TypeScript where the label says only partly.
 
 The set is small and written by one person. It is there to catch regressions and to compare
 engines, not to stand as a benchmark. CI fails if the baseline drops below 60%.
@@ -145,6 +145,8 @@ anonymously.
 | `Llm:Model` | The model to call. Defaults to `gemini-3.5-flash`. |
 | `GitHub:Token` | A token with public read access. Raises the limit from 60 to 5,000 requests an hour. |
 | `ConnectionStrings:Default` | The database, as a connection string or a `postgres://` URL. |
+| `RateLimit:AnalysesPerTenMinutes` | Comparisons one client may start in ten minutes. Defaults to 10. |
+| `RateLimit:UploadsPerMinute` | Uploads and saved vacancies per client each minute. Defaults to 30. |
 | `Retention:Lifetime` | How long a comparison and its documents are kept. Defaults to 24 hours. |
 | `Cors:AllowedOrigins` | Origins allowed to call the API, when the frontend is served from another host. |
 
@@ -228,3 +230,7 @@ docker-compose.yml
 - **The demo runs on free tiers.** The server sleeps when idle, the database is a free
   instance that expires after a month, and the model has a small daily quota, after which
   reports come from the keyword engine and say so.
+
+## License
+
+[MIT](LICENSE)

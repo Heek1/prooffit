@@ -18,7 +18,7 @@ public static class ResumeEndpoints
 
         // Antiforgery is off because there is no cookie session to forge yet. Revisit when
         // GitHub sign-in adds one.
-        group.MapPost("/", Upload).DisableAntiforgery();
+        group.MapPost("/", Upload).DisableAntiforgery().RequireRateLimiting(RateLimits.Uploads);
         group.MapGet("/{id:guid}", Get).WithName("GetResume");
 
         return app;

@@ -33,6 +33,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         builder.UseEnvironment("Testing");
         builder.UseSetting("ConnectionStrings:Default", _database.GetConnectionString());
         builder.UseSetting("Database:MigrateOnStartup", "true");
+        // The tests share this application, so its rate limits are set out of reach.
+        builder.UseSetting("RateLimit:UploadsPerMinute", "100000");
+        builder.UseSetting("RateLimit:AnalysesPerTenMinutes", "100000");
 
         builder.ConfigureTestServices(services =>
             services.AddHttpClient<GitHubClient>().ConfigurePrimaryHttpMessageHandler(() => GitHub));
