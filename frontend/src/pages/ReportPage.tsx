@@ -149,6 +149,15 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
             />
           </Sheet>
           {result.gitHub && <GitHubPanel evidence={result.gitHub} cited={selected?.gitHubFacts ?? []} />}
+          {/* Where the chosen requirement came from, so the reading of the vacancy can be checked too. */}
+          <Sheet title="Vacancy" detail={analysis.vacancy.title}>
+            <DocumentText
+              text={analysis.vacancy.text}
+              label="Vacancy text"
+              source={selected?.vacancyLine}
+              maxHeight="max-h-44"
+            />
+          </Sheet>
         </aside>
 
         <EvidenceThreads selectedId={selectedId} />

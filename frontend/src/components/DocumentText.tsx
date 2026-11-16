@@ -5,14 +5,16 @@ type DocumentTextProps = {
   label: string
   /** 1-based line numbers to mark as cited evidence. The first one is scrolled into view. */
   cited?: number[]
+  /** 1-based line a requirement was taken from. Marked more quietly than evidence, and scrolled into view. */
+  source?: number | null
   /** Tailwind max-height class for the scrolling area. */
   maxHeight?: string
 }
 
 /** Document text, one numbered row per line. Scrolls when it is long. */
-export function DocumentText({ text, label, cited = [], maxHeight = 'max-h-112' }: DocumentTextProps) {
+export function DocumentText({ text, label, cited = [], source = null, maxHeight = 'max-h-112' }: DocumentTextProps) {
   const list = useRef<HTMLOListElement>(null)
-  const firstCited = cited.length > 0 ? Math.min(...cited) : null
+  const firstCited = cited.length > 0 ? Math.min(...cited) : source
 
   useEffect(() => {
     if (firstCited === null || !list.current) return
@@ -30,7 +32,7 @@ export function DocumentText({ text, label, cited = [], maxHeight = 'max-h-112' 
       {text.split('\n').map((line, index) => (
         <li
           key={index}
-          className={cited.includes(index + 1) ? 'is-cited' : undefined}
+          className={cited.includes(index + 1) ? 'is-cited' : source === index + 1 ? 'is-source' : undefined}
           data-cited={cited.includes(index + 1) ? '' : undefined}
         >
           {line}
