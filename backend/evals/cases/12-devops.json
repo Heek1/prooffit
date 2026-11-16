@@ -1,0 +1,61 @@
+{
+  "name": "devops",
+  "resume": [
+    "DevOps engineer",
+    "Ran 40 services on Kubernetes (EKS) with Helm charts",
+    "Wrote all infrastructure in Terraform",
+    "Built CI/CD in GitLab CI with canary releases",
+    "On call for production, wrote the incident runbooks",
+    "Set up Prometheus and Grafana dashboards"
+  ],
+  "requirements": [
+    {
+      "text": "Kubernetes in production",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Forty services on EKS, line 2."
+    },
+    {
+      "text": "Infrastructure as code",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Terraform for all infrastructure, line 3."
+    },
+    {
+      "text": "AWS",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "EKS is an AWS service, line 2."
+    },
+    {
+      "text": "CI/CD pipelines",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "GitLab CI with canary releases, line 4."
+    },
+    {
+      "text": "Monitoring and alerting",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Prometheus and Grafana, line 6."
+    },
+    {
+      "text": "Incident response",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "On call, wrote runbooks, line 5."
+    },
+    {
+      "text": "Azure",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Only AWS is shown."
+    },
+    {
+      "text": "Ansible",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

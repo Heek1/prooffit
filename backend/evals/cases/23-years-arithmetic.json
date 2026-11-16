@@ -1,0 +1,35 @@
+{
+  "name": "years-arithmetic",
+  "resume": [
+    "Backend developer",
+    "Acme Corp, Python developer, March 2019 to February 2022",
+    "Beta Ltd, Python developer, March 2022 to present (2026)",
+    "Freelance C# work, 2017 to 2018"
+  ],
+  "requirements": [
+    {
+      "text": "5+ years of Python",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "March 2019 to 2026 is about seven years."
+    },
+    {
+      "text": "10+ years of commercial experience",
+      "importance": "niceToHave",
+      "expected": "partial",
+      "why": "About nine years in total including freelance work."
+    },
+    {
+      "text": "3+ years of C#",
+      "importance": "niceToHave",
+      "expected": "partial",
+      "why": "Freelance C# from 2017 to 2018, about two years."
+    },
+    {
+      "text": "Django or FastAPI",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "No framework is named."
+    }
+  ]
+}

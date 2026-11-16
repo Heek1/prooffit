@@ -1,0 +1,48 @@
+{
+  "name": "soft-skills-and-process",
+  "resume": [
+    "Team lead, 2023 to 2026: ran a team of seven, hired four engineers",
+    "Introduced code review and a weekly architecture review",
+    "Presented quarterly results to the board",
+    "Worked directly with customers in the US and Germany",
+    "Go and PostgreSQL"
+  ],
+  "requirements": [
+    {
+      "text": "People management experience",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Team of seven, line 1."
+    },
+    {
+      "text": "Hiring",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Hired four engineers, line 1."
+    },
+    {
+      "text": "Strong communication with stakeholders",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Presented to the board, worked with customers, lines 3 and 4."
+    },
+    {
+      "text": "Experience with international clients",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Customers in the US and Germany, line 4."
+    },
+    {
+      "text": "Go",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 5."
+    },
+    {
+      "text": "Scrum master certification",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "No certification is mentioned."
+    }
+  ]
+}

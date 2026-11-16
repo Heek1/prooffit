@@ -3,6 +3,10 @@
 //   dotnet run --project evals/ProofFit.Evals                          keyword engine
 //   dotnet run --project evals/ProofFit.Evals -- --engine model        model engine (needs LLM_API_KEY)
 //   dotnet run --project evals/ProofFit.Evals -- --min-accuracy 0.6    fail when accuracy drops below 60%
+//   dotnet run --project evals/ProofFit.Evals -- --from 10             start at the case file named 10-...
+//
+// A model on a free tier allows only a few calls a day, one per case here. When it stops
+// answering, the run ends with the cases it finished and says where to resume.
 //
 // Each case gives a resume, optional GitHub facts, and requirements labelled with the
 // verdict a careful human reviewer would reach. Requirements are given rather than
@@ -22,6 +26,7 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
 var engine = Option("--engine") ?? "keyword";
 var minAccuracy = double.Parse(Option("--min-accuracy") ?? "0", CultureInfo.InvariantCulture);
+var from = Option("--from");
 
 IRequirementMatcher matcher;
 switch (engine)
@@ -49,8 +54,10 @@ switch (engine)
 
 var cases = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "cases"), "*.json")
     .Order(StringComparer.Ordinal)
-    .Select(path => JsonSerializer.Deserialize<EvalCase>(File.ReadAllText(path), ApiJson.Options)!)
+    .Where(path => from is null || string.CompareOrdinal(Path.GetFileName(path), from) >= 0)
+    .Select(path => (File: Path.GetFileNameWithoutExtension(path), Case: JsonSerializer.Deserialize<EvalCase>(File.ReadAllText(path), ApiJson.Options)!))
     .ToList();
+string? stoppedAt = null;
 
 // confusion[expected][predicted]
 var statuses = new[] { MatchStatus.Confirmed, MatchStatus.Partial, MatchStatus.Missing };
@@ -60,7 +67,7 @@ Console.WriteLine($"Engine: {matcher.EngineName}");
 Console.WriteLine();
 Console.WriteLine($"{"Case",-30} Correct");
 
-foreach (var evalCase in cases)
+foreach (var (caseFile, evalCase) in cases)
 {
     var requirements = evalCase.Requirements
         .Select((r, index) => new Requirement($"R{index + 1}", r.Text, r.Importance, null))
@@ -69,7 +76,17 @@ foreach (var evalCase in cases)
     var facts = evalCase.GitHubFacts ?? [];
 
     // The same path an analysis takes: the matcher proposes, the validator decides.
-    var proposed = await WithRetriesAsync(() => matcher.MatchAsync(requirements, resume, facts, CancellationToken.None));
+    IReadOnlyList<ProposedMatch> proposed;
+    try
+    {
+        proposed = await WithRetriesAsync(() => matcher.MatchAsync(requirements, resume, facts, CancellationToken.None));
+    }
+    catch (LlmUnavailableException ex)
+    {
+        stoppedAt = caseFile;
+        Console.WriteLine($"{evalCase.Name,-30} not run: {ex.Message}");
+        break;
+    }
     var verdicts = EvidenceValidator.Validate(requirements, proposed, resume, facts);
 
     var correct = 0;
@@ -84,7 +101,7 @@ foreach (var evalCase in cases)
 
 var total = confusion.Values.Sum(row => row.Values.Sum());
 var right = statuses.Sum(status => confusion[status][status]);
-var accuracy = (double)right / total;
+var accuracy = total == 0 ? 0 : (double)right / total;
 
 // The costliest mistake for this product: telling someone a requirement is met when
 // nothing shows it.
@@ -99,6 +116,13 @@ foreach (var expected in statuses)
 {
     Console.WriteLine($"{expected.ToString().ToLowerInvariant(),-22}" +
         string.Concat(statuses.Select(predicted => $"{confusion[expected][predicted],10}")));
+}
+
+if (stoppedAt is not null)
+{
+    Console.Error.WriteLine();
+    Console.Error.WriteLine($"Stopped early. Resume with: --from {stoppedAt.Split('-')[0]}");
+    return 3;
 }
 
 if (accuracy < minAccuracy)

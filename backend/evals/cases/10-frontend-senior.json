@@ -1,0 +1,61 @@
+{
+  "name": "frontend-senior",
+  "resume": [
+    "Senior frontend engineer, six years",
+    "Led the migration of a banking dashboard from AngularJS to React 18 and TypeScript",
+    "Built a component library documented in Storybook, used by four product teams",
+    "Cut largest contentful paint from 4.1 s to 1.6 s through code splitting and image work",
+    "Wrote end-to-end tests with Playwright and unit tests with Jest",
+    "Mentored three junior developers"
+  ],
+  "requirements": [
+    {
+      "text": "5+ years of frontend development",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Six years as a frontend engineer, line 1."
+    },
+    {
+      "text": "React and TypeScript",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Migration to React 18 and TypeScript, line 2."
+    },
+    {
+      "text": "Experience building a design system or component library",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Component library in Storybook, line 3."
+    },
+    {
+      "text": "Web performance optimisation",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "LCP cut from 4.1 s to 1.6 s, line 4."
+    },
+    {
+      "text": "Automated testing of user interfaces",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Playwright end-to-end and Jest unit tests, line 5."
+    },
+    {
+      "text": "Next.js",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    },
+    {
+      "text": "Mentoring",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Mentored three juniors, line 6."
+    },
+    {
+      "text": "GraphQL",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

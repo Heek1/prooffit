@@ -82,38 +82,44 @@ report as met.
 
 ## Evaluation
 
-`backend/evals` holds 9 hand-written cases with 43 labelled requirements, each covering a
-way matching goes wrong: synonyms, amounts of experience, negation, alternatives, a resume in
-Ukrainian, skills that are mentioned but not practised.
+`backend/evals` holds 25 hand-written cases with 139 labelled requirements. Each case is built
+around a way matching goes wrong: synonyms, amounts of experience counted from dates,
+negation, alternatives, neighbouring technologies (Kotlin for Java, MySQL for PostgreSQL), a
+bare list of skills with no work behind it, a graduate with only course projects, resumes and
+vacancies in Ukrainian, certifications, and a resume that tries to instruct the model.
 
-| Engine | Accuracy | Unsupported claims |
-|---|---|---|
-| Keyword baseline | 30 of 43 (69.8%) | 1 |
-| Model (`gemini-3.5-flash`) | 42 of 43 (97.7%) | 0 |
+| Engine | Cases run | Accuracy | Unsupported claims |
+|---|---|---|---|
+| Keyword baseline | 25 of 25 | 73 of 139 (52.5%) | 2 |
+| Model (`gemini-3.5-flash`) | 21 of 25 | 108 of 120 (90.0%) | 1 |
+
+The model's free tier allows about 20 calls a day, one per case, so its run is split across
+days. Four cases (`22` to `25`, 19 requirements) are still to be measured; resume with
+`--from 22`. Its figures combine the original nine cases (42 of 43) and twelve of the new
+ones (66 of 77).
 
 An unsupported claim is a requirement reported as proven or partly proven when the label
-says there is no evidence: the mistake that matters most here. They come from text that names
+says there is no evidence: the mistake that matters most here. Most come from text that names
 a technology the candidate has not used: a negation ("no production experience with
-Kubernetes") and other people's work ("worked alongside developers who used React").
+Kubernetes") or other people's work ("worked alongside developers who used React"). The
+keyword engine reads those phrasings and does not count such a line as evidence.
 
-The keyword engine now reads those phrasings and does not count such a line as evidence,
-and counts "currently learning X" as partial. That took it from 27 of 43 with four
-unsupported claims to the figures above. The one left is "managed the budget for an AWS
-migration", which no word list can tell apart from hands-on AWS work.
+Where the model goes wrong now:
 
-The model's first run scored 38 of 43 and made the same four mistakes, as "partly proven".
-The matcher's prompt then gained one rule, that only the candidate's own hands-on work
-counts, which is what the table shows. Its one remaining miss is a judgement call: "strict
-typing" in a Next.js project, read as TypeScript where the label says only partly.
+- **A bare list of skills.** It takes "Skills: React, Kubernetes, Rust" as proof. The labels
+  call that partial, since no work is described. 1 of 5 right.
+- **A graduate's course projects.** It counts Java in a final-year project as commercial
+  experience. 2 of 6 right.
 
-The set is small and written by one person. It is there to catch regressions and to compare
-engines, not to stand as a benchmark. CI fails if the baseline drops below 65%.
+The set is written by one person. It is there to catch regressions and compare engines, not
+to stand as a benchmark. CI runs the keyword engine on every change and fails below 50%.
 
 ```bash
 cd backend && dotnet run --project evals/ProofFit.Evals
 ```
 
-To evaluate the model engine, set `LLM_API_KEY` and add `-- --engine model`.
+To evaluate the model engine, set `LLM_API_KEY` and add `-- --engine model`. When the daily
+quota runs out the run stops with the cases it finished and prints where to resume.
 
 ## Run it locally
 

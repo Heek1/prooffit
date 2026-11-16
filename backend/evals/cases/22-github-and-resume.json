@@ -1,0 +1,87 @@
+{
+  "name": "github-and-resume",
+  "resume": [
+    "Full-stack developer",
+    "React frontends for small businesses"
+  ],
+  "gitHubFacts": [
+    {
+      "id": "G1",
+      "skill": "TypeScript",
+      "repositories": [
+        {
+          "name": "shop",
+          "url": "https://github.com/example/shop"
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "skill": "PostgreSQL",
+      "repositories": [
+        {
+          "name": "shop-api",
+          "url": "https://github.com/example/shop-api"
+        }
+      ]
+    },
+    {
+      "id": "G3",
+      "skill": "CI/CD",
+      "repositories": [
+        {
+          "name": "shop-api",
+          "url": "https://github.com/example/shop-api"
+        }
+      ]
+    },
+    {
+      "id": "G4",
+      "skill": "Docker",
+      "repositories": [
+        {
+          "name": "shop-api",
+          "url": "https://github.com/example/shop-api"
+        }
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "text": "React",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "TypeScript",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Fact G1."
+    },
+    {
+      "text": "PostgreSQL",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Fact G2."
+    },
+    {
+      "text": "Docker and CI/CD",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Facts G3 and G4."
+    },
+    {
+      "text": "Redis",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Neither the resume nor GitHub shows it."
+    },
+    {
+      "text": "Node.js",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "A PostgreSQL repository does not show which backend language was used."
+    }
+  ]
+}

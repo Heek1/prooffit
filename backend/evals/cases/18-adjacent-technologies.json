@@ -1,0 +1,48 @@
+{
+  "name": "adjacent-technologies",
+  "resume": [
+    "Software engineer",
+    "Built services in Kotlin on Spring Boot",
+    "Stored data in MySQL",
+    "Hosted on Google Cloud Run",
+    "Frontend in Vue 3"
+  ],
+  "requirements": [
+    {
+      "text": "Java",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Kotlin on the JVM with Spring is close to Java but is not Java."
+    },
+    {
+      "text": "PostgreSQL",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "MySQL is a related relational database, not PostgreSQL."
+    },
+    {
+      "text": "AWS",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Cloud experience on Google Cloud, not AWS."
+    },
+    {
+      "text": "React",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Vue is a comparable frontend framework, not React."
+    },
+    {
+      "text": "Spring Boot",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "Relational databases",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "MySQL, line 3."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "ukrainian-vacancy",
+  "resume": [
+    "Backend developer",
+    "Node.js and NestJS services for a delivery company",
+    "PostgreSQL with TypeORM, Redis for caching",
+    "Deployed with Docker on DigitalOcean"
+  ],
+  "requirements": [
+    {
+      "text": "Досвід роботи з Node.js від 2 років",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Node.js work is shown, but the resume gives no duration."
+    },
+    {
+      "text": "NestJS",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "Знання PostgreSQL",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3."
+    },
+    {
+      "text": "Redis",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Caching with Redis, line 3."
+    },
+    {
+      "text": "Docker",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 4."
+    },
+    {
+      "text": "Досвід з AWS",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Deployed on DigitalOcean, not AWS."
+    },
+    {
+      "text": "Англійська на рівні B1+",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "No language level is given."
+    }
+  ]
+}
