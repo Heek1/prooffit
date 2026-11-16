@@ -1,0 +1,41 @@
+{
+  "name": "education-and-domain",
+  "resume": [
+    "Software engineer in fintech",
+    "Built payment reconciliation for a card processor",
+    "Implemented PCI DSS controls for card data",
+    "MSc in Applied Mathematics"
+  ],
+  "requirements": [
+    {
+      "text": "Fintech or payments experience",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Card processor reconciliation, line 2."
+    },
+    {
+      "text": "Knowledge of PCI DSS",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Implemented PCI DSS controls, line 3."
+    },
+    {
+      "text": "Master's degree in a technical field",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "MSc in Applied Mathematics, line 4."
+    },
+    {
+      "text": "Experience in e-commerce",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Payments for a card processor is not e-commerce."
+    },
+    {
+      "text": "Blockchain",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

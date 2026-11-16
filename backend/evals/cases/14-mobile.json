@@ -1,0 +1,48 @@
+{
+  "name": "mobile",
+  "resume": [
+    "Mobile developer",
+    "Shipped two iOS apps in Swift and SwiftUI to the App Store",
+    "Maintained an Android app in Kotlin with Jetpack Compose",
+    "Integrated Firebase Analytics and push notifications",
+    "Considering Flutter for the next project"
+  ],
+  "requirements": [
+    {
+      "text": "Swift",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "Kotlin",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3."
+    },
+    {
+      "text": "Published apps in the App Store or Google Play",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Two iOS apps on the App Store, line 2."
+    },
+    {
+      "text": "Flutter",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Only considered, not used."
+    },
+    {
+      "text": "Push notifications",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 4."
+    },
+    {
+      "text": "React Native",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

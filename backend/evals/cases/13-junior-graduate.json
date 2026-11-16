@@ -1,0 +1,47 @@
+{
+  "name": "junior-graduate",
+  "resume": [
+    "Computer science graduate, 2026",
+    "Final-year project: a timetable app in Java with Spring Boot",
+    "Course projects in C and Python",
+    "Internship, three months: fixed bugs in a PHP admin panel"
+  ],
+  "requirements": [
+    {
+      "text": "Degree in computer science or related field",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 1."
+    },
+    {
+      "text": "1+ year of commercial experience with Java",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Java only in a university project; the one internship was in PHP."
+    },
+    {
+      "text": "Spring Boot",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Used in a final-year project, not commercially."
+    },
+    {
+      "text": "Git",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    },
+    {
+      "text": "Commercial experience",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "A three-month internship is some, but short."
+    },
+    {
+      "text": "SQL databases",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

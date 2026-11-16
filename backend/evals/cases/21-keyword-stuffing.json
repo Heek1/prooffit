@@ -1,0 +1,40 @@
+{
+  "name": "keyword-stuffing",
+  "resume": [
+    "Developer",
+    "Skills: React, Angular, Vue, Svelte, Java, C#, Go, Rust, Kubernetes, Kafka, Spark",
+    "Built a WordPress site for a local bakery"
+  ],
+  "requirements": [
+    {
+      "text": "React",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Listed as a skill with no work behind it; only a WordPress site is described."
+    },
+    {
+      "text": "Kubernetes",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Listed as a skill only."
+    },
+    {
+      "text": "Rust",
+      "importance": "niceToHave",
+      "expected": "partial",
+      "why": "Listed as a skill only."
+    },
+    {
+      "text": "WordPress",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Built a WordPress site, line 3."
+    },
+    {
+      "text": "Production experience with Kafka",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "A bare skills list does not show production experience."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "certifications-and-clearance",
+  "resume": [
+    "Cloud engineer",
+    "AWS Certified Solutions Architect – Associate (2025)",
+    "Migrated a hospital records system to AWS",
+    "Studying for the CKA exam"
+  ],
+  "requirements": [
+    {
+      "text": "AWS certification",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Solutions Architect Associate, line 2."
+    },
+    {
+      "text": "Certified Kubernetes Administrator",
+      "importance": "niceToHave",
+      "expected": "partial",
+      "why": "Studying for the CKA, not yet certified, line 4."
+    },
+    {
+      "text": "Experience in healthcare",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Hospital records migration, line 3."
+    },
+    {
+      "text": "Security clearance",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    },
+    {
+      "text": "Cloud migration projects",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "name": "data-engineer",
+  "resume": [
+    "Data engineer",
+    "Built batch pipelines in Python and SQL that load 2 TB a day into BigQuery",
+    "Orchestrated jobs with Apache Airflow",
+    "Modelled the warehouse with dbt",
+    "Some exposure to Spark during a university project"
+  ],
+  "requirements": [
+    {
+      "text": "Python",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Pipelines in Python, line 2."
+    },
+    {
+      "text": "SQL",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Pipelines in SQL, line 2."
+    },
+    {
+      "text": "Apache Airflow",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3."
+    },
+    {
+      "text": "dbt",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 4."
+    },
+    {
+      "text": "Commercial experience with Apache Spark",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Spark only in a university project, line 5."
+    },
+    {
+      "text": "Kafka or another streaming platform",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Only batch pipelines are described."
+    },
+    {
+      "text": "A cloud data warehouse",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "BigQuery is a cloud data warehouse, line 2."
+    }
+  ]
+}

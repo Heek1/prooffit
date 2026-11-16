@@ -1,0 +1,54 @@
+{
+  "name": "ml-engineer",
+  "resume": [
+    "Machine learning engineer",
+    "Trained and deployed a fraud model with scikit-learn and XGBoost, served through FastAPI",
+    "Fine-tuned a small language model for ticket triage with PyTorch",
+    "Built a retrieval pipeline over support articles with embeddings in pgvector",
+    "Tracked experiments in MLflow"
+  ],
+  "requirements": [
+    {
+      "text": "Python",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "scikit-learn, PyTorch and FastAPI are Python, lines 2 and 3."
+    },
+    {
+      "text": "Deploying models to production",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Fraud model served through FastAPI, line 2."
+    },
+    {
+      "text": "Deep learning frameworks",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "PyTorch, line 3."
+    },
+    {
+      "text": "Retrieval-augmented generation",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Retrieval pipeline with embeddings for support articles, line 4."
+    },
+    {
+      "text": "Experiment tracking",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "MLflow, line 5."
+    },
+    {
+      "text": "Computer vision",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    },
+    {
+      "text": "Kubernetes",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

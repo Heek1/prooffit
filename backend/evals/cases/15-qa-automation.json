@@ -1,0 +1,48 @@
+{
+  "name": "qa-automation",
+  "resume": [
+    "QA automation engineer",
+    "Built a Selenium and Java test framework for a booking site",
+    "Tested REST APIs with Postman and RestAssured",
+    "Ran the suites in Jenkins on every merge",
+    "Wrote test plans and reported defects in Jira"
+  ],
+  "requirements": [
+    {
+      "text": "Test automation with Selenium or Playwright",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Selenium framework, line 2."
+    },
+    {
+      "text": "API testing",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Postman and RestAssured, line 3."
+    },
+    {
+      "text": "Continuous integration",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Suites in Jenkins on every merge, line 4."
+    },
+    {
+      "text": "Performance testing with JMeter or k6",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    },
+    {
+      "text": "Writing test documentation",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Test plans, line 5."
+    },
+    {
+      "text": "Python",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Only Java is mentioned."
+    }
+  ]
+}
