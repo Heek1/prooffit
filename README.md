@@ -87,14 +87,18 @@ Ukrainian, skills that are mentioned but not practised.
 
 | Engine | Accuracy | Unsupported claims |
 |---|---|---|
-| Keyword baseline | 27 of 43 (62.8%) | 4 |
+| Keyword baseline | 30 of 43 (69.8%) | 1 |
 | Model (`gemini-3.5-flash`) | 42 of 43 (97.7%) | 0 |
 
 An unsupported claim is a requirement reported as proven or partly proven when the label
-says there is no evidence: the mistake that matters most here. The baseline's four all come
-from text that names a technology the candidate has not used: a negation ("no production
-experience with Kubernetes") and other people's work ("worked alongside developers who used
-React").
+says there is no evidence: the mistake that matters most here. They come from text that names
+a technology the candidate has not used: a negation ("no production experience with
+Kubernetes") and other people's work ("worked alongside developers who used React").
+
+The keyword engine now reads those phrasings and does not count such a line as evidence,
+and counts "currently learning X" as partial. That took it from 27 of 43 with four
+unsupported claims to the figures above. The one left is "managed the budget for an AWS
+migration", which no word list can tell apart from hands-on AWS work.
 
 The model's first run scored 38 of 43 and made the same four mistakes, as "partly proven".
 The matcher's prompt then gained one rule, that only the candidate's own hands-on work
@@ -102,7 +106,7 @@ counts, which is what the table shows. Its one remaining miss is a judgement cal
 typing" in a Next.js project, read as TypeScript where the label says only partly.
 
 The set is small and written by one person. It is there to catch regressions and to compare
-engines, not to stand as a benchmark. CI fails if the baseline drops below 60%.
+engines, not to stand as a benchmark. CI fails if the baseline drops below 65%.
 
 ```bash
 cd backend && dotnet run --project evals/ProofFit.Evals
