@@ -106,6 +106,7 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check 
 app.MapResumeEndpoints();
 app.MapVacancyEndpoints();
 app.MapAnalysisEndpoints();
+app.MapRerunEndpoint();
 
 app.Run();
 

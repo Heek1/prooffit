@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ProofFit.Api.Domain;
 
 namespace ProofFit.Api.Data;
@@ -30,6 +31,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .HasConversion(
                     result => JsonSerializer.Serialize(result, ApiJson.Options),
                     json => JsonSerializer.Deserialize<AnalysisResult>(json, ApiJson.Options)!);
+
+            analysis.Property(a => a.GivenRequirements)
+                .HasColumnType("jsonb")
+                .HasConversion(
+                    given => JsonSerializer.Serialize(given, ApiJson.Options),
+                    json => JsonSerializer.Deserialize<List<GivenRequirement>>(json, ApiJson.Options),
+                    // Set once when the analysis is made and never changed, so comparing by
+                    // content is only needed for change tracking to be correct.
+                    new ValueComparer<List<GivenRequirement>?>(
+                        (a, b) => a == null ? b == null : b != null && a.SequenceEqual(b),
+                        list => list == null ? 0 : list.Aggregate(0, (hash, item) => HashCode.Combine(hash, item)),
+                        list => list == null ? null : list.ToList()));
 
             // The worker looks for unfinished analyses by status on every start.
             analysis.HasIndex(a => a.Status);

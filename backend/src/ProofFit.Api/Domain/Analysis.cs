@@ -23,6 +23,9 @@ public class Analysis
     /// <summary>The candidate's GitHub login, when they want their public code used as evidence.</summary>
     public string? GitHubLogin { get; set; }
 
+    /// <summary>Requirements the user set when comparing again. Null when they are read from the vacancy.</summary>
+    public List<GivenRequirement>? GivenRequirements { get; set; }
+
     public AnalysisStatus Status { get; set; }
     public AnalysisStage Stage { get; set; }
 
@@ -54,6 +57,9 @@ public record AnalysisResult(
     string? GitHubNote,
     string? EngineNote,
     LlmUsage? Usage);
+
+/// <summary>A requirement the user wrote or corrected, judged as given instead of read from the vacancy.</summary>
+public record GivenRequirement(string Text, Importance Importance, int? VacancyLine);
 
 public record LlmUsage(string Model, int Calls, int InputTokens, int OutputTokens, int DurationMs);
 
