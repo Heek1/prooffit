@@ -25,7 +25,7 @@ public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
 
         Only the candidate's own hands-on work is evidence. Work that other people did, or that the candidate only managed or paid for, is not. When the resume says the candidate lacks what is asked for, the status is missing.
 
-        Write reason as one plain sentence of at most 25 words, saying what the evidence shows or what is absent.
+        Write reason as one plain sentence of at most 25 words, saying what the evidence shows or what is absent. Call the person "the candidate" and never assume their gender.
 
         Answer for every requirement. In requirementId give its id exactly as listed, such as R1.
 
