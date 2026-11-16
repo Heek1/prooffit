@@ -62,6 +62,8 @@ public class AnalysisRunner(
 
     private async Task<(AnalysisResult Result, string Engine)> AnalyseAsync(Analysis analysis, CancellationToken ct)
     {
+        if (await FindEarlierReportAsync(analysis, ct) is { } earlier) return earlier;
+
         // A model that is down must not cost the user their report. From the first failed
         // call on, the keyword engine does the rest and the report says so.
         var activeMatcher = matcher;
@@ -112,6 +114,32 @@ public class AnalysisRunner(
         var result = new AnalysisResult(
             Scoring.Score(matches), matches, evidence, gitHubNote, engineNote, llmUsage.Summarise());
         return (result, activeMatcher.EngineName);
+    }
+
+    // The same resume, vacancy and GitHub login give the same report, so a recent one is
+    // handed back instead of being worked out again. That makes a repeated comparison,
+    // the sample above all, instant, and it spends none of the daily model quota.
+    private async Task<(AnalysisResult Result, string Engine)?> FindEarlierReportAsync(Analysis analysis, CancellationToken ct)
+    {
+        var candidates = await db.Analyses
+            .AsNoTracking()
+            .Where(a => a.Id != analysis.Id
+                && a.Status == AnalysisStatus.Completed
+                && a.Engine == matcher.EngineName
+                && a.Resume.Text == analysis.Resume.Text
+                && a.Vacancy.Text == analysis.Vacancy.Text)
+            .OrderByDescending(a => a.CreatedAt)
+            .Take(5)
+            .ToListAsync(ct);
+
+        // Only a report made in full is worth repeating: not one where the model or GitHub
+        // was unavailable, since a fresh attempt may now succeed.
+        var earlier = candidates.FirstOrDefault(a =>
+            a.Result is { EngineNote: null, GitHubNote: null } &&
+            string.Equals(a.GitHubLogin, analysis.GitHubLogin, StringComparison.OrdinalIgnoreCase));
+
+        // The model was not called this time, so the copy claims no usage.
+        return earlier is null ? null : (earlier.Result! with { Usage = null }, earlier.Engine!);
     }
 
     // GitHub is extra evidence, never a precondition: when it cannot be read, the analysis

@@ -127,6 +127,17 @@
     border-color: var(--color-ink-soft);
   }
 
+  /* The vacancy line a requirement was read from: marked, but not as evidence. */
+  .document > li.is-source {
+    box-shadow: inset 3px 0 0 var(--color-ink);
+    background: var(--color-desk);
+  }
+
+  .document > li.is-source::before {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
   /* A thread from a requirement to its evidence. pathLength is 1, so 1 is the whole line. */
   .thread {
     stroke-dasharray: 1;

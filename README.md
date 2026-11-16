@@ -22,8 +22,9 @@ checks the evidence and computes the score.
 - **Scores the match** from 0 to 100, with must-haves counting double.
 
 Choosing a requirement in the report draws a thread to each line it cites in the resume and
-each fact it cites from GitHub. The start page runs a small example of this, and a sample
-resume and vacancy are one click away.
+each fact it cites from GitHub, and marks the line of the vacancy the requirement was read
+from, so the reading of the vacancy can be checked as well. The start page runs a small
+example of this, and a sample comparison is one click away.
 
 ![The start page: a running example of a requirement reaching for its evidence, above the upload form](docs/screenshots/start.png)
 
@@ -73,6 +74,10 @@ report as met.
   as server-sent events, read from the database, so it keeps working if the API and the
   worker become separate processes. Unfinished analyses are requeued on startup.
 - **A report is one JSON document.** It is written once and always read whole.
+- **Repeated comparisons are answered from an earlier report.** The same resume, vacancy
+  and GitHub login give the same verdicts, so a recent complete report is copied instead of
+  asking the model again. The sample is instant after its first run, and repeats spend none
+  of the daily quota. A report made while the model or GitHub was unavailable is not reused.
 
 ## Evaluation
 

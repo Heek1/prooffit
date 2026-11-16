@@ -17,7 +17,9 @@ public class AnalysisWithModelTests(ApiFactory factory)
         - Docker
         """;
 
-    private static readonly string[] Resume = ["Platform engineer", "Containerised services with Docker"];
+    // The first line differs per test: identical documents would be answered with an
+    // earlier report, and each test here needs the model to be asked.
+    private static string[] Resume(string who) => [$"Platform engineer, {who}", "Containerised services with Docker"];
 
     private readonly StubGemini _gemini = new();
 
@@ -41,7 +43,7 @@ public class AnalysisWithModelTests(ApiFactory factory)
             ] }
             """;
 
-        var analysis = await WithModel().AnalyseAsync(Resume, Vacancy);
+        var analysis = await WithModel().AnalyseAsync(Resume("the validator test"), Vacancy);
 
         Assert.Equal(AnalysisStatus.Completed, analysis.Status);
         Assert.Equal("gemini-test", analysis.Engine);
@@ -68,7 +70,7 @@ public class AnalysisWithModelTests(ApiFactory factory)
     {
         _gemini.Refuse = true;
 
-        var analysis = await WithModel().AnalyseAsync(Resume, Vacancy);
+        var analysis = await WithModel().AnalyseAsync(Resume("the outage test"), Vacancy);
 
         Assert.Equal(AnalysisStatus.Completed, analysis.Status);
         Assert.Equal("keyword", analysis.Engine);
@@ -87,7 +89,7 @@ public class AnalysisWithModelTests(ApiFactory factory)
         _gemini.ExtractAnswer = """{ "requirements": [{ "text": "Docker", "importance": "must", "line": 4 }] }""";
         _gemini.MatchAnswer = "I could not decide.";
 
-        var analysis = await WithModel().AnalyseAsync(Resume, Vacancy);
+        var analysis = await WithModel().AnalyseAsync(Resume("the halfway test"), Vacancy);
 
         Assert.Equal("keyword", analysis.Engine);
         var result = analysis.Result!;
@@ -95,6 +97,50 @@ public class AnalysisWithModelTests(ApiFactory factory)
         // The requirement the model extracted is kept and matched by keyword.
         var docker = Assert.Single(result.Requirements);
         Assert.Equal(("Docker", MatchStatus.Confirmed), (docker.Text, docker.Status));
+    }
+
+    [Fact]
+    public async Task Comparing_the_same_documents_again_reuses_the_report_without_calling_the_model()
+    {
+        _gemini.ExtractAnswer = """{ "requirements": [{ "text": "Docker", "importance": "must", "line": 4 }] }""";
+        _gemini.MatchAnswer = """
+            { "matches": [{ "requirementId": "R1", "status": "confirmed", "reason": "Line 2.", "resumeLines": [2], "gitHubFacts": [] }] }
+            """;
+        var client = WithModel();
+
+        var first = await client.AnalyseAsync(Resume("the reuse test"), Vacancy);
+        var callsAfterFirst = _gemini.Requests.Count;
+        var second = await client.AnalyseAsync(Resume("the reuse test"), Vacancy);
+
+        Assert.Equal(2, callsAfterFirst);
+        Assert.Equal(callsAfterFirst, _gemini.Requests.Count);
+        Assert.NotEqual(first.Id, second.Id);
+        Assert.Equal(AnalysisStatus.Completed, second.Status);
+        Assert.Equal(first.Engine, second.Engine);
+        Assert.Equal(first.Result!.Score, second.Result!.Score);
+        Assert.Equal(first.Result.Requirements.Select(r => r.Status), second.Result.Requirements.Select(r => r.Status));
+        // The first report says what it cost; the copy cost nothing.
+        Assert.NotNull(first.Result.Usage);
+        Assert.Null(second.Result.Usage);
+    }
+
+    [Fact]
+    public async Task A_report_made_while_the_model_was_down_is_not_reused()
+    {
+        _gemini.Refuse = true;
+        var client = WithModel();
+        await client.AnalyseAsync(Resume("the retry test"), Vacancy);
+
+        _gemini.Refuse = false;
+        _gemini.ExtractAnswer = """{ "requirements": [{ "text": "Docker", "importance": "must", "line": 4 }] }""";
+        _gemini.MatchAnswer = """
+            { "matches": [{ "requirementId": "R1", "status": "confirmed", "reason": "Line 2.", "resumeLines": [2], "gitHubFacts": [] }] }
+            """;
+        var retried = await client.AnalyseAsync(Resume("the retry test"), Vacancy);
+
+        // The model is back, so the comparison is made again rather than copied.
+        Assert.Equal("gemini-test", retried.Engine);
+        Assert.Null(retried.Result!.EngineNote);
     }
 
     private HttpClient WithModel() => factory
