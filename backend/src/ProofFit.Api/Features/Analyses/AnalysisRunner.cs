@@ -62,7 +62,8 @@ public class AnalysisRunner(
 
     private async Task<(AnalysisResult Result, string Engine)> AnalyseAsync(Analysis analysis, CancellationToken ct)
     {
-        if (await FindEarlierReportAsync(analysis, ct) is { } earlier) return earlier;
+        if (analysis.GivenRequirements is null && await FindEarlierReportAsync(analysis, ct) is { } earlier)
+            return earlier;
 
         // A model that is down must not cost the user their report. From the first failed
         // call on, the keyword engine does the rest and the report says so.
@@ -74,7 +75,10 @@ public class AnalysisRunner(
         IReadOnlyList<ExtractedRequirement> extracted;
         try
         {
-            extracted = await extractor.ExtractAsync(vacancy, ct);
+            // Requirements the user corrected are taken as they are; the vacancy is not read again.
+            extracted = analysis.GivenRequirements is { } given
+                ? given.Select(r => new ExtractedRequirement(r.Text, r.Importance, r.VacancyLine)).ToList()
+                : await extractor.ExtractAsync(vacancy, ct);
         }
         catch (LlmUnavailableException ex)
         {
@@ -127,7 +131,8 @@ public class AnalysisRunner(
                 && a.Status == AnalysisStatus.Completed
                 && a.Engine == matcher.EngineName
                 && a.Resume.Text == analysis.Resume.Text
-                && a.Vacancy.Text == analysis.Vacancy.Text)
+                && a.Vacancy.Text == analysis.Vacancy.Text
+                && a.GivenRequirements == null)
             .OrderByDescending(a => a.CreatedAt)
             .Take(5)
             .ToListAsync(ct);

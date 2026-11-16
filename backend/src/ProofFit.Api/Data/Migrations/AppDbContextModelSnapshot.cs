@@ -45,6 +45,9 @@ namespace ProofFit.Api.Data.Migrations
                         .HasMaxLength(39)
                         .HasColumnType("character varying(39)");
 
+                    b.Property<string>("GivenRequirements")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("Result")
                         .HasColumnType("jsonb");
 

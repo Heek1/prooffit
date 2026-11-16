@@ -7,6 +7,7 @@ import { GitHubPanel } from '../components/GitHubPanel.tsx'
 import { Notice, PageShell } from '../components/PageShell.tsx'
 import { ProgressSteps } from '../components/ProgressSteps.tsx'
 import { ProofBar } from '../components/ProofBar.tsx'
+import { RequirementEditor } from '../components/RequirementEditor.tsx'
 import { RequirementList } from '../components/RequirementList.tsx'
 import { Sheet } from '../components/Sheet.tsx'
 import { StillToProve } from '../components/StillToProve.tsx'
@@ -94,6 +95,8 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
     setSheetOpen(true)
   }
 
+  const [editing, setEditing] = useState(false)
+
   // Keeps the score in the list of recent comparisons on the start page.
   useEffect(() => {
     remember({ id: analysis.id, title: analysis.vacancy.title, createdAt: analysis.createdAt, score: result.score })
@@ -118,8 +121,11 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
         <ProofBar requirements={result.requirements} />
       </div>
 
-      {(result.engineNote || result.gitHubNote) && (
+      {(result.engineNote || result.gitHubNote || analysis.requirementsEdited) && (
         <div className="mt-8 max-w-3xl space-y-2">
+          {analysis.requirementsEdited && (
+            <Notice>These requirements were corrected by hand, not read from the vacancy.</Notice>
+          )}
           {result.engineNote && <Notice>{result.engineNote}</Notice>}
           {result.gitHubNote && <Notice>GitHub evidence was not used. {result.gitHubNote}</Notice>}
         </div>
@@ -129,14 +135,31 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
         className="relative mt-10 grid items-start gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]"
       >
         <div className="space-y-8">
-          <StillToProve requirements={result.requirements} onSelect={choose} />
-          <RequirementList
-            requirements={result.requirements}
-            resumeLines={analysis.resume.text.split('\n')}
-            facts={result.gitHub?.facts ?? []}
-            selectedId={selectedId}
-            onSelect={choose}
-          />
+          {editing ? (
+            <RequirementEditor
+              analysisId={analysis.id}
+              vacancyTitle={analysis.vacancy.title}
+              requirements={result.requirements}
+              onCancel={() => setEditing(false)}
+            />
+          ) : (
+            <>
+              <StillToProve requirements={result.requirements} onSelect={choose} />
+              <p className="text-sm text-ink-soft">
+                Read a requirement wrongly?{' '}
+                <button type="button" onClick={() => setEditing(true)} className={`cursor-pointer text-ink ${linkStyle}`}>
+                  Edit the requirements
+                </button>
+              </p>
+              <RequirementList
+                requirements={result.requirements}
+                resumeLines={analysis.resume.text.split('\n')}
+                facts={result.gitHub?.facts ?? []}
+                selectedId={selectedId}
+                onSelect={choose}
+              />
+            </>
+          )}
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-6" aria-label="Evidence">

@@ -25,13 +25,14 @@ public record AnalysisResponse(
     DateTimeOffset CreatedAt,
     DateTimeOffset? CompletedAt,
     DateTimeOffset ExpiresAt,
+    bool RequirementsEdited,
     ResumeResponse Resume,
     VacancyResponse Vacancy,
     AnalysisResult? Result)
 {
     public static AnalysisResponse From(Analysis analysis, TimeSpan lifetime) => new(
         analysis.Id, analysis.GitHubLogin, analysis.Status, analysis.Stage, analysis.Engine, analysis.Error,
-        analysis.CreatedAt, analysis.CompletedAt, analysis.CreatedAt + lifetime,
+        analysis.CreatedAt, analysis.CompletedAt, analysis.CreatedAt + lifetime, analysis.GivenRequirements is not null,
         ResumeResponse.From(analysis.Resume), VacancyResponse.From(analysis.Vacancy), analysis.Result);
 }
 
