@@ -62,6 +62,8 @@ export type Analysis = {
   completedAt: string | null
   /** When the comparison and its documents are deleted automatically. */
   expiresAt: string
+  /** True when the user corrected the requirements before this comparison. */
+  requirementsEdited: boolean
   resume: Resume
   vacancy: Vacancy
   result: AnalysisResult | null
@@ -101,6 +103,14 @@ export function createAnalysis(request: {
 
 export function getAnalysis(id: string): Promise<Analysis> {
   return send<Analysis>(`/api/analyses/${id}`, {})
+}
+
+/** Compares the same documents again against requirements the user has corrected. */
+export function rerunAnalysis(
+  id: string,
+  requirements: { text: string; importance: Importance; vacancyLine: number | null }[],
+): Promise<Analysis> {
+  return send<Analysis>(`/api/analyses/${id}/rerun`, json({ requirements }))
 }
 
 /** Deletes a comparison and its documents at once. */

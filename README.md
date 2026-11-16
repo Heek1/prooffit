@@ -23,7 +23,8 @@ checks the evidence and computes the score.
 
 Choosing a requirement in the report draws a thread to each line it cites in the resume and
 each fact it cites from GitHub, and marks the line of the vacancy the requirement was read
-from, so the reading of the vacancy can be checked as well. The start page runs a small
+from, so the reading of the vacancy can be checked as well. If it was read wrongly, the
+requirements can be edited by hand and the documents compared again. The start page runs a small
 example of this, and a sample comparison is one click away.
 
 ![The start page: a running example of a requirement reaching for its evidence, above the upload form](docs/screenshots/start.png)
@@ -191,6 +192,7 @@ cd frontend && npm run lint && npm test && npm run build
 | `POST` | `/api/analyses` | Start a comparison: `{ "resumeId", "vacancyId", "gitHubLogin"? }`; returns 202 |
 | `GET` | `/api/analyses/{id}` | A comparison with its documents and, once finished, its report |
 | `GET` | `/api/analyses/{id}/events` | Progress as server-sent events; closes when the comparison ends |
+| `POST` | `/api/analyses/{id}/rerun` | Compare the same documents again against corrected requirements: `{ "requirements": [{ "text", "importance", "vacancyLine"? }] }`, 1 to 40 |
 | `DELETE` | `/api/analyses/{id}` | Delete a comparison and its documents now |
 | `GET` | `/health/live` | The process is up |
 | `GET` | `/health/ready` | The process is up and can reach the database |
