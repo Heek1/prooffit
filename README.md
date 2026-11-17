@@ -179,6 +179,10 @@ For Docker Compose, copy `.env.example` to `.env` and fill it in.
 The backend integration tests start their own PostgreSQL container, so Docker has to be
 running. GitHub and Gemini are replaced by stub HTTP handlers; no test touches the network.
 
+The guarantees about evidence are also checked as properties (FsCheck): matcher output is
+generated to be as wrong as a model can be, with invented ids, line numbers outside the resume
+and facts that were never gathered, and every verdict must still cite evidence that exists.
+
 ```bash
 cd backend && dotnet test
 ```
