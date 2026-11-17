@@ -191,6 +191,14 @@ cd backend && dotnet test
 cd frontend && npm run lint && npm test && npm run build
 ```
 
+End-to-end tests drive the real frontend in Chromium: the sample comparison, choosing
+requirements, editing them, deleting a report, phone width and reduced motion. The API is
+answered by a fake inside the browser, so they need no backend.
+
+```bash
+cd frontend && npx playwright install chromium && npm run e2e
+```
+
 ## API
 
 | Method | Path | Purpose |
