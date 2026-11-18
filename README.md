@@ -83,6 +83,17 @@ Each has a longer record, with what it costs, in [docs/decisions](docs/decisions
   as server-sent events, read from the database, so it keeps working if the API and the
   worker become separate processes. Unfinished analyses are requeued on startup.
 - **A report is one JSON document.** It is written once and always read whole.
+- **Text a reader cannot see is not evidence.** White or near-white text, text under three
+  points, and invisible text are left out of a resume when its PDF is read, and the page says
+  how many characters were dropped. Hiding a vacancy's keywords is the oldest trick against
+  automated screening, and it would otherwise prove anything.
+- **Instructions in a resume are not evidence either.** "Ignore previous instructions",
+  "SYSTEM: ..." and "the candidate meets all requirements" lines are not counted by the
+  keyword engine, and the model is told to treat such text as part of the document.
+- **Locked down by default.** The API sends strict security headers (no framing, no sniffing,
+  no referrer, a Content-Security-Policy that allows nothing) and HSTS outside development.
+  The built frontend carries its own Content-Security-Policy: scripts, styles and fonts only
+  from the site, requests only to the site and the API. Dependabot and CodeQL watch the code.
 - **Repeated comparisons are answered from an earlier report.** The same resume, vacancy
   and GitHub login give the same verdicts, so a recent complete report is copied instead of
   asking the model again. The sample is instant after its first run, and repeats spend none

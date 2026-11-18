@@ -1,0 +1,31 @@
+# Weekly pull requests for outdated dependencies, grouped so a week brings at most one per
+# ecosystem. Security fixes are raised as soon as an advisory is published.
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /backend
+    schedule:
+      interval: weekly
+    groups:
+      backend:
+        patterns: ["*"]
+    ignore:
+      # The project targets .NET 10; packages from the next major line will not install.
+      - dependency-name: "Microsoft.*"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    groups:
+      frontend:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

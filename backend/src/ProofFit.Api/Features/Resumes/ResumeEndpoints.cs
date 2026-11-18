@@ -4,10 +4,10 @@ using ProofFit.Api.Domain;
 
 namespace ProofFit.Api.Features.Resumes;
 
-public record ResumeResponse(Guid Id, string FileName, int PageCount, string Text, DateTimeOffset UploadedAt)
+public record ResumeResponse(Guid Id, string FileName, int PageCount, string Text, DateTimeOffset UploadedAt, int IgnoredCharacters)
 {
     public static ResumeResponse From(Resume resume) =>
-        new(resume.Id, resume.FileName, resume.PageCount, resume.Text, resume.UploadedAt);
+        new(resume.Id, resume.FileName, resume.PageCount, resume.Text, resume.UploadedAt, resume.IgnoredCharacters);
 }
 
 public static class ResumeEndpoints
@@ -52,6 +52,7 @@ public static class ResumeEndpoints
             FileName = DisplayName(file.FileName),
             Text = pdf.Text,
             PageCount = pdf.PageCount,
+            IgnoredCharacters = pdf.IgnoredCharacters,
             UploadedAt = Timestamp.Now(),
         };
         db.Resumes.Add(resume);
