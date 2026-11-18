@@ -1,9 +1,15 @@
 # ProofFit
 
+[![CI](https://github.com/Heek1/prooffit/actions/workflows/ci.yml/badge.svg)](https://github.com/Heek1/prooffit/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-prooffit.onrender.com-1d2b4f)](https://prooffit.onrender.com)
+![.NET 10](https://img.shields.io/badge/.NET-10-512bd4)
+![React 19](https://img.shields.io/badge/React-19-149eca)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 **Does your resume prove what the vacancy asks for?**
 
-**Live demo:** [prooffit.onrender.com](https://prooffit.onrender.com). Press "Load a sample resume and
-vacancy", then Compare. It runs on free hosting, so the first request can take up to a minute.
+**Live demo:** [prooffit.onrender.com](https://prooffit.onrender.com). Press "Run a sample
+comparison". It runs on free hosting, so the first request can take up to a minute.
 
 ProofFit compares a resume with a job posting and backs every verdict with evidence. A
 requirement counts as met only when the report can point at a line of the resume or at
@@ -58,6 +64,8 @@ left with no evidence becomes "no evidence". A model cannot talk a requirement i
 report as met.
 
 ## Design decisions
+
+Each has a longer record, with what it costs, in [docs/decisions](docs/decisions/README.md).
 
 - **Evidence is checked in code, not trusted.** This is the product's one promise, so it does
   not depend on a prompt being obeyed.
