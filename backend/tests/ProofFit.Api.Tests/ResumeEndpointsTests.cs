@@ -40,6 +40,16 @@ public class ResumeEndpointsTests(ApiFactory factory)
     }
 
     [Fact]
+    public async Task Upload_rejects_a_pdf_with_too_many_pages()
+    {
+        var pages = Enumerable.Range(1, 11).Select(n => new[] { $"Page {n}" }).ToArray();
+
+        var response = await Upload(TestPdf.WithPages(pages), "thesis.pdf");
+
+        await AssertFileError(response, "The PDF has 11 pages. A resume can have at most 10.");
+    }
+
+    [Fact]
     public async Task Upload_rejects_a_pdf_without_selectable_text()
     {
         var response = await Upload(TestPdf.Blank(), "scan.pdf");

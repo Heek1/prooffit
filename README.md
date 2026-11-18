@@ -223,7 +223,7 @@ cd frontend && npx playwright install chromium && npm run e2e
 
 | Method | Path | Purpose |
 |---|---|---|
-| `POST` | `/api/resumes` | Upload a PDF (multipart field `file`, up to 5 MB); returns the extracted text |
+| `POST` | `/api/resumes` | Upload a PDF (multipart field `file`, up to 5 MB and 10 pages); returns the extracted text |
 | `GET` | `/api/resumes/{id}` | A stored resume |
 | `POST` | `/api/vacancies` | Save a vacancy: `{ "title", "text" }`, text of 50 to 20,000 characters |
 | `GET` | `/api/vacancies/{id}` | A stored vacancy |
