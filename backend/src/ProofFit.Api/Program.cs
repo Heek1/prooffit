@@ -89,6 +89,11 @@ if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 }
 
 app.UseForwardedHeaders();
+app.UseSecurityHeaders();
+
+// HTTPS is enforced by the host in front of the API; this tells browsers to keep using it.
+if (!app.Environment.IsDevelopment()) app.UseHsts();
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseCors();
