@@ -46,6 +46,12 @@ export function ResumeSheet({ resume, onChange }: ResumeSheetProps) {
         detail={`${resume.fileName}, ${pages}`}
         action={<TextButton onClick={() => onChange(null)}>Replace</TextButton>}
       >
+        {resume.ignoredCharacters > 0 && (
+          <p role="status" className="mb-3 border-l-4 border-marker-deep bg-desk/50 px-3 py-2 text-sm">
+            This PDF holds {resume.ignoredCharacters.toLocaleString('en')} characters of text a reader cannot see,
+            such as white or tiny text. They were left out and count as no evidence.
+          </p>
+        )}
         <DocumentText text={resume.text} label="Resume text" />
       </Sheet>
     )

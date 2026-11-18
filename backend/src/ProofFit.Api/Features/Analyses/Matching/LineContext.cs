@@ -11,7 +11,7 @@ public enum LineUse
     /// <summary>The candidate is studying it: a course, a tutorial, "currently learning".</summary>
     Learning,
 
-    /// <summary>The line names it without the candidate having used it: a negation, or other people's work.</summary>
+    /// <summary>The line names it without the candidate having used it: a negation, other people's work, or an instruction aimed at a screening tool.</summary>
     NotPractised,
 }
 
@@ -25,7 +25,7 @@ public static partial class LineContext
 {
     public static LineUse Classify(string line)
     {
-        if (Negation().IsMatch(line) || OthersWork().IsMatch(line)) return LineUse.NotPractised;
+        if (Negation().IsMatch(line) || OthersWork().IsMatch(line) || Instruction().IsMatch(line)) return LineUse.NotPractised;
         if (Study().IsMatch(line)) return LineUse.Learning;
         return LineUse.Practised;
     }
@@ -42,6 +42,14 @@ public static partial class LineContext
         @"\b(?:alongside|together\s+with)\s+(?:\w+\s+){0,3}(?:developers|engineers|colleagues|teams?)\b|\b(?:developers|engineers|colleagues|teammates|people|others)\s+who\s+(?:used|built|wrote|ran)\b",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex OthersWork();
+
+    // A line written to a screening tool rather than to a reader: "ignore previous
+    // instructions", "SYSTEM: ...", "the candidate meets all requirements". The words it
+    // names are a demand, not a record of work.
+    [GeneratedRegex(
+        @"\b(?:ignore|disregard|forget)\s+(?:all\s+|any\s+|the\s+)?(?:previous|prior|above|earlier)\s+(?:instructions|rules|prompts?)\b|^\s*(?:system|assistant|ai|note\s+to\s+(?:the\s+)?(?:ai|model|screener))\s*:|\b(?:candidate|applicant)\s+(?:meets|satisfies|fulfils|fulfills)\s+(?:all|every)\b|\bmark\s+(?:all|every)\s+(?:requirements?|skills?)\b",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex Instruction();
 
     [GeneratedRegex(
         @"\b(?:currently\s+)?(?:learning|studying)\b|\b(?:introductory|online|beginner)\s+course\b|\btutorials?\b",

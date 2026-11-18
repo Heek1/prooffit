@@ -33,7 +33,7 @@ function analysis(id: string, edited: boolean, requirements = defaultRequirement
     completedAt: now,
     expiresAt: new Date(Date.now() + 24 * 3600 * 1000).toISOString(),
     requirementsEdited: edited,
-    resume: { id: 'resume-1', fileName: 'sample-resume.pdf', pageCount: 1, text: RESUME_TEXT, uploadedAt: now },
+    resume: { id: 'resume-1', fileName: 'sample-resume.pdf', pageCount: 1, text: RESUME_TEXT, uploadedAt: now, ignoredCharacters: 0 },
     vacancy: { id: 'vacancy-1', title: 'Full-stack developer', text: VACANCY_TEXT, createdAt: now },
     result: {
       score: Math.round((100 * proven) / requirements.length),

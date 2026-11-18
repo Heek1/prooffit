@@ -32,4 +32,26 @@ public static class TestPdf
 
     /// <summary>A valid one-page PDF with no text, like a scanned document.</summary>
     public static byte[] Blank() => WithPages([[]]);
+
+    /// <summary>How a line is drawn: as a reader sees it, or hidden from one.</summary>
+    public enum Ink { Visible, White, Tiny }
+
+    /// <summary>One page of lines, each drawn as given, top to bottom.</summary>
+    public static byte[] WithInk(params (string Text, Ink Ink)[] lines)
+    {
+        var builder = new PdfDocumentBuilder();
+        var font = builder.AddStandard14Font(Standard14Font.Helvetica);
+        var page = builder.AddPage(PageSize.A4);
+
+        var y = 780.0;
+        foreach (var (text, ink) in lines)
+        {
+            if (ink == Ink.White) page.SetTextAndFillColor(255, 255, 255);
+            page.AddText(text, ink == Ink.Tiny ? 1 : 12, new PdfPoint(40, y), font);
+            page.ResetColor();
+            y -= 20;
+        }
+
+        return builder.Build();
+    }
 }

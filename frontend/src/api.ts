@@ -8,6 +8,8 @@ export type Resume = {
   pageCount: number
   text: string
   uploadedAt: string
+  /** Characters in the PDF left out because a reader could not see them. */
+  ignoredCharacters: number
 }
 
 export type Vacancy = {

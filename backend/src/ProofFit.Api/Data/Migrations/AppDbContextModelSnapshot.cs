@@ -107,6 +107,9 @@ namespace ProofFit.Api.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<int>("IgnoredCharacters")
+                        .HasColumnType("integer");
+
                     b.Property<int>("PageCount")
                         .HasColumnType("integer");
 
