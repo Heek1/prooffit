@@ -9,3 +9,4 @@ Short records of the choices that shape ProofFit: what was decided, why, and wha
 - [0005. Analyses run in a background worker and report progress from the database](0005-analyses-run-in-the-background.md)
 - [0006. A keyword engine as the baseline and the fallback](0006-a-keyword-engine-as-baseline-and-fallback.md)
 - [0007. No accounts; reports expire after a day](0007-no-accounts-reports-expire.md)
+- [0008. Attempts to game the screen prove nothing](0008-gaming-the-screen-proves-nothing.md)

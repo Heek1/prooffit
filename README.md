@@ -1,6 +1,7 @@
 # ProofFit
 
 [![CI](https://github.com/Heek1/prooffit/actions/workflows/ci.yml/badge.svg)](https://github.com/Heek1/prooffit/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Heek1/prooffit/actions/workflows/codeql.yml/badge.svg)](https://github.com/Heek1/prooffit/actions/workflows/codeql.yml)
 [![Live demo](https://img.shields.io/badge/demo-prooffit.onrender.com-1d2b4f)](https://prooffit.onrender.com)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512bd4)
 ![React 19](https://img.shields.io/badge/React-19-149eca)
