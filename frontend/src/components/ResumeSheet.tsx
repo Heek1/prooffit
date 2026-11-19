@@ -1,6 +1,6 @@
 import { useState, type DragEvent } from 'react'
 import { ApiError, uploadResume, type Resume } from '../api.ts'
-import { RESUME_FILE_BYTES } from '../limits.ts'
+import { RESUME_FILE_BYTES, RESUME_PAGES } from '../limits.ts'
 import { DocumentText } from './DocumentText.tsx'
 import { ErrorList, Sheet, TextButton } from './Sheet.tsx'
 
@@ -85,7 +85,7 @@ export function ResumeSheet({ resume, onChange }: ResumeSheetProps) {
           {uploading ? 'Reading your resume…' : 'Choose a PDF resume'}
         </span>
         <span className="text-sm text-ink-soft">
-          or drop it here. Up to {RESUME_FILE_BYTES / (1024 * 1024)} MB, with selectable text.
+          or drop it here. Up to {RESUME_FILE_BYTES / (1024 * 1024)} MB and {RESUME_PAGES} pages, with selectable text.
         </span>
       </label>
       <ErrorList messages={errors} />
