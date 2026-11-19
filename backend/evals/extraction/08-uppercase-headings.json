@@ -1,0 +1,48 @@
+{
+  "name": "uppercase-headings",
+  "about": "Headings in capitals and without colons.",
+  "vacancy": [
+    "QA AUTOMATION ENGINEER",
+    "",
+    "WHAT YOU WILL DO",
+    "- Automate regression tests for the web app",
+    "- Maintain the test pipeline",
+    "",
+    "WHAT YOU NEED",
+    "- Playwright or Cypress",
+    "- JavaScript or TypeScript",
+    "- API testing with Postman",
+    "",
+    "BONUS",
+    "- Performance testing with k6"
+  ],
+  "expected": [
+    {
+      "match": [
+        "Playwright",
+        "Cypress"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "JavaScript",
+        "TypeScript"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Postman",
+        "API testing"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "k6"
+      ],
+      "importance": "niceToHave"
+    }
+  ]
+}

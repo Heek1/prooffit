@@ -1,0 +1,59 @@
+{
+  "name": "ukrainian",
+  "about": "A posting written in Ukrainian with Ukrainian headings.",
+  "vacancy": [
+    "Full-stack розробник",
+    "",
+    "Вимоги:",
+    "- досвід роботи з Node.js від 2 років",
+    "- знання React",
+    "- досвід з MongoDB",
+    "- англійська на рівні Intermediate",
+    "",
+    "Буде плюсом:",
+    "- GraphQL",
+    "- досвід з AWS",
+    "",
+    "Ми пропонуємо:",
+    "- офіс у Львові або віддалену роботу"
+  ],
+  "expected": [
+    {
+      "match": [
+        "Node.js"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "React"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "MongoDB"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "англійська",
+        "Intermediate"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "GraphQL"
+      ],
+      "importance": "niceToHave"
+    },
+    {
+      "match": [
+        "AWS"
+      ],
+      "importance": "niceToHave"
+    }
+  ]
+}

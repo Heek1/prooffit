@@ -31,7 +31,7 @@ public partial class KeywordRequirementExtractor : IRequirementExtractor
         (Section.MustHave,
         [
             "requirement", "must have", "must-have", "qualification", "we expect", "you have",
-            "what you need", "about you", "who you are", "skills", "tech stack",
+            "what you need", "about you", "who you are", "looking for", "skills", "tech stack",
             "вимоги", "необхідні", "ми очікуємо", "навички",
         ]),
     ];
@@ -58,6 +58,9 @@ public partial class KeywordRequirementExtractor : IRequirementExtractor
             }
 
             if (section == Section.NotRequirements) continue;
+
+            // A line written to screening software asks for a verdict, not for a skill.
+            if (LineContext.IsInstruction(text)) continue;
 
             // Inside a requirements section every bullet is a requirement, named skill or
             // not ("3+ years of experience"). Anywhere else, prose included, a line has to

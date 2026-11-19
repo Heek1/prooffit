@@ -22,6 +22,7 @@ jobs:
       - run: dotnet test --no-build
       # The keyword baseline is deterministic, so a drop in its accuracy is a regression.
       - run: dotnet run --project evals/ProofFit.Evals --no-build -- --min-accuracy 0.5
+      - run: dotnet run --project evals/ProofFit.Evals --no-build -- --suite extraction --min-recall 0.85 --min-precision 0.9
 
   frontend:
     runs-on: ubuntu-latest
