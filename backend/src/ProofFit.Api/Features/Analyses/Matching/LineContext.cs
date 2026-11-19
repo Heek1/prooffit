@@ -30,6 +30,9 @@ public static partial class LineContext
         return LineUse.Practised;
     }
 
+    /// <summary>Whether the line addresses a screening tool rather than a reader, in a resume or a vacancy alike.</summary>
+    public static bool IsInstruction(string line) => Instruction().IsMatch(line);
+
     // Experience that the line itself says is missing. Plain "no" is not enough on its own:
     // "deployed with no downtime using Docker" is still Docker experience.
     [GeneratedRegex(
@@ -47,7 +50,7 @@ public static partial class LineContext
     // instructions", "SYSTEM: ...", "the candidate meets all requirements". The words it
     // names are a demand, not a record of work.
     [GeneratedRegex(
-        @"\b(?:ignore|disregard|forget)\s+(?:all\s+|any\s+|the\s+)?(?:previous|prior|above|earlier)\s+(?:instructions|rules|prompts?)\b|^\s*(?:system|assistant|ai|note\s+to\s+(?:the\s+)?(?:ai|model|screener))\s*:|\b(?:candidate|applicant)\s+(?:meets|satisfies|fulfils|fulfills)\s+(?:all|every)\b|\bmark\s+(?:all|every)\s+(?:requirements?|skills?)\b",
+        @"\b(?:ignore|disregard|forget)\s+(?:all\s+|any\s+|the\s+)?(?:previous|prior|above|earlier)\s+(?:instructions|rules|prompts?)\b|^\s*(?:system|assistant|ai|note\s+to\s+(?:the\s+|any\s+|all\s+)?(?:ai|llm|model|bot|screen\w*)(?:\s+[\w-]+){0,2})\s*:|\b(?:candidate|applicant)\s+(?:meets|satisfies|fulfils|fulfills)\s+(?:all|every)\b|\bmark\s+(?:all|every)\s+(?:requirements?|skills?|applicants?|candidates?)\b",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex Instruction();
 

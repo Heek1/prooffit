@@ -1,0 +1,55 @@
+{
+  "name": "numbered-must-and-preferred",
+  "about": "Numbered lists under \"Must have\" and \"Preferred\" headings.",
+  "vacancy": [
+    "Android Developer",
+    "",
+    "Must have",
+    "1. Kotlin",
+    "2. Jetpack Compose",
+    "3. Coroutines and Flow",
+    "4. Publishing apps to Google Play",
+    "",
+    "Preferred",
+    "1. Kotlin Multiplatform",
+    "2. CI with Fastlane"
+  ],
+  "expected": [
+    {
+      "match": [
+        "Kotlin"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Compose"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Coroutines"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Google Play"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Multiplatform"
+      ],
+      "importance": "niceToHave"
+    },
+    {
+      "match": [
+        "Fastlane"
+      ],
+      "importance": "niceToHave"
+    }
+  ]
+}

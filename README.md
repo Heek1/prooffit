@@ -141,6 +141,32 @@ cd backend && dotnet run --project evals/ProofFit.Evals
 To evaluate the model engine, set `LLM_API_KEY` and add `-- --engine model`. When the daily
 quota runs out the run stops with the cases it finished and prints where to resume.
 
+### Reading requirements from a vacancy
+
+The cases above give the requirements, so they measure matching alone. A second set,
+`backend/evals/extraction`, measures the step before it: 10 vacancies with 51 labelled
+requirements, in the layouts postings use (headed lists, optional items marked inline,
+responsibilities and benefits around the requirements, plain prose, numbered lists, a one-line
+stack, capitalised headings, Ukrainian, a line addressed to screening software).
+
+| Extractor | Recall | Precision | Required or optional right |
+|---|---|---|---|
+| Keyword baseline | 48 of 51 (94.1%) | 45 of 46 (97.8%) | 48 of 48 |
+| Model | not measured yet | | |
+
+Recall is the share of labelled requirements found; precision, the share of extracted ones
+that are real. An extracted requirement finds a label when it names the label's phrase, so
+"React with TypeScript" can arrive as one requirement or two. The keyword extractor misses
+requirements written as prose that name tools outside its catalog (Airflow, Snowflake, dbt),
+and takes the job title "Backend Developer (.NET)" for a requirement. Two of its faults were
+found by this set and fixed before the figures above: it did not read "What we are looking
+for" as a heading, and it listed a line telling screening tools to pass every applicant.
+CI fails below 85% recall or 90% precision.
+
+```bash
+cd backend && dotnet run --project evals/ProofFit.Evals -- --suite extraction
+```
+
 ## Run it locally
 
 You need the .NET 10 SDK, Node.js 22 and Docker.
@@ -277,7 +303,7 @@ docker-compose.yml
 - **The keyword engine knows a fixed list of technologies.** A requirement that names none of
   them is reported as unchecked.
 - **The demo runs on free tiers.** The server sleeps when idle, the database is a free
-  instance that expires after a month, and the model has a small daily quota, after which
+  Supabase project kept awake by a daily request, and the model has a small daily quota, after which
   reports come from the keyword engine and say so.
 
 ## License
