@@ -95,6 +95,10 @@ Each has a longer record, with what it costs, in [docs/decisions](docs/decisions
   no referrer, a Content-Security-Policy that allows nothing) and HSTS outside development.
   The built frontend carries its own Content-Security-Policy: scripts, styles and fonts only
   from the site, requests only to the site and the API. Dependabot and CodeQL watch the code.
+- **Years of experience are counted in code.** Dated jobs in the resume ("March 2019 to
+  present") are read into periods, credited with the technologies under them, and added up
+  with overlaps counted once. The keyword engine checks "3+ years of Python" against that
+  count, and the model is handed the numbers instead of doing the date arithmetic itself.
 - **Repeated comparisons are answered from an earlier report.** The same resume, vacancy
   and GitHub login give the same verdicts, so a recent complete report is copied instead of
   asking the model again. The sample is instant after its first run, and repeats spend none
@@ -110,7 +114,7 @@ vacancies in Ukrainian, certifications, and a resume that tries to instruct the 
 
 | Engine | Cases run | Accuracy | Unsupported claims |
 |---|---|---|---|
-| Keyword baseline | 25 of 25 | 73 of 139 (52.5%) | 2 |
+| Keyword baseline | 25 of 25 | 75 of 139 (54.0%) | 2 |
 | Model (`gemini-3.5-flash`) | 21 of 25 | 108 of 120 (90.0%) | 1 |
 
 The model's free tier allows about 20 calls a day, one per case, so its run is split across

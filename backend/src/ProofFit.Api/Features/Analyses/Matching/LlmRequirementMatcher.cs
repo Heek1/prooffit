@@ -11,8 +11,11 @@ namespace ProofFit.Api.Features.Analyses.Matching;
 /// proposes: what it cites is checked by <see cref="EvidenceValidator"/> afterwards, and a
 /// verdict whose evidence does not exist is discarded.
 /// </summary>
-public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
+/// <param name="time">The clock that dates "to present"; the system clock when not given.</param>
+public partial class LlmRequirementMatcher(ILlmClient llm, TimeProvider? time = null) : IRequirementMatcher
 {
+    private readonly TimeProvider _time = time ?? TimeProvider.System;
+
     private const string System = """
         You check a candidate's evidence against the requirements of a job posting.
 
@@ -22,6 +25,8 @@ public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
         - missing: nothing in the evidence shows it.
 
         The evidence is the numbered resume lines and the GitHub facts below, and nothing else. In resumeLines and gitHubFacts, cite every line number and fact id your verdict rests on. A confirmed or partial verdict that cites nothing will be discarded. Do not assume a skill that is not stated: a job title or a general claim is not evidence of a specific technology.
+
+        When a requirement asks for an amount of experience, take the years from EXPERIENCE COUNTED FROM THE RESUME'S DATES. They are counted exactly from the dates in the resume, with overlapping jobs counted once; do not redo that arithmetic. Years the resume states in words count as well. Cite the lines the count comes from.
 
         Only the candidate's own hands-on work is evidence. Work that other people did, or that the candidate only managed or paid for, is not. When the resume says the candidate lacks what is asked for, the status is missing.
 
@@ -64,7 +69,7 @@ public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
         CancellationToken ct)
     {
         var answer = await llm.GenerateAsync<Answer>(
-            new LlmPrompt("match", System, Describe(requirements, resume, gitHubFacts), SchemaFor(requirements)), ct);
+            new LlmPrompt("match", System, Describe(requirements, resume, gitHubFacts, Today()), SchemaFor(requirements)), ct);
 
         var matches = (answer.Matches ?? [])
             .Select(item => (Item: item, Id: Resolve(item.RequirementId, requirements)))
@@ -118,8 +123,10 @@ public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
         return number is null ? null : requirements.FirstOrDefault(r => r.Id == "R" + number)?.Id;
     }
 
+    private DateOnly Today() => DateOnly.FromDateTime(_time.GetUtcNow().UtcDateTime);
+
     private static string Describe(
-        IReadOnlyList<Requirement> requirements, NumberedText resume, IReadOnlyList<GitHubFact> gitHubFacts)
+        IReadOnlyList<Requirement> requirements, NumberedText resume, IReadOnlyList<GitHubFact> gitHubFacts, DateOnly today)
     {
         var prompt = new StringBuilder("REQUIREMENTS\n");
         foreach (var requirement in requirements)
@@ -130,6 +137,8 @@ public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
 
         prompt.Append("\nRESUME, one numbered line per row\n").Append(resume.ToPrompt()).Append('\n');
 
+        prompt.Append("\nEXPERIENCE COUNTED FROM THE RESUME'S DATES\n").Append(DescribeExperience(Experience.Read(resume, today)));
+
         prompt.Append("\nGITHUB FACTS, found in the candidate's public repositories\n");
         if (gitHubFacts.Count == 0) prompt.Append("None.\n");
         foreach (var fact in gitHubFacts)
@@ -139,6 +148,27 @@ public partial class LlmRequirementMatcher(ILlmClient llm) : IRequirementMatcher
         }
 
         return prompt.ToString();
+    }
+
+    private static string DescribeExperience(ExperienceSummary experience)
+    {
+        if (experience.Periods.Count == 0) return "No dated work found.\n";
+
+        var text = new StringBuilder();
+        text.Append("Total: ").Append(Experience.Describe(experience.TotalMonths)).Append(", ")
+            .Append(FromLines(experience.Periods)).Append('\n');
+        foreach (var skill in experience.Periods.SelectMany(period => period.Skills).Distinct())
+        {
+            text.Append(skill).Append(": ").Append(Experience.Describe(experience.MonthsWith(skill))).Append(", ")
+                .Append(FromLines(experience.PeriodsWith(skill))).Append('\n');
+        }
+        return text.ToString();
+    }
+
+    private static string FromLines(IEnumerable<WorkPeriod> periods)
+    {
+        var lines = periods.Select(period => period.Line).ToList();
+        return (lines.Count == 1 ? "from line " : "from lines ") + string.Join(", ", lines);
     }
 
     private record Answer(List<Item>? Matches);

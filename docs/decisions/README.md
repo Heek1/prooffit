@@ -10,3 +10,4 @@ Short records of the choices that shape ProofFit: what was decided, why, and wha
 - [0006. A keyword engine as the baseline and the fallback](0006-a-keyword-engine-as-baseline-and-fallback.md)
 - [0007. No accounts; reports expire after a day](0007-no-accounts-reports-expire.md)
 - [0008. Attempts to game the screen prove nothing](0008-gaming-the-screen-proves-nothing.md)
+- [0009. Years of experience are counted in code](0009-years-are-counted-in-code.md)
