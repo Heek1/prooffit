@@ -244,8 +244,10 @@ cd frontend && npm run lint && npm test && npm run build
 ```
 
 End-to-end tests drive the real frontend in Chromium: the sample comparison, choosing
-requirements, editing them, deleting a report, phone width and reduced motion. The API is
-answered by a fake inside the browser, so they need no backend.
+requirements, editing them, deleting a report, phone width, reduced motion, and reading a
+report with the keyboard alone. Every page is also checked with axe against WCAG 2.1 A and
+AA and axe's best practices, and any violation fails the run. The API is answered by a fake
+inside the browser, so they need no backend.
 
 ```bash
 cd frontend && npx playwright install chromium && npm run e2e
