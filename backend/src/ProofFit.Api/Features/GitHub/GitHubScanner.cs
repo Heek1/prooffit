@@ -13,6 +13,9 @@ public class GitHubScanner(GitHubClient client, IOptions<GitHubOptions> options)
     /// <exception cref="GitHubUnavailableException">Nothing could be read: no such user, no network, or the request limit.</exception>
     public async Task<GitHubEvidence> ScanAsync(string login, CancellationToken ct)
     {
+        // The login is not recorded: a trace needs to show the scan's cost, not whose it was.
+        using var activity = Telemetry.Source.StartActivity("github.scan");
+
         var repositories = (await client.ListRepositoriesAsync(login, ct))
             .Where(repository => !repository.Fork && repository.Size > 0)
             .OrderByDescending(repository => repository.PushedAt)
@@ -51,6 +54,8 @@ public class GitHubScanner(GitHubClient client, IOptions<GitHubOptions> options)
             .Select((entry, index) => new GitHubFact($"G{index + 1}", entry.Name, entry.Repositories))
             .ToList();
 
+        activity?.SetTag("prooffit.github.repositories_scanned", scanned.Count);
+        activity?.SetTag("prooffit.github.facts", facts.Count);
         return new GitHubEvidence(login, scanned.Count, facts);
     }
 

@@ -94,6 +94,11 @@ Each has a longer record, with what it costs, in [docs/decisions](docs/decisions
 - **Instructions in a resume are not evidence either.** "Ignore previous instructions",
   "SYSTEM: ..." and "the candidate meets all requirements" lines are not counted by the
   keyword engine, and the model is told to treat such text as part of the document.
+- **Observable without reading anyone's resume.** OpenTelemetry traces each request, database
+  query, GitHub scan and model call, with the model and its token use tagged after the
+  generative-AI conventions, and an analysis carries its steps as events. Metrics count
+  analyses by outcome and engine, their duration, model fallbacks and tokens. Spans carry
+  ids, counts and durations, never text from a resume or a vacancy.
 - **Locked down by default.** The API sends strict security headers (no framing, no sniffing,
   no referrer, a Content-Security-Policy that allows nothing) and HSTS outside development.
   The built frontend carries its own Content-Security-Policy: scripts, styles and fonts only
@@ -217,6 +222,7 @@ anonymously.
 | `RateLimit:AnalysesPerTenMinutes` | Comparisons one client may start in ten minutes. Defaults to 10. |
 | `RateLimit:UploadsPerMinute` | Uploads and saved vacancies per client each minute. Defaults to 30. |
 | `Retention:Lifetime` | How long a comparison and its documents are kept. Defaults to 24 hours. |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Sends traces, metrics and logs over OTLP to this collector, such as Grafana Cloud, Honeycomb or a local Jaeger. Headers for its key go in `OTEL_EXPORTER_OTLP_HEADERS`. |
 | `Cors:AllowedOrigins` | Origins allowed to call the API, when the frontend is served from another host. |
 
 For local development, keep secrets out of the repository with user secrets:
