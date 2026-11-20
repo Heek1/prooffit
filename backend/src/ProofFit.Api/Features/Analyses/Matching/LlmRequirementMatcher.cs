@@ -30,6 +30,8 @@ public partial class LlmRequirementMatcher(ILlmClient llm, TimeProvider? time = 
 
         Only the candidate's own hands-on work is evidence. Work that other people did, or that the candidate only managed or paid for, is not. When the resume says the candidate lacks what is asked for, the status is missing.
 
+        A skill that appears only in a list of skills, with no described work that uses it, is at most partial. Work from courses, university or personal projects is not commercial or production experience: when a requirement asks for commercial, production or professional experience, such work is at most partial.
+
         Write reason as one plain sentence of at most 25 words, saying what the evidence shows or what is absent. Call the person "the candidate" and never assume their gender.
 
         Answer for every requirement. In requirementId give its id exactly as listed, such as R1.
