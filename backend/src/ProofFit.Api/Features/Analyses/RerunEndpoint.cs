@@ -73,7 +73,7 @@ public static class RerunEndpoint
         };
         db.Analyses.Add(analysis);
         await db.SaveChangesAsync(ct);
-        queue.Enqueue(analysis.Id);
+        queue.Wake();
 
         return TypedResults.AcceptedAtRoute(
             AnalysisResponse.From(analysis, retention.Value.Lifetime), "GetAnalysis", new { id = analysis.Id });

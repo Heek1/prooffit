@@ -86,9 +86,9 @@ public static class AnalysisEndpoints
         db.Analyses.Add(analysis);
         await db.SaveChangesAsync(ct);
 
-        // Queued only after the row is committed. If the process dies in between, the
-        // worker finds the row on its next start.
-        queue.Enqueue(analysis.Id);
+        // The row is the queue entry; waking the worker only saves it waiting for the
+        // next poll. Any instance may be the one that runs it.
+        queue.Wake();
 
         return TypedResults.AcceptedAtRoute(
             AnalysisResponse.From(analysis, retention.Value.Lifetime), "GetAnalysis", new { id = analysis.Id });

@@ -60,6 +60,7 @@ builder.Services.AddOptions<RetentionOptions>().BindConfiguration("Retention");
 builder.Services.AddScoped<RetentionCleaner>();
 builder.Services.AddHostedService<RetentionWorker>();
 builder.Services.AddSingleton<AnalysisQueue>();
+builder.Services.AddScoped<AnalysisLeases>();
 builder.Services.AddHostedService<AnalysisWorker>();
 
 builder.Services.AddOptions<GitHubOptions>().BindConfiguration("GitHub");

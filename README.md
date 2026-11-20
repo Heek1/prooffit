@@ -80,9 +80,11 @@ Each has a longer record, with what it costs, in [docs/decisions](docs/decisions
 - **No sign-in.** Public GitHub data needs no OAuth, and someone trying the demo should not
   have to log in. Scanned profiles are cached for a day because GitHub allows 60 anonymous
   API requests an hour.
-- **Analyses run in a background worker.** Creating one returns at once. Progress is streamed
-  as server-sent events, read from the database, so it keeps working if the API and the
-  worker become separate processes. Unfinished analyses are requeued on startup.
+- **Analyses run in a background worker, and the database is the queue.** Creating one
+  returns at once. A worker claims an analysis with `FOR UPDATE SKIP LOCKED` and holds it on a
+  lease it renews while it runs, so several instances can share the work and an analysis
+  whose instance dies is taken over by another. Progress is streamed as server-sent events,
+  read from the database.
 - **A report is one JSON document.** It is written once and always read whole.
 - **Text a reader cannot see is not evidence.** White or near-white text, text under three
   points, and invisible text are left out of a resume when its PDF is read, and the page says

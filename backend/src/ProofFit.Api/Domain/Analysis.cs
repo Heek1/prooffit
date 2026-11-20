@@ -38,6 +38,12 @@ public class Analysis
     /// <summary>Null until the analysis completes.</summary>
     public AnalysisResult? Result { get; set; }
 
+    /// <summary>Until when a worker holds this analysis. Another worker may take it over once this has passed.</summary>
+    public DateTimeOffset? LeaseExpiresAt { get; set; }
+
+    /// <summary>How many times a worker has taken this analysis on.</summary>
+    public int Attempts { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? CompletedAt { get; set; }
 }
