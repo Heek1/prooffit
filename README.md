@@ -27,6 +27,8 @@ checks the evidence and computes the score.
 - **Judges each requirement** as proven, partly proven or without evidence, with a one-line
   reason and the evidence quoted in place.
 - **Scores the match** from 0 to 100, with must-haves counting double.
+- **Goes with you**: a summary in plain text for an email or a note, or a PDF of the report
+  with each requirement, its reason and its evidence.
 
 Choosing a requirement in the report draws a thread to each line it cites in the resume and
 each fact it cites from GitHub, and marks the line of the vacancy the requirement was read

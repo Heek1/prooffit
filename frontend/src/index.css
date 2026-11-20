@@ -226,3 +226,18 @@
     }
   }
 }
+
+/* Saved as PDF, a report is the requirements with their reasons and quoted evidence, on white. */
+@media print {
+  @page {
+    margin: 16mm;
+  }
+
+  body {
+    background: white;
+  }
+
+  [data-requirement] {
+    break-inside: avoid;
+  }
+}
