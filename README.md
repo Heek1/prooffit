@@ -17,7 +17,7 @@ requirement counts as met only when the report can point at a line of the resume
 something in the candidate's public GitHub repositories. The matcher proposes; plain code
 checks the evidence and computes the score.
 
-![A report: six of ten requirements proven, with threads from the chosen requirement to the lines that back it](docs/screenshots/report.png)
+![The live demo: one click runs the sample comparison; the report shows six of ten requirements proven, and choosing a requirement draws a thread to the resume line that backs it](docs/screenshots/demo.gif)
 
 ## What it does
 
