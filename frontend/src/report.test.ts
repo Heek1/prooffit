@@ -6,6 +6,7 @@ import {
   firstWithEvidence,
   headline,
   lastPushed,
+  reportSummary,
   progressSteps,
   remainder,
   stepState,
@@ -107,5 +108,45 @@ describe('lastPushed', () => {
 
   it('says nothing for repositories recorded without a date', () => {
     expect(lastPushed([{ name: 'infra', url: 'u' }])).toBeNull()
+  })
+})
+
+describe('reportSummary', () => {
+  const analysis: Parameters<typeof reportSummary>[0] = {
+    id: 'a1', gitHubLogin: 'olena-dev', status: 'completed', stage: 'done', engine: 'keyword', error: null,
+    createdAt: '2026-11-20T10:00:00Z', completedAt: '2026-11-20T10:00:05Z', expiresAt: '2026-11-21T10:00:00Z',
+    requirementsEdited: false,
+    resume: { id: 'r1', fileName: 'cv.pdf', pageCount: 1, uploadedAt: '', ignoredCharacters: 0,
+      text: 'Olena Koval\nBuilt a payments API with ASP.NET Core' },
+    vacancy: { id: 'v1', title: 'Backend developer', text: '', createdAt: '' },
+    result: {
+      score: 67, engineNote: null, gitHubNote: null, usage: null,
+      gitHub: { login: 'olena-dev', repositoriesScanned: 2, facts: [
+        { id: 'G1', skill: 'Kubernetes', repositories: [{ name: 'infra', url: 'u', file: 'k8s/deployment.yaml' }] },
+      ] },
+      requirements: [
+        requirement('confirmed', { id: 'R1', text: 'ASP.NET Core', reason: 'Found evidence of ASP.NET Core.', resumeLines: [2] }),
+        requirement('confirmed', { id: 'R2', text: 'Kubernetes', importance: 'niceToHave', reason: 'Manifests on GitHub.', gitHubFacts: ['G1'] }),
+        requirement('missing', { id: 'R3', text: 'Kafka', reason: 'Found no evidence of Kafka.' }),
+      ],
+    },
+  }
+
+  it('lists each requirement under its verdict with the evidence quoted', () => {
+    expect(reportSummary(analysis, 'https://prooffit.onrender.com/analyses/a1')).toBe([
+      'ProofFit report: Backend developer',
+      '2 of 3 requirements proven. Score 67 out of 100, with must-haves counting double.',
+      '',
+      'Proven',
+      '- ASP.NET Core (must-have): Found evidence of ASP.NET Core.',
+      '  Resume line 2: "Built a payments API with ASP.NET Core"',
+      '- Kubernetes (nice to have): Manifests on GitHub.',
+      '  GitHub: Kubernetes in infra (k8s/deployment.yaml)',
+      '',
+      'No evidence',
+      '- Kafka (must-have): Found no evidence of Kafka.',
+      '',
+      'Full report: https://prooffit.onrender.com/analyses/a1 (available until Nov 21, 2026)',
+    ].join('\n'))
   })
 })
