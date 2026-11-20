@@ -41,7 +41,17 @@ export type RequirementMatch = {
 export type GitHubFact = {
   id: string
   skill: string
-  repositories: { name: string; url: string }[]
+  repositories: GitHubRepository[]
+}
+
+/** A repository a fact was found in. The file and date are missing from profiles scanned before they were recorded. */
+export type GitHubRepository = {
+  name: string
+  url: string
+  /** A file in the repository that shows the skill, such as "k8s/deployment.yaml". */
+  file?: string | null
+  fileUrl?: string | null
+  pushedAt?: string | null
 }
 
 export type AnalysisResult = {

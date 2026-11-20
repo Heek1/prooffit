@@ -1,4 +1,4 @@
-import type { AnalysisResult, AnalysisStage, MatchStatus, RequirementMatch } from './api.ts'
+import type { AnalysisResult, AnalysisStage, GitHubRepository, MatchStatus, RequirementMatch } from './api.ts'
 
 /** What each verdict is called in the interface. */
 export const STATUS_LABEL: Record<MatchStatus, string> = {
@@ -8,6 +8,17 @@ export const STATUS_LABEL: Record<MatchStatus, string> = {
 }
 
 export type StatusCounts = Record<MatchStatus, number>
+
+/** "March 2026": when the most recently pushed of a fact's repositories was last pushed to. */
+export function lastPushed(repositories: GitHubRepository[]): string | null {
+  const latest = repositories
+    .map((repository) => (repository.pushedAt ? Date.parse(repository.pushedAt) : NaN))
+    .filter((time) => !Number.isNaN(time))
+    .sort((a, b) => b - a)[0]
+  return latest === undefined
+    ? null
+    : new Date(latest).toLocaleDateString('en', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+}
 
 export function countByStatus(requirements: RequirementMatch[]): StatusCounts {
   const counts: StatusCounts = { confirmed: 0, partial: 0, missing: 0 }

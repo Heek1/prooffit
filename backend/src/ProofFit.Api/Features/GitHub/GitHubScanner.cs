@@ -19,7 +19,7 @@ public class GitHubScanner(GitHubClient client, IOptions<GitHubOptions> options)
             .Take(options.Value.MaxRepositories)
             .ToList();
 
-        var scanned = new ConcurrentDictionary<GitHubRepository, IReadOnlySet<string>>();
+        var scanned = new ConcurrentDictionary<GitHubRepository, IReadOnlyDictionary<string, string>>();
         GitHubUnavailableException? interrupted = null;
 
         var parallel = new ParallelOptions { MaxDegreeOfParallelism = MaxConcurrentRepositories, CancellationToken = ct };
@@ -44,8 +44,8 @@ public class GitHubScanner(GitHubClient client, IOptions<GitHubOptions> options)
         // One fact per skill, in catalog order, listing its repositories newest first.
         var facts = SkillCatalog.All
             .Select(skill => (skill.Name, Repositories: repositories
-                .Where(repository => scanned.TryGetValue(repository, out var skills) && skills.Contains(skill.Name))
-                .Select(repository => new RepositoryRef(repository.Name, repository.HtmlUrl))
+                .Where(repository => scanned.TryGetValue(repository, out var skills) && skills.ContainsKey(skill.Name))
+                .Select(repository => Reference(repository, scanned[repository][skill.Name]))
                 .ToList()))
             .Where(entry => entry.Repositories.Count > 0)
             .Select((entry, index) => new GitHubFact($"G{index + 1}", entry.Name, entry.Repositories))
@@ -54,7 +54,14 @@ public class GitHubScanner(GitHubClient client, IOptions<GitHubOptions> options)
         return new GitHubEvidence(login, scanned.Count, facts);
     }
 
-    private async Task<IReadOnlySet<string>?> ScanRepositoryAsync(string login, GitHubRepository repository, CancellationToken ct)
+    private static RepositoryRef Reference(GitHubRepository repository, string file)
+    {
+        var path = string.Join('/', file.Split('/').Select(Uri.EscapeDataString));
+        var fileUrl = repository.DefaultBranch is { } branch ? $"{repository.HtmlUrl}/blob/{Uri.EscapeDataString(branch)}/{path}" : null;
+        return new RepositoryRef(repository.Name, repository.HtmlUrl, file, fileUrl, repository.PushedAt);
+    }
+
+    private async Task<IReadOnlyDictionary<string, string>?> ScanRepositoryAsync(string login, GitHubRepository repository, CancellationToken ct)
     {
         var paths = await client.GetFilePathsAsync(login, repository, ct);
         if (paths is null) return null;
@@ -65,6 +72,6 @@ public class GitHubScanner(GitHubClient client, IOptions<GitHubOptions> options)
             if (await client.GetFileAsync(login, repository, path, ct) is { } content) manifests[path] = content;
         }
 
-        return RepositorySignals.Detect(paths, manifests);
+        return RepositorySignals.DetectWithSources(paths, manifests);
     }
 }
