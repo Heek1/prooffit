@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using ProofFit.Api.Data;
 using ProofFit.Api.Domain;
@@ -38,6 +39,12 @@ public class AnalysisRunner(
         // Finished analyses can be queued again after a restart; they are left alone.
         if (analysis is null || analysis.Status is AnalysisStatus.Completed or AnalysisStatus.Failed) return;
 
+        using var activity = Telemetry.Source.StartActivity("analysis.run");
+        activity?.SetTag("prooffit.analysis.id", analysisId);
+        activity?.SetTag("prooffit.analysis.rerun", analysis.GivenRequirements is not null);
+        activity?.SetTag("prooffit.analysis.github", analysis.GitHubLogin is not null);
+        var started = Stopwatch.GetTimestamp();
+
         try
         {
             analysis.Status = AnalysisStatus.Running;
@@ -58,12 +65,29 @@ public class AnalysisRunner(
 
         analysis.CompletedAt = Timestamp.Now();
         await db.SaveChangesAsync(ct);
+
+        var outcome = analysis.Status == AnalysisStatus.Completed ? "completed" : "failed";
+        var engine = analysis.Engine ?? "none";
+        activity?.SetTag("prooffit.analysis.outcome", outcome);
+        activity?.SetTag("prooffit.analysis.engine", engine);
+        if (analysis.Result is { } result)
+        {
+            activity?.SetTag("prooffit.analysis.score", result.Score);
+            activity?.SetTag("prooffit.analysis.requirements", result.Requirements.Count);
+        }
+        if (outcome == "failed") activity?.SetStatus(ActivityStatusCode.Error, analysis.Error);
+
+        Telemetry.AnalysesFinished.Add(1, new("outcome", outcome), new("engine", engine));
+        Telemetry.AnalysisDuration.Record(Stopwatch.GetElapsedTime(started).TotalSeconds, new("outcome", outcome), new("engine", engine));
     }
 
     private async Task<(AnalysisResult Result, string Engine)> AnalyseAsync(Analysis analysis, CancellationToken ct)
     {
         if (analysis.GivenRequirements is null && await FindEarlierReportAsync(analysis, ct) is { } earlier)
+        {
+            Activity.Current?.SetTag("prooffit.analysis.reused", true);
             return earlier;
+        }
 
         // A model that is down must not cost the user their report. From the first failed
         // call on, the keyword engine does the rest and the report says so.
@@ -83,6 +107,7 @@ public class AnalysisRunner(
         catch (LlmUnavailableException ex)
         {
             logger.LogWarning(ex, "Model unavailable while reading the vacancy of analysis {AnalysisId}", analysis.Id);
+            RecordFallback("extract");
             (activeMatcher, engineNote) = (keywordMatcher, FallbackNote);
             extracted = await keywordExtractor.ExtractAsync(vacancy, ct);
         }
@@ -110,6 +135,7 @@ public class AnalysisRunner(
         catch (LlmUnavailableException ex)
         {
             logger.LogWarning(ex, "Model unavailable while matching analysis {AnalysisId}", analysis.Id);
+            RecordFallback("match");
             (activeMatcher, engineNote) = (keywordMatcher, FallbackNote);
             proposed = await keywordMatcher.MatchAsync(requirements, resume, facts, ct);
         }
@@ -165,9 +191,17 @@ public class AnalysisRunner(
         }
     }
 
+    private static void RecordFallback(string step)
+    {
+        Telemetry.ModelFallbacks.Add(1, new KeyValuePair<string, object?>("step", step));
+        Activity.Current?.AddEvent(new ActivityEvent("model.fallback", tags: new ActivityTagsCollection { ["step"] = step }));
+    }
+
     // Saved at once so anyone watching the analysis sees the step it is on.
     private async Task EnterStageAsync(Analysis analysis, AnalysisStage stage, CancellationToken ct)
     {
+        // A trace shows how long each step took by when the next one began.
+        Activity.Current?.AddEvent(new ActivityEvent($"stage.{stage}"));
         analysis.Stage = stage;
         await db.SaveChangesAsync(ct);
     }

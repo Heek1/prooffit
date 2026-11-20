@@ -11,6 +11,8 @@ using ProofFit.Api.Features.Vacancies;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddTelemetry();
+
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddValidation();
