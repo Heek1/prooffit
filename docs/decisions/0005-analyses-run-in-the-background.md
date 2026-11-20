@@ -10,4 +10,4 @@ Creating an analysis stores it and returns 202. A hosted worker takes it from an
 
 ## Consequences
 
-Requests return at once, and progress keeps working if the API and the worker become separate processes. The queue is in memory, so only one instance can run; a Postgres-backed queue is the next step if that changes.
+Requests return at once, and progress keeps working if the API and the worker become separate processes. The queue was first kept in memory, so only one instance could run; record 0010 moved it into the database.
