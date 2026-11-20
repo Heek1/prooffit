@@ -35,7 +35,8 @@ export function DocumentText({ text, label, cited = [], source = null, maxHeight
           className={cited.includes(index + 1) ? 'is-cited' : source === index + 1 ? 'is-source' : undefined}
           data-cited={cited.includes(index + 1) ? '' : undefined}
         >
-          {line}
+          {/* A highlight, not only a colour: assistive technology can announce a mark. */}
+          {cited.includes(index + 1) ? <mark className="bg-transparent text-inherit">{line}</mark> : line}
         </li>
       ))}
     </ol>
