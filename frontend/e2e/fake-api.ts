@@ -19,6 +19,34 @@ const RESUME_TEXT = [
 
 const VACANCY_TEXT = ['Requirements', '- ASP.NET Core', '- React with TypeScript', '- Kubernetes'].join('\n')
 
+/** The same comparison with a GitHub profile that proves the Kubernetes requirement. */
+function withGitHub(id: string) {
+  const made = analysis(id, false, defaultRequirements().map((r) =>
+    r.id === 'R3' ? { ...r, status: 'confirmed', reason: 'Kubernetes manifests in a public repository.', gitHubFacts: ['G1'] } : r))
+  return {
+    ...made,
+    gitHubLogin: 'olena-dev',
+    result: {
+      ...made.result,
+      gitHub: {
+        login: 'olena-dev',
+        repositoriesScanned: 3,
+        facts: [{
+          id: 'G1',
+          skill: 'Kubernetes',
+          repositories: [{
+            name: 'infra',
+            url: 'https://github.com/olena-dev/infra',
+            file: 'k8s/deployment.yaml',
+            fileUrl: 'https://github.com/olena-dev/infra/blob/main/k8s/deployment.yaml',
+            pushedAt: '2026-03-14T09:00:00Z',
+          }],
+        }],
+      },
+    },
+  }
+}
+
 function analysis(id: string, edited: boolean, requirements = defaultRequirements()) {
   const now = new Date().toISOString()
   const proven = requirements.filter((r) => r.status === 'confirmed').length
@@ -71,7 +99,10 @@ const json = (body: unknown, status = 200) => ({
 
 export async function fakeApi(page: Page): Promise<FakeApi> {
   const state: FakeApi = { reruns: [], deleted: [] }
-  const stored = new Map<string, ReturnType<typeof analysis>>([['analysis-1', analysis('analysis-1', false)]])
+  const stored = new Map<string, ReturnType<typeof analysis>>([
+    ['analysis-1', analysis('analysis-1', false)],
+    ['analysis-github', withGitHub('analysis-github')],
+  ])
 
   await page.route('**/health/ready', (route) => route.fulfill({ status: 200, body: 'Healthy' }))
   await page.route('**/api/resumes', (route) => route.fulfill(json(stored.get('analysis-1')!.resume, 201)))

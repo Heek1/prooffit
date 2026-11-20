@@ -73,8 +73,9 @@ Each has a longer record, with what it costs, in [docs/decisions](docs/decisions
 - **The score is arithmetic.** It is computed from the verdicts, so the same verdicts always
   give the same number and the number can be explained.
 - **GitHub facts come from rules.** Skills are detected from file paths and dependency
-  manifests. Every fact can be confirmed by opening the repository. Forks, vendored code and
-  build output are ignored.
+  manifests. Every fact links to the file that shows it (a Dockerfile, a `package.json`, a
+  source file) and says when the repository was last pushed to, so it can be checked in one
+  click. Forks, vendored code and build output are ignored.
 - **No vector search.** A resume and a profile's facts fit in a model's context whole, so
   there is nothing to retrieve. The pgvector extension was removed once that was clear.
 - **No sign-in.** Public GitHub data needs no OAuth, and someone trying the demo should not

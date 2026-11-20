@@ -5,6 +5,7 @@ import {
   engineSentence,
   firstWithEvidence,
   headline,
+  lastPushed,
   progressSteps,
   remainder,
   stepState,
@@ -91,5 +92,20 @@ describe('the progress of a running analysis', () => {
     expect(stepState('matching', 'matching')).toBe('active')
     expect(stepState('matching', 'readingVacancy')).toBe('waiting')
     expect(stepState('readingVacancy', 'queued')).toBe('waiting')
+  })
+})
+
+describe('lastPushed', () => {
+  it('names the month of the most recent push', () => {
+    expect(
+      lastPushed([
+        { name: 'old', url: 'u1', pushedAt: '2025-01-02T00:00:00Z' },
+        { name: 'new', url: 'u2', pushedAt: '2026-03-14T09:00:00Z' },
+      ]),
+    ).toBe('March 2026')
+  })
+
+  it('says nothing for repositories recorded without a date', () => {
+    expect(lastPushed([{ name: 'infra', url: 'u' }])).toBeNull()
   })
 })

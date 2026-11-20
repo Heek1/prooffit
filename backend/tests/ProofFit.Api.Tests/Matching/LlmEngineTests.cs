@@ -122,6 +122,21 @@ public class LlmRequirementMatcherTests
     }
 
     [Fact]
+    public async Task Tells_the_model_which_file_shows_a_fact_and_how_recent_it_is()
+    {
+        var llm = new FakeLlmClient(OneVerdict);
+        GitHubFact[] facts =
+        [
+            new("G1", "Kubernetes", [new RepositoryRef("infra", "https://github.com/octo-dev/infra", "k8s/deployment.yaml",
+                "https://github.com/octo-dev/infra/blob/main/k8s/deployment.yaml", new DateTimeOffset(2026, 3, 14, 0, 0, 0, TimeSpan.Zero))]),
+        ];
+
+        await new LlmRequirementMatcher(llm).MatchAsync(Requirements, Resume, facts, CancellationToken.None);
+
+        Assert.Contains("G1: Kubernetes, found in infra (k8s/deployment.yaml, last pushed 2026-03)", Assert.Single(llm.Prompts).User);
+    }
+
+    [Fact]
     public async Task Says_so_when_there_are_no_github_facts()
     {
         var llm = new FakeLlmClient(OneVerdict);

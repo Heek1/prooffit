@@ -144,10 +144,20 @@ public partial class LlmRequirementMatcher(ILlmClient llm, TimeProvider? time = 
         foreach (var fact in gitHubFacts)
         {
             prompt.Append(fact.Id).Append(": ").Append(fact.Skill).Append(", found in ")
-                .AppendJoin(", ", fact.Repositories.Select(repository => repository.Name)).Append('\n');
+                .AppendJoin(", ", fact.Repositories.Select(Describe)).Append('\n');
         }
 
         return prompt.ToString();
+    }
+
+    // "infra (k8s/deployment.yaml, last pushed 2026-03)", or just the name for profiles
+    // scanned before files and dates were recorded.
+    private static string Describe(RepositoryRef repository)
+    {
+        var details = new List<string>();
+        if (repository.File is { } file) details.Add(file);
+        if (repository.PushedAt is { } pushed) details.Add($"last pushed {pushed:yyyy-MM}");
+        return details.Count == 0 ? repository.Name : $"{repository.Name} ({string.Join(", ", details)})";
     }
 
     private static string DescribeExperience(ExperienceSummary experience)

@@ -30,6 +30,14 @@ test.describe('meets WCAG 2.1 AA as far as automated checks can tell', () => {
     expect(await violations(page)).toEqual([])
   })
 
+  test('a report with evidence from GitHub', async ({ page }) => {
+    await fakeApi(page)
+    await page.goto('/analyses/analysis-github')
+    await page.getByRole('button', { name: /^Kubernetes/ }).last().click()
+
+    expect(await violations(page)).toEqual([])
+  })
+
   test('a report with its requirements open for editing', async ({ page }) => {
     await fakeApi(page)
     await page.goto('/analyses/analysis-1')

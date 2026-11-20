@@ -1,5 +1,5 @@
 import type { GitHubFact, Importance, RequirementMatch } from '../api.ts'
-import { STATUS_LABEL } from '../report.ts'
+import { STATUS_LABEL, lastPushed } from '../report.ts'
 
 type RequirementListProps = {
   requirements: RequirementMatch[]
@@ -105,6 +105,7 @@ const MAX_REPOSITORIES_SHOWN = 3
 export function FactSentence({ fact }: { fact: GitHubFact }) {
   const shown = fact.repositories.slice(0, MAX_REPOSITORIES_SHOWN)
   const hidden = fact.repositories.length - shown.length
+  const pushed = lastPushed(fact.repositories)
 
   return (
     <>
@@ -115,9 +116,25 @@ export function FactSentence({ fact }: { fact: GitHubFact }) {
           <a href={repository.url} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:decoration-2">
             {repository.name}
           </a>
+          {/* The file the rule matched, so the fact can be checked in one click. */}
+          {repository.file && repository.fileUrl && (
+            <>
+              {' ('}
+              <a
+                href={repository.fileUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono text-[0.8rem] underline underline-offset-2 hover:decoration-2"
+              >
+                {repository.file}
+              </a>
+              {')'}
+            </>
+          )}
         </span>
       ))}
       {hidden > 0 && ` and ${hidden} more`}
+      {pushed && <span className="text-ink-soft">, last pushed {pushed}</span>}
     </>
   )
 }

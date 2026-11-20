@@ -78,6 +78,17 @@ test('deleting a report asks first, then removes it and returns to the start', a
   expect(api.deleted).toEqual(['analysis-1'])
 })
 
+test('a fact from GitHub links to the file that shows it', async ({ page }) => {
+  await fakeApi(page)
+  await page.goto('/analyses/analysis-github')
+
+  await page.getByRole('button', { name: /^Kubernetes/ }).last().click()
+
+  const file = page.getByRole('link', { name: 'k8s/deployment.yaml' })
+  await expect(file).toHaveAttribute('href', 'https://github.com/olena-dev/infra/blob/main/k8s/deployment.yaml')
+  await expect(page.getByText(', last pushed March 2026')).toBeVisible()
+})
+
 test('an unknown report says so and offers a way back', async ({ page }) => {
   await fakeApi(page)
   await page.goto('/analyses/does-not-exist')

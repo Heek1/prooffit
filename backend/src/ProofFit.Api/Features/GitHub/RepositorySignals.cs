@@ -111,10 +111,20 @@ public static partial class RepositorySignals
 
     /// <param name="paths">Every file path in the repository.</param>
     /// <param name="manifests">Contents of the manifests that could be read, by path.</param>
-    public static IReadOnlySet<string> Detect(IReadOnlyList<string> paths, IReadOnlyDictionary<string, string> manifests)
+    public static IReadOnlySet<string> Detect(IReadOnlyList<string> paths, IReadOnlyDictionary<string, string> manifests) =>
+        DetectWithSources(paths, manifests).Keys.ToHashSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// The skills a repository shows, each with one file that shows it: a source file for a
+    /// language, the matching file for a path rule, the manifest for a dependency. Opening
+    /// that file is how a reader checks the fact.
+    /// </summary>
+    public static IReadOnlyDictionary<string, string> DetectWithSources(
+        IReadOnlyList<string> paths, IReadOnlyDictionary<string, string> manifests)
     {
-        var skills = new HashSet<string>(StringComparer.Ordinal);
-        var source = paths.Where(path => !IsVendored(path)).ToList();
+        var sources = new Dictionary<string, string>(StringComparer.Ordinal);
+        // The file nearest the root is the one a reader finds first.
+        var source = paths.Where(path => !IsVendored(path)).OrderBy(Depth).ThenBy(path => path, StringComparer.Ordinal).ToList();
 
         var byLanguage = source
             .Select(path => LanguageByExtension.GetValueOrDefault(Path.GetExtension(path)))
@@ -124,30 +134,32 @@ public static partial class RepositorySignals
         var codeFiles = byLanguage.Values.Sum();
         foreach (var (language, count) in byLanguage)
         {
-            if (count >= LanguageFileCount || count >= codeFiles * LanguageShare) skills.Add(language);
+            if (count >= LanguageFileCount || count >= codeFiles * LanguageShare)
+                sources.TryAdd(language, source.First(path => LanguageByExtension.GetValueOrDefault(Path.GetExtension(path)) == language));
         }
 
         foreach (var (pattern, skill) in PathRules)
         {
-            if (source.Any(pattern.IsMatch)) skills.Add(skill);
+            if (source.FirstOrDefault(pattern.IsMatch) is { } path) sources.TryAdd(skill, path);
         }
 
-        foreach (var (path, content) in manifests)
+        foreach (var (path, content) in manifests.OrderBy(entry => Depth(entry.Key)).ThenBy(entry => entry.Key, StringComparer.Ordinal))
         {
-            skills.UnionWith(ManifestKind(path) switch
+            var found = ManifestKind(path) switch
             {
                 "npm" => FromPackageJson(content),
                 "nuget" => FromProjectFile(content),
                 "python" => FromPythonManifest(content),
                 _ => [],
-            });
+            };
+            foreach (var skill in found) sources.TryAdd(skill, path);
         }
 
         // A language-model SDK next to a vector store is retrieval-augmented generation in
-        // all but name; neither on its own shows it.
-        if (skills.Contains("LLM APIs") && skills.Contains("Vector search")) skills.Add("RAG");
+        // all but name; neither on its own shows it. The vector store is the telling file.
+        if (sources.ContainsKey("LLM APIs") && sources.TryGetValue("Vector search", out var store)) sources.TryAdd("RAG", store);
 
-        return skills;
+        return sources;
     }
 
     private static IEnumerable<string> FromPackageJson(string content)
