@@ -1,6 +1,7 @@
 # ProofFit
 
 [![CI](https://github.com/Heek1/prooffit/actions/workflows/ci.yml/badge.svg)](https://github.com/Heek1/prooffit/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Heek1/prooffit/badges/coverage.json)](https://github.com/Heek1/prooffit/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/Heek1/prooffit/actions/workflows/codeql.yml/badge.svg)](https://github.com/Heek1/prooffit/actions/workflows/codeql.yml)
 [![Live demo](https://img.shields.io/badge/demo-prooffit.onrender.com-1d2b4f)](https://prooffit.onrender.com)
 ![.NET 10](https://img.shields.io/badge/.NET-10-512bd4)
@@ -246,6 +247,14 @@ and facts that were never gathered, and every verdict must still cite evidence t
 
 ```bash
 cd backend && dotnet test
+```
+
+Coverage of the backend's hand-written code (generated code and migrations left out) is about
+96% of lines and 88% of branches. CI adds the figures to each run's summary and keeps the
+badge above current. To see it locally:
+
+```bash
+cd backend && dotnet tool restore && dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
 ```
 
 ```bash
