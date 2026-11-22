@@ -288,7 +288,10 @@ cd frontend && npx playwright install chromium && npm run e2e
 | `GET` | `/health/ready` | The process is up and can reach the database |
 
 Errors are returned as [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) problem details.
-In development the OpenAPI document is served at `/openapi/v1.json`.
+In development the OpenAPI document is served at `/openapi/v1.json`. Every development build
+also writes it to `frontend/openapi/prooffit.json`, and the frontend's types are generated from
+it (`npm run api:types`), so the page cannot drift from the API unnoticed: CI fails when either
+file is out of date.
 
 ## Layout
 
@@ -309,6 +312,7 @@ backend/
 frontend/
   src/
     api.ts                   typed client for the API
+    api.generated.ts         its types, generated from the OpenAPI document
     report.ts                the wording and arithmetic of a report
     pages/                   the start page and the report page
     components/

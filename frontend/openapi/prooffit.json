@@ -1,0 +1,914 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "ProofFit.Api | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/analyses/{id}/rerun": {
+      "post": {
+        "tags": [
+          "Analyses"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RerunRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/resumes": {
+      "post": {
+        "tags": [
+          "Resumes"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/resumes/{id}": {
+      "get": {
+        "tags": [
+          "Resumes"
+        ],
+        "operationId": "GetResume",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumeResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/vacancies": {
+      "post": {
+        "tags": [
+          "Vacancies"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVacancyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VacancyResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vacancies/{id}": {
+      "get": {
+        "tags": [
+          "Vacancies"
+        ],
+        "operationId": "GetVacancy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VacancyResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/analyses": {
+      "post": {
+        "tags": [
+          "Analyses"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAnalysisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analyses/{id}": {
+      "get": {
+        "tags": [
+          "Analyses"
+        ],
+        "operationId": "GetAnalysis",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Analyses"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/analyses/{id}/events": {
+      "get": {
+        "tags": [
+          "Analyses"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/SseItemOfAnalysisProgress"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnalysisProgress": {
+        "required": [
+          "status",
+          "stage"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/AnalysisStatus"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/AnalysisStage"
+          }
+        }
+      },
+      "AnalysisResponse": {
+        "required": [
+          "id",
+          "gitHubLogin",
+          "status",
+          "stage",
+          "engine",
+          "error",
+          "createdAt",
+          "completedAt",
+          "expiresAt",
+          "requirementsEdited",
+          "resume",
+          "vacancy",
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "gitHubLogin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/AnalysisStatus"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/AnalysisStage"
+          },
+          "engine": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "error": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requirementsEdited": {
+            "type": "boolean"
+          },
+          "resume": {
+            "$ref": "#/components/schemas/ResumeResponse"
+          },
+          "vacancy": {
+            "$ref": "#/components/schemas/VacancyResponse"
+          },
+          "result": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AnalysisResult"
+              }
+            ]
+          }
+        }
+      },
+      "AnalysisResult": {
+        "required": [
+          "score",
+          "requirements",
+          "gitHub",
+          "gitHubNote",
+          "engineNote",
+          "usage"
+        ],
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequirementMatch"
+            }
+          },
+          "gitHub": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/GitHubEvidence"
+              }
+            ]
+          },
+          "gitHubNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "engineNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "usage": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/LlmUsage"
+              }
+            ]
+          }
+        }
+      },
+      "AnalysisStage": {
+        "enum": [
+          "queued",
+          "readingVacancy",
+          "collectingGitHub",
+          "matching",
+          "done"
+        ]
+      },
+      "AnalysisStatus": {
+        "enum": [
+          "queued",
+          "running",
+          "completed",
+          "failed"
+        ]
+      },
+      "CreateAnalysisRequest": {
+        "required": [
+          "resumeId",
+          "vacancyId"
+        ],
+        "type": "object",
+        "properties": {
+          "resumeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vacancyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "gitHubLogin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CreateVacancyRequest": {
+        "required": [
+          "title",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 20000,
+            "minLength": 50,
+            "type": "string"
+          }
+        }
+      },
+      "GitHubEvidence": {
+        "required": [
+          "login",
+          "repositoriesScanned",
+          "facts"
+        ],
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "repositoriesScanned": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GitHubFact"
+            }
+          }
+        }
+      },
+      "GitHubFact": {
+        "required": [
+          "id",
+          "skill",
+          "repositories"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "skill": {
+            "type": "string"
+          },
+          "repositories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepositoryRef"
+            }
+          }
+        }
+      },
+      "HttpValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
+      "Importance": {
+        "enum": [
+          "mustHave",
+          "niceToHave"
+        ]
+      },
+      "LlmUsage": {
+        "required": [
+          "model",
+          "calls",
+          "inputTokens",
+          "outputTokens",
+          "durationMs"
+        ],
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "calls": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outputTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "durationMs": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MatchStatus": {
+        "enum": [
+          "missing",
+          "partial",
+          "confirmed"
+        ]
+      },
+      "RepositoryRef": {
+        "required": [
+          "name",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "file": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fileUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "pushedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "RequirementMatch": {
+        "required": [
+          "id",
+          "text",
+          "importance",
+          "vacancyLine",
+          "status",
+          "reason",
+          "resumeLines",
+          "gitHubFacts"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "importance": {
+            "$ref": "#/components/schemas/Importance"
+          },
+          "vacancyLine": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MatchStatus"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "resumeLines": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "gitHubFacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RerunRequest": {
+        "required": [
+          "requirements"
+        ],
+        "type": "object",
+        "properties": {
+          "requirements": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/RerunRequirement"
+            }
+          }
+        }
+      },
+      "RerunRequirement": {
+        "required": [
+          "text",
+          "importance",
+          "vacancyLine"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importance": {
+            "$ref": "#/components/schemas/Importance"
+          },
+          "vacancyLine": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "ResumeResponse": {
+        "required": [
+          "id",
+          "fileName",
+          "pageCount",
+          "text",
+          "uploadedAt",
+          "ignoredCharacters"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "pageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "text": {
+            "type": "string"
+          },
+          "uploadedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ignoredCharacters": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SseItemOfAnalysisProgress": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AnalysisProgress"
+          },
+          "eventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "eventId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reconnectionInterval": {
+            "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "VacancyResponse": {
+        "required": [
+          "id",
+          "title",
+          "text",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Analyses"
+    },
+    {
+      "name": "Resumes"
+    },
+    {
+      "name": "Vacancies"
+    }
+  ]
+}

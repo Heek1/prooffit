@@ -1,85 +1,27 @@
+import type { components } from './api.generated.ts'
+
 // Empty in development and Docker Compose, where a proxy serves the API on the page's own
 // origin. Set VITE_API_URL at build time when the API lives on a different host.
 const base: string = import.meta.env.VITE_API_URL ?? ''
 
-export type Resume = {
-  id: string
-  fileName: string
-  pageCount: number
-  text: string
-  uploadedAt: string
-  /** Characters in the PDF left out because a reader could not see them. */
-  ignoredCharacters: number
-}
+// The shapes the API sends, generated from its OpenAPI document (npm run api:types), so a
+// change on the server that the page has not caught up with fails the type check.
+type Schemas = components['schemas']
 
-export type Vacancy = {
-  id: string
-  title: string
-  text: string
-  createdAt: string
-}
-
-export type AnalysisStatus = 'queued' | 'running' | 'completed' | 'failed'
-export type AnalysisStage = 'queued' | 'readingVacancy' | 'collectingGitHub' | 'matching' | 'done'
-export type Importance = 'mustHave' | 'niceToHave'
-export type MatchStatus = 'confirmed' | 'partial' | 'missing'
-
-export type RequirementMatch = {
-  id: string
-  text: string
-  importance: Importance
-  /** 1-based line of the vacancy the requirement came from. */
-  vacancyLine: number | null
-  status: MatchStatus
-  reason: string
-  /** 1-based lines of the resume that support the verdict. */
-  resumeLines: number[]
-  /** Ids of the GitHub facts that support the verdict. */
-  gitHubFacts: string[]
-}
-
-export type GitHubFact = {
-  id: string
-  skill: string
-  repositories: GitHubRepository[]
-}
-
-/** A repository a fact was found in. The file and date are missing from profiles scanned before they were recorded. */
-export type GitHubRepository = {
-  name: string
-  url: string
-  /** A file in the repository that shows the skill, such as "k8s/deployment.yaml". */
-  file?: string | null
-  fileUrl?: string | null
-  pushedAt?: string | null
-}
-
-export type AnalysisResult = {
-  score: number
-  requirements: RequirementMatch[]
-  gitHub: { login: string; repositoriesScanned: number; facts: GitHubFact[] } | null
-  gitHubNote: string | null
-  engineNote: string | null
-  usage: { model: string; calls: number; inputTokens: number; outputTokens: number; durationMs: number } | null
-}
-
-export type Analysis = {
-  id: string
-  gitHubLogin: string | null
-  status: AnalysisStatus
-  stage: AnalysisStage
-  engine: string | null
-  error: string | null
-  createdAt: string
-  completedAt: string | null
-  /** When the comparison and its documents are deleted automatically. */
-  expiresAt: string
-  /** True when the user corrected the requirements before this comparison. */
-  requirementsEdited: boolean
-  resume: Resume
-  vacancy: Vacancy
-  result: AnalysisResult | null
-}
+/** `ignoredCharacters` counts characters in the PDF left out because a reader could not see them. */
+export type Resume = Schemas['ResumeResponse']
+export type Vacancy = Schemas['VacancyResponse']
+export type AnalysisStatus = Schemas['AnalysisStatus']
+export type AnalysisStage = Schemas['AnalysisStage']
+export type Importance = Schemas['Importance']
+export type MatchStatus = Schemas['MatchStatus']
+/** Line numbers, in the vacancy and the resume, start at 1. */
+export type RequirementMatch = Schemas['RequirementMatch']
+export type GitHubFact = Schemas['GitHubFact']
+/** File and date are missing from profiles scanned before they were recorded. */
+export type GitHubRepository = Schemas['RepositoryRef']
+export type AnalysisResult = Schemas['AnalysisResult']
+export type Analysis = Schemas['AnalysisResponse']
 
 export type AnalysisProgress = Pick<Analysis, 'status' | 'stage'>
 

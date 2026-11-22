@@ -16,7 +16,13 @@ builder.AddTelemetry();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddValidation();
-builder.Services.ConfigureHttpJsonOptions(options => ApiJson.Configure(options.SerializerOptions));
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    ApiJson.Configure(options.SerializerOptions);
+    // Numbers are numbers on the wire, so the OpenAPI document, and the frontend types made
+    // from it, say "number" rather than "number or string".
+    options.SerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.Strict;
+});
 
 // The connection string is read when the context is first resolved rather than here, so
 // configuration added after this point (integration tests, container env) still applies.
