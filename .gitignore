@@ -1,6 +1,8 @@
 # .NET
 bin/
 obj/
+TestResults/
+backend/coverage/
 .vs/
 *.user
 
