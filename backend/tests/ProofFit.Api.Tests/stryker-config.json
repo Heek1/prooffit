@@ -4,6 +4,6 @@
     "mutate": ["**/Features/Analyses/Matching/**/*.cs"],
     "test-case-filter": "FullyQualifiedName~ProofFit.Api.Tests.Matching",
     "reporters": ["progress", "html", "json"],
-    "thresholds": { "high": 85, "low": 70, "break": 0 }
+    "thresholds": { "high": 90, "low": 80, "break": 80 }
   }
 }

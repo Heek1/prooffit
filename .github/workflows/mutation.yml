@@ -31,7 +31,8 @@ jobs:
       - run: dotnet tool restore
       - name: Run Stryker on the matching code
         working-directory: backend/tests/ProofFit.Api.Tests
-        run: dotnet stryker --break-at 80
+        # Fails below the break threshold in stryker-config.json (80%).
+        run: dotnet stryker
       - name: Add the score to the run summary
         if: always()
         working-directory: backend/tests/ProofFit.Api.Tests
