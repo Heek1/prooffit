@@ -1,0 +1,56 @@
+name: Mutation testing
+
+# Stryker.NET changes the matching code one small step at a time and checks that a test
+# notices each change. It takes about five minutes, so it runs when the matching code or
+# its tests change, weekly, and on demand, rather than on every push.
+on:
+  pull_request:
+    paths:
+      - backend/src/ProofFit.Api/Features/Analyses/Matching/**
+      - backend/tests/ProofFit.Api.Tests/Matching/**
+      - backend/tests/ProofFit.Api.Tests/stryker-config.json
+      - .github/workflows/mutation.yml
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stryker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet tool restore
+      - name: Run Stryker on the matching code
+        working-directory: backend/tests/ProofFit.Api.Tests
+        run: dotnet stryker --break-at 80
+      - name: Add the score to the run summary
+        if: always()
+        working-directory: backend/tests/ProofFit.Api.Tests
+        run: |
+          report=$(ls StrykerOutput/*/reports/mutation-report.json 2>/dev/null | head -1)
+          [ -n "$report" ] || exit 0
+          jq -r '
+            [.files[].mutants[]] as $all
+            | ($all | map(select(.status == "Killed" or .status == "Timeout")) | length) as $killed
+            | ($all | map(select(.status == "Survived" or .status == "NoCoverage")) | length) as $missed
+            | "### Mutation score: \(100 * $killed / ($killed + $missed) | . * 10 | round / 10)%\n\n\($killed) mutants killed, \($missed) survived.\n\n| File | Score |\n|---|---|",
+              (.files | to_entries[]
+                | (.value.mutants | map(select(.status == "Killed" or .status == "Timeout")) | length) as $k
+                | (.value.mutants | map(select(.status == "Survived" or .status == "NoCoverage")) | length) as $s
+                | select($k + $s > 0)
+                | "| \(.key | split("/") | last) | \(100 * $k / ($k + $s) | . * 10 | round / 10)% |")
+          ' "$report" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: mutation-report
+          path: backend/tests/ProofFit.Api.Tests/StrykerOutput/*/reports/mutation-report.html
