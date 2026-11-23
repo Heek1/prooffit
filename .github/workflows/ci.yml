@@ -22,6 +22,9 @@ jobs:
       - run: dotnet restore
       - run: dotnet tool restore
       - run: dotnet build --no-restore -warnaserror
+      # The build rewrites the OpenAPI document the frontend's types come from; a change to the
+      # API has to be committed with it.
+      - run: git diff --exit-code -- ../frontend/openapi
       # The integration tests start PostgreSQL in Docker, which the runner provides.
       - run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory TestResults
       # Generated code (regular expressions, OpenAPI, validation) and migrations are left
@@ -62,6 +65,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      # The committed types must be the ones the committed OpenAPI document produces.
+      - run: npm run api:types && git diff --exit-code -- src/api.generated.ts
       - run: npm test
       - run: npm run build
 
