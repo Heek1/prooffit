@@ -241,6 +241,10 @@ For Docker Compose, copy `.env.example` to `.env` and fill it in.
 The backend integration tests start their own PostgreSQL container, so Docker has to be
 running. GitHub and Gemini are replaced by stub HTTP handlers; no test touches the network.
 
+The matching code is also put through mutation testing (Stryker.NET): small deliberate changes,
+such as `>` turned into `>=`, that a test has to notice. 83% of them are caught, and every one in the
+evidence check and the score. It runs when that code changes and weekly.
+
 The guarantees about evidence are also checked as properties (FsCheck): matcher output is
 generated to be as wrong as a model can be, with invented ids, line numbers outside the resume
 and facts that were never gathered, and every verdict must still cite evidence that exists.
