@@ -1,0 +1,48 @@
+{
+  "name": "lead-versus-hands-on",
+  "resume": [
+    "Engineering manager",
+    "Managed a team of eight engineers building a Kafka-based event platform",
+    "Hired and mentored engineers; ran planning and retrospectives",
+    "Reviewed architecture proposals for the Go and Java services",
+    "Before management: wrote Java services with Spring Boot for four years"
+  ],
+  "requirements": [
+    {
+      "text": "Hands-on experience with Kafka",
+      "importance": "mustHave",
+      "expected": "missing",
+      "why": "Line 2: the team built on Kafka; the candidate managed it. Managing is not hands-on use."
+    },
+    {
+      "text": "Java",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 5: wrote Java services for four years."
+    },
+    {
+      "text": "Spring Boot",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 5."
+    },
+    {
+      "text": "Go",
+      "importance": "niceToHave",
+      "expected": "partial",
+      "why": "Line 4: reviewed proposals for Go services; involvement, but not writing Go."
+    },
+    {
+      "text": "Experience leading a team",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Lines 2 and 3."
+    },
+    {
+      "text": "Mentoring",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 3."
+    }
+  ]
+}

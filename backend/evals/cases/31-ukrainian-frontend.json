@@ -1,0 +1,48 @@
+{
+  "name": "ukrainian-frontend",
+  "resume": [
+    "Фронтенд-розробниця",
+    "Розробляла інтерфейси на React і TypeScript для банківського застосунку",
+    "Налаштувала тести компонентів на Jest і Testing Library",
+    "Верстала адаптивні сторінки з Tailwind CSS",
+    "Вивчаю Next.js на курсах"
+  ],
+  "requirements": [
+    {
+      "text": "React",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "TypeScript",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "Unit testing of components",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3: Jest and Testing Library."
+    },
+    {
+      "text": "Tailwind CSS",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 4."
+    },
+    {
+      "text": "Next.js",
+      "importance": "niceToHave",
+      "expected": "partial",
+      "why": "Line 5: learning it on a course, not yet used at work."
+    },
+    {
+      "text": "Vue",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

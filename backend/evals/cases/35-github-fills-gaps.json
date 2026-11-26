@@ -1,0 +1,92 @@
+{
+  "name": "github-fills-gaps",
+  "resume": [
+    "Junior backend developer",
+    "Internship: fixed bugs in a Python web service",
+    "University projects in Java"
+  ],
+  "gitHubFacts": [
+    {
+      "id": "G1",
+      "skill": "FastAPI",
+      "repositories": [
+        {
+          "name": "todo-api",
+          "url": "https://github.com/example/todo-api"
+        },
+        {
+          "name": "bookmarks",
+          "url": "https://github.com/example/bookmarks"
+        }
+      ]
+    },
+    {
+      "id": "G2",
+      "skill": "PostgreSQL",
+      "repositories": [
+        {
+          "name": "bookmarks",
+          "url": "https://github.com/example/bookmarks"
+        }
+      ]
+    },
+    {
+      "id": "G3",
+      "skill": "Docker",
+      "repositories": [
+        {
+          "name": "todo-api",
+          "url": "https://github.com/example/todo-api"
+        }
+      ]
+    },
+    {
+      "id": "G4",
+      "skill": "Automated testing",
+      "repositories": [
+        {
+          "name": "todo-api",
+          "url": "https://github.com/example/todo-api"
+        }
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "text": "Python",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2: internship work in Python; G1 adds FastAPI projects."
+    },
+    {
+      "text": "FastAPI",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Fact G1."
+    },
+    {
+      "text": "PostgreSQL",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Fact G2."
+    },
+    {
+      "text": "Docker",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Fact G3."
+    },
+    {
+      "text": "Commercial experience with Java",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Line 3: university projects only."
+    },
+    {
+      "text": "CI/CD pipelines",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "No workflow or pipeline anywhere."
+    }
+  ]
+}

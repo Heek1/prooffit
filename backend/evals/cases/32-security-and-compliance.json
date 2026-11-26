@@ -1,0 +1,42 @@
+{
+  "name": "security-and-compliance",
+  "resume": [
+    "Backend developer, healthcare platform",
+    "Fixed findings from an OWASP ZAP scan and a penetration test",
+    "Implemented OAuth 2.0 sign-in with Keycloak",
+    "Kept patient data processing within GDPR rules together with the legal team",
+    "Read about SOC 2 controls for an upcoming audit"
+  ],
+  "requirements": [
+    {
+      "text": "Knowledge of the OWASP Top 10",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Line 2: fixed scan findings, which shows practice with web vulnerabilities, but the Top 10 itself is not named."
+    },
+    {
+      "text": "OAuth 2.0 / OpenID Connect",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3."
+    },
+    {
+      "text": "GDPR",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 4: applied it in data processing."
+    },
+    {
+      "text": "SOC 2 experience",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Line 5: read about it; reading is not experience."
+    },
+    {
+      "text": "Kubernetes",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

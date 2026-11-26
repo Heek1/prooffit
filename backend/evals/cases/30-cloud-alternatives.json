@@ -1,0 +1,41 @@
+{
+  "name": "cloud-alternatives",
+  "resume": [
+    "Cloud engineer",
+    "Built serverless APIs on Google Cloud Run and Pub/Sub",
+    "Moved storage from on-premise NAS to Google Cloud Storage",
+    "Terraform for every environment"
+  ],
+  "requirements": [
+    {
+      "text": "Experience with a major cloud provider (AWS, Azure or GCP)",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Lines 2 and 3: Google Cloud."
+    },
+    {
+      "text": "AWS",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "GCP only: the same kind of work on another provider."
+    },
+    {
+      "text": "Infrastructure as code",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 4: Terraform."
+    },
+    {
+      "text": "Serverless",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 2: Cloud Run."
+    },
+    {
+      "text": "Kubernetes",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Cloud Run is not Kubernetes from the candidate's side; nothing shows it."
+    }
+  ]
+}

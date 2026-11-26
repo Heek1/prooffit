@@ -1,0 +1,42 @@
+{
+  "name": "negation-that-is-not",
+  "resume": [
+    "Site reliability engineer",
+    "Shipped releases with no downtime using Kubernetes rolling updates",
+    "Not only wrote Terraform but also reviewed it for three teams",
+    "Never missed an on-call handover in two years",
+    "No prior experience with Azure; the company was on AWS"
+  ],
+  "requirements": [
+    {
+      "text": "Kubernetes",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2: \"no downtime\" negates downtime, not Kubernetes."
+    },
+    {
+      "text": "Terraform",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3: \"not only wrote\" still says wrote."
+    },
+    {
+      "text": "On-call experience",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 4: two years of on-call."
+    },
+    {
+      "text": "Azure",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Line 5 says there is no Azure experience."
+    },
+    {
+      "text": "AWS",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Line 5 only says the company was on AWS, not what the candidate did there."
+    }
+  ]
+}
