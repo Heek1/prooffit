@@ -1,0 +1,62 @@
+{
+  "name": "fullstack-dotnet-realistic",
+  "resume": [
+    "Andrii Melnyk",
+    "Full-stack .NET developer",
+    "Experience",
+    "Senior software engineer, LogiTrack, March 2022 to present",
+    "- Lead the migration of a warehouse system from .NET Framework 4.8 to .NET 8",
+    "- Designed REST APIs in ASP.NET Core used by three mobile apps",
+    "- Replaced stored procedures with Entity Framework Core and Dapper queries on SQL Server",
+    "- Introduced integration tests with xUnit and Testcontainers",
+    "Software engineer, Retail Cloud, June 2019 to February 2022",
+    "- Built an Angular 12 back office for 400 store managers",
+    "- Ran nightly jobs on Azure Functions and Azure Service Bus",
+    "Skills",
+    "C#, TypeScript, SQL, Git"
+  ],
+  "requirements": [
+    {
+      "text": "5+ years of commercial experience with C# and .NET",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "Only the current job, March 2022 on and so under five years, names .NET; the earlier job names Angular and Azure, not C#. The years are not shown in full."
+    },
+    {
+      "text": "ASP.NET Core Web API",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 6: designed REST APIs in ASP.NET Core."
+    },
+    {
+      "text": "Entity Framework Core",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 7."
+    },
+    {
+      "text": "PostgreSQL",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "SQL Server only (line 7): a neighbouring relational database."
+    },
+    {
+      "text": "Angular or React",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 10: Angular 12 back office; one alternative is enough."
+    },
+    {
+      "text": "Microsoft Azure",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 11: Azure Functions and Service Bus."
+    },
+    {
+      "text": "Kubernetes",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

@@ -8,6 +8,9 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    # Written to only on main, to publish the coverage badge.
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: backend
@@ -17,11 +20,36 @@ jobs:
         with:
           dotnet-version: 10.0.x
       - run: dotnet restore
+      - run: dotnet tool restore
       - run: dotnet build --no-restore -warnaserror
+      # The build rewrites the OpenAPI document the frontend's types come from; a change to the
+      # API has to be committed with it.
+      - run: git diff --exit-code -- ../frontend/openapi
       # The integration tests start PostgreSQL in Docker, which the runner provides.
-      - run: dotnet test --no-build
+      - run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory TestResults
+      # Generated code (regular expressions, OpenAPI, validation) and migrations are left
+      # out, so the figure is about code written by hand.
+      - name: Summarise coverage
+        run: |
+          dotnet reportgenerator -reports:"TestResults/*/coverage.cobertura.xml" -targetdir:coverage \
+            -reporttypes:"MarkdownSummaryGithub;JsonSummary" -classfilters:"-System.*;-Microsoft.*;-ProofFit.Api.Data.Migrations.*"
+          cat coverage/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+      # The badge reads a shields.io endpoint file kept on its own branch, so main's history
+      # does not fill with coverage commits.
+      - name: Publish the coverage badge
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          line=$(jq -r '.summary.linecoverage' coverage/Summary.json)
+          color=$(jq -rn --argjson p "$line" 'if $p >= 90 then "brightgreen" elif $p >= 80 then "green" elif $p >= 70 then "yellowgreen" else "yellow" end')
+          mkdir -p ../badge && cd ../badge
+          jq -n --arg m "$line%" --arg c "$color" '{schemaVersion: 1, label: "coverage", message: $m, color: $c}' > coverage.json
+          git init -q -b badges
+          git add coverage.json
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "Coverage $line%"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" badges
       # The keyword baseline is deterministic, so a drop in its accuracy is a regression.
       - run: dotnet run --project evals/ProofFit.Evals --no-build -- --min-accuracy 0.5
+      - run: dotnet run --project evals/ProofFit.Evals --no-build -- --suite extraction --min-recall 0.85 --min-precision 0.9
 
   frontend:
     runs-on: ubuntu-latest
@@ -37,6 +65,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      # The committed types must be the ones the committed OpenAPI document produces.
+      - run: npm run api:types && git diff --exit-code -- src/api.generated.ts
       - run: npm test
       - run: npm run build
 

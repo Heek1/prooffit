@@ -1,0 +1,46 @@
+{
+  "name": "prose-only",
+  "about": "No lists or headings: the requirements are sentences in a paragraph.",
+  "vacancy": [
+    "Data Engineer",
+    "",
+    "We are looking for an engineer who has worked with Apache Spark for at least two years and writes clean Python.",
+    "You should be comfortable with Airflow and with designing data warehouses in Snowflake or BigQuery.",
+    "Experience with dbt is a bonus.",
+    "You will join a team of five and report to the head of data."
+  ],
+  "expected": [
+    {
+      "match": [
+        "Spark"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Python"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Airflow"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Snowflake",
+        "BigQuery",
+        "warehouse"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "dbt"
+      ],
+      "importance": "niceToHave"
+    }
+  ]
+}

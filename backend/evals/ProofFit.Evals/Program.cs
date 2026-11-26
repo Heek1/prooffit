@@ -4,6 +4,9 @@
 //   dotnet run --project evals/ProofFit.Evals -- --engine model        model engine (needs LLM_API_KEY)
 //   dotnet run --project evals/ProofFit.Evals -- --min-accuracy 0.6    fail when accuracy drops below 60%
 //   dotnet run --project evals/ProofFit.Evals -- --from 10             start at the case file named 10-...
+//   dotnet run --project evals/ProofFit.Evals -- --show-misses         list every wrong verdict with its reason
+//   dotnet run --project evals/ProofFit.Evals -- --suite extraction    measure reading requirements from vacancies
+//   ... --suite extraction --min-recall 0.7 --min-precision 0.8        fail below these
 //
 // A model on a free tier allows only a few calls a day, one per case here. When it stops
 // answering, the run ends with the cases it finished and says where to resume.
@@ -27,7 +30,10 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 var engine = Option("--engine") ?? "keyword";
 var minAccuracy = double.Parse(Option("--min-accuracy") ?? "0", CultureInfo.InvariantCulture);
 var from = Option("--from");
+var showMisses = args.Contains("--show-misses");
+var suite = Option("--suite") ?? "matching";
 
+ILlmClient? llm = null;
 IRequirementMatcher matcher;
 switch (engine)
 {
@@ -44,12 +50,19 @@ switch (engine)
         var options = new LlmOptions { ApiKey = apiKey };
         if (Environment.GetEnvironmentVariable("LLM_MODEL") is { Length: > 0 } model) options.Model = model;
         var http = new HttpClient { Timeout = TimeSpan.FromMinutes(2) };
-        matcher = new LlmRequirementMatcher(
-            new GeminiClient(http, Options.Create(options), new LlmUsageRecorder(), NullLogger<GeminiClient>.Instance));
+        llm = new GeminiClient(http, Options.Create(options), new LlmUsageRecorder(), NullLogger<GeminiClient>.Instance);
+        matcher = new LlmRequirementMatcher(llm);
         break;
     default:
         Console.Error.WriteLine($"Unknown engine '{engine}'. Use keyword or model.");
         return 2;
+}
+
+if (suite == "extraction") return await EvaluateExtractionAsync();
+if (suite != "matching")
+{
+    Console.Error.WriteLine($"Unknown suite '{suite}'. Use matching or extraction.");
+    return 2;
 }
 
 var cases = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "cases"), "*.json")
@@ -90,13 +103,16 @@ foreach (var (caseFile, evalCase) in cases)
     var verdicts = EvidenceValidator.Validate(requirements, proposed, resume, facts);
 
     var correct = 0;
+    var misses = new List<string>();
     for (var index = 0; index < verdicts.Count; index++)
     {
         var expected = evalCase.Requirements[index].Expected;
         confusion[expected][verdicts[index].Status]++;
         if (verdicts[index].Status == expected) correct++;
+        else misses.Add($"    {evalCase.Requirements[index].Text}: expected {expected}, got {verdicts[index].Status}. {verdicts[index].Reason}");
     }
     Console.WriteLine($"{evalCase.Name,-30} {correct}/{verdicts.Count}");
+    if (showMisses) misses.ForEach(Console.WriteLine);
 }
 
 var total = confusion.Values.Sum(row => row.Values.Sum());
@@ -132,6 +148,40 @@ if (accuracy < minAccuracy)
     return 1;
 }
 return 0;
+
+async Task<int> EvaluateExtractionAsync()
+{
+    IRequirementExtractor extractor = llm is null ? new KeywordRequirementExtractor() : new LlmRequirementExtractor(llm);
+    Console.WriteLine($"Extractor: {(llm is null ? "keyword" : "model")}");
+    Console.WriteLine();
+
+    var (result, stopped) = await ExtractionEval.RunAsync(extractor, from, WithRetriesAsync<IReadOnlyList<ExtractedRequirement>>);
+    var recall = result.Labelled == 0 ? 0 : (double)result.Found / result.Labelled;
+    var precision = result.Extracted == 0 ? 0 : (double)result.Real / result.Extracted;
+    var importance = result.Found == 0 ? 0 : (double)result.ImportanceRight / result.Found;
+
+    Console.WriteLine();
+    Console.WriteLine($"Recall:     {result.Found}/{result.Labelled} ({recall:P1}) of the labelled requirements found");
+    Console.WriteLine($"Precision:  {result.Real}/{result.Extracted} ({precision:P1}) of the extracted requirements are real");
+    Console.WriteLine($"Importance: {result.ImportanceRight}/{result.Found} ({importance:P1}) of the found ones marked required or optional correctly");
+
+    if (stopped is not null)
+    {
+        Console.Error.WriteLine();
+        Console.Error.WriteLine($"Stopped early. Resume with: --suite extraction --from {stopped.Split('-')[0]}");
+        return 3;
+    }
+
+    var minRecall = double.Parse(Option("--min-recall") ?? "0", CultureInfo.InvariantCulture);
+    var minPrecision = double.Parse(Option("--min-precision") ?? "0", CultureInfo.InvariantCulture);
+    if (recall < minRecall || precision < minPrecision)
+    {
+        Console.Error.WriteLine();
+        Console.Error.WriteLine($"Below the required recall {minRecall:P1} or precision {minPrecision:P1}.");
+        return 1;
+    }
+    return 0;
+}
 
 // A hosted model is sometimes briefly overloaded. One refused call should not throw away
 // a whole evaluation run, so each case gets a few attempts.

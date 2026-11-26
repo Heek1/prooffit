@@ -89,7 +89,7 @@ export function EvidenceThreads({ selectedId }: { selectedId: string | null }) {
   return (
     <svg
       ref={svg}
-      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible print:hidden"
       aria-hidden="true"
     >
       {/* Keyed by requirement so each thread is drawn in once per choice, not on every scroll. */}

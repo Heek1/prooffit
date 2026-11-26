@@ -7,9 +7,12 @@ namespace ProofFit.Api.Features.Analyses.Matching;
 /// and among the candidate's GitHub facts. It cannot weigh experience, synonyms or context;
 /// that gap is what the model-based matcher is for, and what the evaluation set measures.
 /// </summary>
-public class KeywordRequirementMatcher : IRequirementMatcher
+/// <param name="time">The clock that dates "to present"; the system clock when not given.</param>
+public class KeywordRequirementMatcher(TimeProvider? time = null) : IRequirementMatcher
 {
     private const int MaxLinesPerSkill = 3;
+
+    private readonly TimeProvider _time = time ?? TimeProvider.System;
 
     public string EngineName => "keyword";
 
@@ -19,13 +22,18 @@ public class KeywordRequirementMatcher : IRequirementMatcher
         IReadOnlyList<GitHubFact> gitHubFacts,
         CancellationToken ct)
     {
-        var matches = requirements.Select(requirement => Match(requirement, resume, gitHubFacts)).ToList();
+        var experience = Experience.Read(resume, DateOnly.FromDateTime(_time.GetUtcNow().UtcDateTime));
+        var matches = requirements.Select(requirement => Match(requirement, resume, gitHubFacts, experience)).ToList();
         return Task.FromResult<IReadOnlyList<ProposedMatch>>(matches);
     }
 
-    private static ProposedMatch Match(Requirement requirement, NumberedText resume, IReadOnlyList<GitHubFact> gitHubFacts)
+    private static ProposedMatch Match(
+        Requirement requirement, NumberedText resume, IReadOnlyList<GitHubFact> gitHubFacts, ExperienceSummary experience)
     {
+        var years = Experience.YearsAsked(requirement.Text);
         var skills = SkillCatalog.FindIn(requirement.Text);
+        if (skills.Count == 0 && years is not null && experience.Periods.Count > 0)
+            return MatchTotalYears(requirement, years.Value, experience);
         if (skills.Count == 0)
         {
             return new ProposedMatch(requirement.Id, MatchStatus.Missing,
@@ -62,8 +70,41 @@ public class KeywordRequirementMatcher : IRequirementMatcher
             (0, 0, _) => (MatchStatus.Missing, $"Found no evidence of {Join(absent, "or")}."),
             _ => (MatchStatus.Partial, Partly(found, learning, absent)),
         };
+
+        // A requirement for years of a technology is checked against the dated jobs that
+        // name it. A technology with no dated job behind it keeps its verdict: the resume
+        // may state the years in words.
+        if (years is not null && status != MatchStatus.Missing)
+        {
+            var asked = years.Value * 12;
+            var dated = found.Where(skill => experience.MonthsWith(skill) > 0).ToList();
+            var short_ = dated.Where(skill => experience.MonthsWith(skill) < asked).ToList();
+            if (dated.Count > 0) lines = lines.Concat(dated.SelectMany(experience.PeriodsWith).SelectMany(period => period.Lines)).Distinct().Order().ToList();
+
+            if (short_.Count > 0)
+            {
+                status = MatchStatus.Partial;
+                reason = $"The resume's dates show {Join(short_.Select(skill => $"{Experience.Describe(experience.MonthsWith(skill))} of {skill}").ToList())}, where {Asked(years.Value)}.";
+            }
+            else if (dated.Count > 0 && status == MatchStatus.Confirmed)
+            {
+                reason = $"The resume's dates show {Join(dated.Select(skill => $"{Experience.Describe(experience.MonthsWith(skill))} of {skill}").ToList())}, where {Asked(years.Value)}.";
+            }
+        }
+
         return new ProposedMatch(requirement.Id, status, reason, lines, facts);
     }
+
+    private static ProposedMatch MatchTotalYears(Requirement requirement, int years, ExperienceSummary experience)
+    {
+        var months = experience.TotalMonths;
+        var status = months >= years * 12 ? MatchStatus.Confirmed : MatchStatus.Partial;
+        return new ProposedMatch(requirement.Id, status,
+            $"The resume's dates add up to {Experience.Describe(months)} of work, where {Asked(years)}.",
+            experience.Periods.Select(period => period.Line).ToList());
+    }
+
+    private static string Asked(int years) => years == 1 ? "1 year is asked" : $"{years} years are asked";
 
     private static string Partly(List<string> found, List<string> learning, List<string> absent)
     {

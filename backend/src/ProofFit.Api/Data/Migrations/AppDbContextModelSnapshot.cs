@@ -28,6 +28,9 @@ namespace ProofFit.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -47,6 +50,9 @@ namespace ProofFit.Api.Data.Migrations
 
                     b.Property<string>("GivenRequirements")
                         .HasColumnType("jsonb");
+
+                    b.Property<DateTimeOffset?>("LeaseExpiresAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Result")
                         .HasColumnType("jsonb");
@@ -106,6 +112,9 @@ namespace ProofFit.Api.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<int>("IgnoredCharacters")
+                        .HasColumnType("integer");
 
                     b.Property<int>("PageCount")
                         .HasColumnType("integer");

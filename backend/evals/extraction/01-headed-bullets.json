@@ -1,0 +1,64 @@
+{
+  "name": "headed-bullets",
+  "about": "A conventional posting: a requirements list and a nice-to-have list under headings.",
+  "vacancy": [
+    "Backend Developer (.NET)",
+    "We build payroll software for small businesses.",
+    "",
+    "Requirements:",
+    "- 3+ years of commercial experience with C# and .NET",
+    "- ASP.NET Core Web API",
+    "- PostgreSQL or SQL Server",
+    "- Writing unit tests with xUnit or NUnit",
+    "- Upper-Intermediate English",
+    "",
+    "Nice to have:",
+    "- Docker",
+    "- Experience with Azure"
+  ],
+  "expected": [
+    {
+      "match": [
+        "3+ years"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "ASP.NET Core"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "PostgreSQL"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "unit tests",
+        "xUnit"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "English"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Docker"
+      ],
+      "importance": "niceToHave"
+    },
+    {
+      "match": [
+        "Azure"
+      ],
+      "importance": "niceToHave"
+    }
+  ]
+}

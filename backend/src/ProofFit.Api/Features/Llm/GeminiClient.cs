@@ -32,6 +32,13 @@ public class GeminiClient(
         // In a header rather than the query string, so the key never lands in request logs.
         request.Headers.Add("x-goog-api-key", options.Value.ApiKey);
 
+        // Named and tagged after OpenTelemetry's conventions for generative AI clients.
+        using var activity = Telemetry.Source.StartActivity($"generate_content {Model}", ActivityKind.Client);
+        activity?.SetTag("gen_ai.operation.name", "generate_content");
+        activity?.SetTag("gen_ai.provider.name", "gcp.gemini");
+        activity?.SetTag("gen_ai.request.model", Model);
+        activity?.SetTag("prooffit.prompt", prompt.Purpose);
+
         var started = Stopwatch.GetTimestamp();
         GenerateResponse? response;
         try
@@ -54,10 +61,12 @@ public class GeminiClient(
             throw new LlmUnavailableException("The model could not be reached.", ex);
         }
 
-        usage.Record(Model,
-            response?.UsageMetadata?.PromptTokenCount ?? 0,
-            response?.UsageMetadata?.CandidatesTokenCount ?? 0,
-            Stopwatch.GetElapsedTime(started));
+        var (inputTokens, outputTokens) = (response?.UsageMetadata?.PromptTokenCount ?? 0, response?.UsageMetadata?.CandidatesTokenCount ?? 0);
+        usage.Record(Model, inputTokens, outputTokens, Stopwatch.GetElapsedTime(started));
+        activity?.SetTag("gen_ai.usage.input_tokens", inputTokens);
+        activity?.SetTag("gen_ai.usage.output_tokens", outputTokens);
+        Telemetry.ModelTokens.Add(inputTokens, new("gen_ai.token.type", "input"), new("gen_ai.request.model", Model));
+        Telemetry.ModelTokens.Add(outputTokens, new("gen_ai.token.type", "output"), new("gen_ai.request.model", Model));
 
         var text = response?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text;
         if (string.IsNullOrWhiteSpace(text))

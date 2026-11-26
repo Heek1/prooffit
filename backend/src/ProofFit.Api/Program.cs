@@ -11,10 +11,18 @@ using ProofFit.Api.Features.Vacancies;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddTelemetry();
+
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddValidation();
-builder.Services.ConfigureHttpJsonOptions(options => ApiJson.Configure(options.SerializerOptions));
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    ApiJson.Configure(options.SerializerOptions);
+    // Numbers are numbers on the wire, so the OpenAPI document, and the frontend types made
+    // from it, say "number" rather than "number or string".
+    options.SerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.Strict;
+});
 
 // The connection string is read when the context is first resolved rather than here, so
 // configuration added after this point (integration tests, container env) still applies.
@@ -60,6 +68,7 @@ builder.Services.AddOptions<RetentionOptions>().BindConfiguration("Retention");
 builder.Services.AddScoped<RetentionCleaner>();
 builder.Services.AddHostedService<RetentionWorker>();
 builder.Services.AddSingleton<AnalysisQueue>();
+builder.Services.AddScoped<AnalysisLeases>();
 builder.Services.AddHostedService<AnalysisWorker>();
 
 builder.Services.AddOptions<GitHubOptions>().BindConfiguration("GitHub");
@@ -89,6 +98,11 @@ if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
 }
 
 app.UseForwardedHeaders();
+app.UseSecurityHeaders();
+
+// HTTPS is enforced by the host in front of the API; this tells browsers to keep using it.
+if (!app.Environment.IsDevelopment()) app.UseHsts();
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseCors();

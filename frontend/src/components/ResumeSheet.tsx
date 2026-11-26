@@ -1,6 +1,6 @@
 import { useState, type DragEvent } from 'react'
 import { ApiError, uploadResume, type Resume } from '../api.ts'
-import { RESUME_FILE_BYTES } from '../limits.ts'
+import { RESUME_FILE_BYTES, RESUME_PAGES } from '../limits.ts'
 import { DocumentText } from './DocumentText.tsx'
 import { ErrorList, Sheet, TextButton } from './Sheet.tsx'
 
@@ -46,6 +46,12 @@ export function ResumeSheet({ resume, onChange }: ResumeSheetProps) {
         detail={`${resume.fileName}, ${pages}`}
         action={<TextButton onClick={() => onChange(null)}>Replace</TextButton>}
       >
+        {resume.ignoredCharacters > 0 && (
+          <p role="status" className="mb-3 border-l-4 border-marker-deep bg-desk/50 px-3 py-2 text-sm">
+            This PDF holds {resume.ignoredCharacters.toLocaleString('en')} characters of text a reader cannot see,
+            such as white or tiny text. They were left out and count as no evidence.
+          </p>
+        )}
         <DocumentText text={resume.text} label="Resume text" />
       </Sheet>
     )
@@ -79,7 +85,7 @@ export function ResumeSheet({ resume, onChange }: ResumeSheetProps) {
           {uploading ? 'Reading your resume…' : 'Choose a PDF resume'}
         </span>
         <span className="text-sm text-ink-soft">
-          or drop it here. Up to {RESUME_FILE_BYTES / (1024 * 1024)} MB, with selectable text.
+          or drop it here. Up to {RESUME_FILE_BYTES / (1024 * 1024)} MB and {RESUME_PAGES} pages, with selectable text.
         </span>
       </label>
       <ErrorList messages={errors} />

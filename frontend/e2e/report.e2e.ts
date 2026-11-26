@@ -78,6 +78,46 @@ test('deleting a report asks first, then removes it and returns to the start', a
   expect(api.deleted).toEqual(['analysis-1'])
 })
 
+test('a fact from GitHub links to the file that shows it', async ({ page }) => {
+  await fakeApi(page)
+  await page.goto('/analyses/analysis-github')
+
+  await page.getByRole('button', { name: /^Kubernetes/ }).last().click()
+
+  const file = page.getByRole('link', { name: 'k8s/deployment.yaml' })
+  await expect(file).toHaveAttribute('href', 'https://github.com/olena-dev/infra/blob/main/k8s/deployment.yaml')
+  await expect(page.getByText(', last pushed March 2026')).toBeVisible()
+})
+
+test('the summary is copied as text with the evidence quoted', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await fakeApi(page)
+  await page.goto('/analyses/analysis-1')
+
+  await page.getByRole('button', { name: 'Copy summary' }).click()
+
+  await expect(page.getByRole('status').filter({ hasText: 'Summary copied.' })).toBeVisible()
+  const text = await page.evaluate(() => navigator.clipboard.readText())
+  expect(text).toContain('ProofFit report: Full-stack developer')
+  expect(text).toContain('  Resume line 3: "Built a payments API with ASP.NET Core and PostgreSQL"')
+  expect(text).toContain('Full report: ' + page.url())
+})
+
+test('printed, a report keeps the requirements and leaves out the controls', async ({ page }) => {
+  await fakeApi(page)
+  await page.goto('/analyses/analysis-1')
+  await page.emulateMedia({ media: 'print' })
+
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^React with TypeScript/ })).toBeVisible()
+  await expect(page.getByText('Wrote the React and TypeScript admin console').first()).toBeVisible()
+  for (const hidden of ['Copy summary', 'Save as PDF', 'Edit the requirements', 'Delete now']) {
+    await expect(page.getByRole('button', { name: hidden })).toBeHidden()
+  }
+  await expect(page.getByRole('complementary', { name: 'Evidence' })).toBeHidden()
+  await expect(page.getByText('Full report, until it is deleted: ' + page.url())).toBeVisible()
+})
+
 test('an unknown report says so and offers a way back', async ({ page }) => {
   await fakeApi(page)
   await page.goto('/analyses/does-not-exist')

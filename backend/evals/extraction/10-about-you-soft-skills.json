@@ -1,0 +1,49 @@
+{
+  "name": "about-you-soft-skills",
+  "about": "Soft skills and a language level under an \"About you\" heading are requirements too.",
+  "vacancy": [
+    "Product Designer",
+    "",
+    "About you:",
+    "- A portfolio of shipped product work",
+    "- Daily use of Figma",
+    "- Clear written communication",
+    "- Fluent English",
+    "",
+    "Good to have:",
+    "- Experience with design systems"
+  ],
+  "expected": [
+    {
+      "match": [
+        "portfolio"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Figma"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "communication"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "English"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "design system",
+        "design systems"
+      ],
+      "importance": "niceToHave"
+    }
+  ]
+}

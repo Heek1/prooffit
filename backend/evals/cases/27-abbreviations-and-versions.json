@@ -1,0 +1,48 @@
+{
+  "name": "abbreviations-and-versions",
+  "resume": [
+    "Platform engineer",
+    "Ran K8s clusters on EKS for 30 services",
+    "Wrote JS and TS tooling for the deploy pipeline",
+    "Maintained Postgres 15 with logical replication",
+    "Upgraded services from .NET Core 3.1 to .NET 8"
+  ],
+  "requirements": [
+    {
+      "text": "Kubernetes",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2: K8s is Kubernetes; EKS is managed Kubernetes."
+    },
+    {
+      "text": "AWS",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2: EKS is an AWS service."
+    },
+    {
+      "text": "TypeScript",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3: TS."
+    },
+    {
+      "text": "PostgreSQL",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 4: Postgres is PostgreSQL."
+    },
+    {
+      "text": ".NET 6 or later",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 5: upgraded to .NET 8."
+    },
+    {
+      "text": "Terraform",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

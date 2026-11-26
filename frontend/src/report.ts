@@ -1,4 +1,4 @@
-import type { AnalysisResult, AnalysisStage, MatchStatus, RequirementMatch } from './api.ts'
+import type { Analysis, AnalysisResult, AnalysisStage, GitHubRepository, MatchStatus, RequirementMatch } from './api.ts'
 
 /** What each verdict is called in the interface. */
 export const STATUS_LABEL: Record<MatchStatus, string> = {
@@ -8,6 +8,53 @@ export const STATUS_LABEL: Record<MatchStatus, string> = {
 }
 
 export type StatusCounts = Record<MatchStatus, number>
+
+const MAX_LINES_QUOTED = 2
+
+/**
+ * The report as plain text, to paste into an email or a note: each requirement under its
+ * verdict with the reason and the evidence quoted, and a link back to the full report.
+ */
+export function reportSummary(analysis: Analysis & { result: AnalysisResult }, url: string): string {
+  const { result } = analysis
+  const lines = analysis.resume.text.split('\n')
+  const out = [
+    `ProofFit report: ${analysis.vacancy.title}`,
+    `${headline(result.requirements)}. Score ${result.score} out of 100, with must-haves counting double.`,
+  ]
+
+  for (const status of ['confirmed', 'partial', 'missing'] as const) {
+    const group = result.requirements.filter((requirement) => requirement.status === status)
+    if (group.length === 0) continue
+    out.push('', STATUS_LABEL[status])
+    for (const requirement of group) {
+      const importance = requirement.importance === 'mustHave' ? 'must-have' : 'nice to have'
+      out.push(`- ${requirement.text} (${importance}): ${requirement.reason}`)
+      for (const line of requirement.resumeLines.slice(0, MAX_LINES_QUOTED)) {
+        out.push(`  Resume line ${line}: "${lines[line - 1] ?? ''}"`)
+      }
+      for (const fact of result.gitHub?.facts.filter((f) => requirement.gitHubFacts.includes(f.id)) ?? []) {
+        const where = fact.repositories.map((r) => (r.file ? `${r.name} (${r.file})` : r.name)).join(', ')
+        out.push(`  GitHub: ${fact.skill} in ${where}`)
+      }
+    }
+  }
+
+  const expires = new Date(analysis.expiresAt).toLocaleDateString('en', { dateStyle: 'medium' })
+  out.push('', `Full report: ${url} (available until ${expires})`)
+  return out.join('\n')
+}
+
+/** "March 2026": when the most recently pushed of a fact's repositories was last pushed to. */
+export function lastPushed(repositories: GitHubRepository[]): string | null {
+  const latest = repositories
+    .map((repository) => (repository.pushedAt ? Date.parse(repository.pushedAt) : NaN))
+    .filter((time) => !Number.isNaN(time))
+    .sort((a, b) => b - a)[0]
+  return latest === undefined
+    ? null
+    : new Date(latest).toLocaleDateString('en', { month: 'long', year: 'numeric', timeZone: 'UTC' })
+}
 
 export function countByStatus(requirements: RequirementMatch[]): StatusCounts {
   const counts: StatusCounts = { confirmed: 0, partial: 0, missing: 0 }

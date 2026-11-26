@@ -25,8 +25,28 @@ public class GitHubScannerTests
             ("G3", "Kubernetes", "infra"),
         ], evidence.Facts.Select(fact => (fact.Id, fact.Skill, string.Join(", ", fact.Repositories.Select(r => r.Name)))));
         Assert.Equal(
-            new RepositoryRef("infra", "https://github.com/octo-dev/infra"),
+            new RepositoryRef("infra", "https://github.com/octo-dev/infra", "k8s/deployment.yaml",
+                "https://github.com/octo-dev/infra/blob/main/k8s/deployment.yaml", new DateTimeOffset(2026, 10, 31, 0, 0, 0, TimeSpan.Zero)),
             evidence.Facts[2].Repositories[0]);
+    }
+
+    [Fact]
+    public async Task Links_each_fact_to_the_file_that_shows_it()
+    {
+        _gitHub.AddUser("octo-dev", new StubRepository("shop")
+            .With("src/Api/Api.csproj", """<Project><ItemGroup><PackageReference Include="Npgsql" /></ItemGroup></Project>""")
+            .With("src/Api/Program.cs").With("src/Api/Orders.cs").With("src/Api/Cart.cs")
+            .With(".github/workflows/ci.yml"));
+
+        var evidence = await Scanner().ScanAsync("octo-dev", CancellationToken.None);
+
+        var files = evidence.Facts.ToDictionary(fact => fact.Skill, fact => Assert.Single(fact.Repositories).File);
+        Assert.Equal("src/Api/Cart.cs", files["C#"]);
+        Assert.Equal(".github/workflows/ci.yml", files["CI/CD"]);
+        Assert.Equal("src/Api/Api.csproj", files["PostgreSQL"]);
+        Assert.Equal(
+            "https://github.com/octo-dev/shop/blob/main/src/Api/Api.csproj",
+            evidence.Facts.Single(fact => fact.Skill == "PostgreSQL").Repositories[0].FileUrl);
     }
 
     [Fact]

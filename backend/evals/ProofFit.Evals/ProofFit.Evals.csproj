@@ -14,6 +14,7 @@
   <!-- The labelled cases travel with the build, so the runner works from any directory. -->
   <ItemGroup>
     <Content Include="..\cases\*.json" Link="cases\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\extraction\*.json" Link="extraction\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

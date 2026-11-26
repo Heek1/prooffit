@@ -1,0 +1,46 @@
+{
+  "name": "plus-marked-inline",
+  "about": "Optional items marked inside a single list rather than under their own heading.",
+  "vacancy": [
+    "Frontend Engineer",
+    "",
+    "What we are looking for:",
+    "- Solid React and TypeScript",
+    "- Experience with REST APIs",
+    "- Next.js would be a plus",
+    "- Familiarity with Storybook is a plus",
+    "- Good eye for accessibility"
+  ],
+  "expected": [
+    {
+      "match": [
+        "React"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "REST"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Next.js"
+      ],
+      "importance": "niceToHave"
+    },
+    {
+      "match": [
+        "Storybook"
+      ],
+      "importance": "niceToHave"
+    },
+    {
+      "match": [
+        "accessibility"
+      ],
+      "importance": "mustHave"
+    }
+  ]
+}

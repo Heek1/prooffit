@@ -14,7 +14,7 @@ import { StillToProve } from '../components/StillToProve.tsx'
 import { forget, remember } from '../history.ts'
 import { useAnalysis } from '../hooks/useAnalysis.ts'
 import { useCountUp } from '../hooks/useCountUp.ts'
-import { countByStatus, engineSentence, firstWithEvidence, headline, remainder } from '../report.ts'
+import { countByStatus, engineSentence, firstWithEvidence, headline, remainder, reportSummary } from '../report.ts'
 
 const linkStyle = 'font-medium underline underline-offset-4 hover:decoration-2'
 
@@ -25,7 +25,7 @@ export function ReportPage() {
   return (
     <PageShell
       action={
-        <Link to="/" className={`text-sm ${linkStyle}`}>
+        <Link to="/" className={`text-sm print:hidden ${linkStyle}`}>
           New comparison
         </Link>
       }
@@ -115,6 +115,7 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
         <p className="mt-4 text-lg text-ink-soft">
           {remainder(result.requirements)} Score {result.score} out of 100, with must-haves counting double.
         </p>
+        <ExportActions analysis={{ ...analysis, result }} />
       </header>
 
       <div className="mt-8 max-w-3xl">
@@ -145,7 +146,7 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
           ) : (
             <>
               <StillToProve requirements={result.requirements} onSelect={choose} />
-              <p className="text-sm text-ink-soft">
+              <p className="text-sm text-ink-soft print:hidden">
                 Read a requirement wrongly?{' '}
                 <button type="button" onClick={() => setEditing(true)} className={`cursor-pointer text-ink ${linkStyle}`}>
                   Edit the requirements
@@ -162,7 +163,8 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
           )}
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-6" aria-label="Evidence">
+        {/* Printed, the evidence is already quoted under each requirement. */}
+        <aside className="space-y-4 lg:sticky lg:top-6 print:hidden" aria-label="Evidence">
           <Sheet title="Resume" detail={analysis.resume.fileName}>
             <DocumentText
               text={analysis.resume.text}
@@ -188,16 +190,24 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
 
       <footer className="mt-12 border-t border-rule pt-4 text-sm text-ink-soft">
         <p>{engineSentence(analysis.engine, result.usage)}</p>
-        <Lifetime analysis={analysis} />
+        {/* A printed report says where it came from, since the page it was printed from expires. */}
+        <p className="hidden print:block">
+          Made on {new Date(analysis.createdAt).toLocaleDateString('en', { dateStyle: 'long' })}. Full report, until it is deleted:{' '}
+          {window.location.href}
+        </p>
+        <div className="print:hidden">
+          <Lifetime analysis={analysis} />
+        </div>
       </footer>
 
       {sheetOpen && selected && (
+        // The phone's evidence sheet is part of the screen, not of the report.
         <>
           {/* Keeps the end of the page reachable above the sheet. */}
-          <div className="h-80 lg:hidden" aria-hidden="true" />
+          <div className="h-80 lg:hidden print:hidden" aria-hidden="true" />
           <section
             aria-label="Resume lines for the chosen requirement"
-            className="slide-up fixed inset-x-0 bottom-0 z-10 rounded-t-2xl border-t border-rule bg-sheet shadow-[0_-12px_40px_rgb(29_43_79/0.2)] lg:hidden"
+            className="slide-up fixed inset-x-0 bottom-0 z-10 print:hidden rounded-t-2xl border-t border-rule bg-sheet shadow-[0_-12px_40px_rgb(29_43_79/0.2)] lg:hidden"
           >
             <div className="mx-auto mt-2 h-1 w-9 rounded-full bg-rule" aria-hidden="true" />
             <header className="flex items-center justify-between gap-4 border-b border-rule px-4 pb-2">
@@ -233,6 +243,34 @@ function Report({ analysis, result }: { analysis: Analysis; result: AnalysisResu
 }
 
 /** Says when the comparison disappears, and lets its owner remove it now. */
+/** Takes the report away: as text for an email or a note, or as a PDF through the browser's print dialog. */
+function ExportActions({ analysis }: { analysis: Analysis & { result: AnalysisResult } }) {
+  const [copied, setCopied] = useState<'idle' | 'copied' | 'failed'>('idle')
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(reportSummary(analysis, window.location.href))
+      setCopied('copied')
+    } catch {
+      setCopied('failed')
+    }
+  }
+
+  return (
+    <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm print:hidden">
+      <button type="button" onClick={() => void copy()} className={`cursor-pointer ${linkStyle}`}>
+        Copy summary
+      </button>
+      <button type="button" onClick={() => window.print()} className={`cursor-pointer ${linkStyle}`}>
+        Save as PDF
+      </button>
+      <p role="status" className="text-ink-soft">
+        {copied === 'copied' ? 'Summary copied.' : copied === 'failed' ? 'The browser did not allow copying.' : ''}
+      </p>
+    </div>
+  )
+}
+
 function Lifetime({ analysis }: { analysis: Analysis }) {
   const navigate = useNavigate()
   const [step, setStep] = useState<'idle' | 'confirming' | 'deleting' | 'failed'>('idle')

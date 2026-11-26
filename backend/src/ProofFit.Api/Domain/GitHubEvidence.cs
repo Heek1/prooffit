@@ -1,6 +1,9 @@
 namespace ProofFit.Api.Domain;
 
-public record RepositoryRef(string Name, string Url);
+/// <param name="File">A file in the repository that shows the skill. Null in profiles scanned before files were recorded.</param>
+/// <param name="FileUrl">Where that file can be opened on GitHub.</param>
+/// <param name="PushedAt">When the repository was last pushed to.</param>
+public record RepositoryRef(string Name, string Url, string? File = null, string? FileUrl = null, DateTimeOffset? PushedAt = null);
 
 /// <summary>
 /// One thing a candidate's public code shows: a skill, and the repositories it was found

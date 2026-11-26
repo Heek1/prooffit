@@ -1,0 +1,59 @@
+{
+  "name": "stack-line",
+  "about": "A one-line technology stack followed by a short list.",
+  "vacancy": [
+    "DevOps Engineer",
+    "",
+    "Tech stack: Kubernetes, Terraform, AWS, GitHub Actions",
+    "",
+    "You have:",
+    "- 3+ years running production infrastructure",
+    "- Strong Linux administration",
+    "- Experience with Prometheus and Grafana"
+  ],
+  "expected": [
+    {
+      "match": [
+        "Kubernetes"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Terraform"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "AWS"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "GitHub Actions"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "3+ years"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Linux"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "Prometheus",
+        "Grafana"
+      ],
+      "importance": "mustHave"
+    }
+  ]
+}

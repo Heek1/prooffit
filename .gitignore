@@ -1,6 +1,9 @@
 # .NET
 bin/
 obj/
+TestResults/
+StrykerOutput/
+backend/coverage/
 .vs/
 *.user
 

@@ -45,7 +45,10 @@ public class AnalysisWithGitHubTests(ApiFactory factory)
         Assert.Empty(kubernetes.ResumeLines);
         var fact = result.GitHub.Facts.Single(f => f.Id == Assert.Single(kubernetes.GitHubFacts));
         Assert.Equal("Kubernetes", fact.Skill);
-        Assert.Equal(new RepositoryRef("infra", "https://github.com/kube-dev/infra"), Assert.Single(fact.Repositories));
+        Assert.Equal(
+            new RepositoryRef("infra", "https://github.com/kube-dev/infra", "k8s/deployment.yaml",
+                "https://github.com/kube-dev/infra/blob/main/k8s/deployment.yaml", new DateTimeOffset(2026, 11, 1, 0, 0, 0, TimeSpan.Zero)),
+            Assert.Single(fact.Repositories));
 
         // Docker is shown by both sources, and both are cited.
         var docker = result.Requirements[0];

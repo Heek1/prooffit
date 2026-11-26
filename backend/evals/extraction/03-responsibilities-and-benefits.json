@@ -1,0 +1,45 @@
+{
+  "name": "responsibilities-and-benefits",
+  "about": "Responsibilities, benefits and company text around a short requirements list; only the list counts.",
+  "vacancy": [
+    "Python Developer",
+    "",
+    "About the company:",
+    "We are a fintech startup with 40 people in Kyiv and Warsaw.",
+    "",
+    "Responsibilities:",
+    "- Design and build services with FastAPI",
+    "- Work with Kafka event streams",
+    "- Take part in code reviews",
+    "",
+    "Requirements:",
+    "- 2+ years with Python",
+    "- Experience with SQL databases",
+    "- Understanding of async programming",
+    "",
+    "We offer:",
+    "- Remote work and flexible hours",
+    "- Paid courses and conferences"
+  ],
+  "expected": [
+    {
+      "match": [
+        "2+ years",
+        "Python"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "SQL"
+      ],
+      "importance": "mustHave"
+    },
+    {
+      "match": [
+        "async"
+      ],
+      "importance": "mustHave"
+    }
+  ]
+}
