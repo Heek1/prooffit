@@ -1,0 +1,41 @@
+{
+  "name": "overlapping-jobs",
+  "resume": [
+    "Backend developer",
+    "Nova Pay, Go developer, January 2023 to December 2024",
+    "Freelance Go consulting, part-time, June 2023 to June 2024",
+    "Earlier: PHP developer at a web studio, 2020 to 2022"
+  ],
+  "requirements": [
+    {
+      "text": "3+ years of Go",
+      "importance": "mustHave",
+      "expected": "partial",
+      "why": "The two Go periods overlap: January 2023 to December 2024 is two years, not three and a half."
+    },
+    {
+      "text": "2+ years of Go",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Two years of Go by the dates, overlaps counted once."
+    },
+    {
+      "text": "4+ years of commercial experience",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "2020 to 2022 plus 2023 to 2024 is five years of work."
+    },
+    {
+      "text": "PHP",
+      "importance": "niceToHave",
+      "expected": "confirmed",
+      "why": "Line 4."
+    },
+    {
+      "text": "Rust",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    }
+  ]
+}

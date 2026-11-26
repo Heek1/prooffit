@@ -4,6 +4,7 @@
 //   dotnet run --project evals/ProofFit.Evals -- --engine model        model engine (needs LLM_API_KEY)
 //   dotnet run --project evals/ProofFit.Evals -- --min-accuracy 0.6    fail when accuracy drops below 60%
 //   dotnet run --project evals/ProofFit.Evals -- --from 10             start at the case file named 10-...
+//   dotnet run --project evals/ProofFit.Evals -- --show-misses         list every wrong verdict with its reason
 //   dotnet run --project evals/ProofFit.Evals -- --suite extraction    measure reading requirements from vacancies
 //   ... --suite extraction --min-recall 0.7 --min-precision 0.8        fail below these
 //
@@ -29,6 +30,7 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 var engine = Option("--engine") ?? "keyword";
 var minAccuracy = double.Parse(Option("--min-accuracy") ?? "0", CultureInfo.InvariantCulture);
 var from = Option("--from");
+var showMisses = args.Contains("--show-misses");
 var suite = Option("--suite") ?? "matching";
 
 ILlmClient? llm = null;
@@ -101,13 +103,16 @@ foreach (var (caseFile, evalCase) in cases)
     var verdicts = EvidenceValidator.Validate(requirements, proposed, resume, facts);
 
     var correct = 0;
+    var misses = new List<string>();
     for (var index = 0; index < verdicts.Count; index++)
     {
         var expected = evalCase.Requirements[index].Expected;
         confusion[expected][verdicts[index].Status]++;
         if (verdicts[index].Status == expected) correct++;
+        else misses.Add($"    {evalCase.Requirements[index].Text}: expected {expected}, got {verdicts[index].Status}. {verdicts[index].Reason}");
     }
     Console.WriteLine($"{evalCase.Name,-30} {correct}/{verdicts.Count}");
+    if (showMisses) misses.ForEach(Console.WriteLine);
 }
 
 var total = confusion.Values.Sum(row => row.Values.Sum());

@@ -117,20 +117,23 @@ Each has a longer record, with what it costs, in [docs/decisions](docs/decisions
 
 ## Evaluation
 
-`backend/evals` holds 25 hand-written cases with 139 labelled requirements. Each case is built
-around a way matching goes wrong: synonyms, amounts of experience counted from dates,
-negation, alternatives, neighbouring technologies (Kotlin for Java, MySQL for PostgreSQL), a
-bare list of skills with no work behind it, a graduate with only course projects, resumes and
-vacancies in Ukrainian, certifications, and a resume that tries to instruct the model.
+`backend/evals` holds 35 hand-written cases with 196 labelled requirements. Each case is built
+around a way matching goes wrong: synonyms and abbreviations (K8s, Postgres, TS), amounts of
+experience counted from dates and from overlapping jobs, negation and phrasings that only look
+like one ("no downtime"), alternatives, neighbouring technologies (Kotlin for Java, MySQL for
+PostgreSQL, GCP for AWS), a bare list of skills with no work behind it, a manager whose team
+used the technology, a graduate with only course projects, resumes and vacancies in Ukrainian,
+certifications and compliance, evidence found only on GitHub, and a resume that tries to
+instruct the model.
 
 | Engine | Cases run | Accuracy | Unsupported claims |
 |---|---|---|---|
-| Keyword baseline | 25 of 25 | 75 of 139 (54.0%) | 2 |
-| Model (`gemini-3.5-flash`) | 21 of 25 | 108 of 120 (90.0%) | 1 |
+| Keyword baseline | 35 of 35 | 111 of 196 (56.6%) | 4 |
+| Model (`gemini-3.5-flash`) | 21 of 35 | 108 of 120 (90.0%) | 1 |
 
 The model's free tier allows about 20 calls a day, one per case, so its run is split across
-days. Four cases (`22` to `25`, 19 requirements) are still to be measured; resume with
-`--from 22`. Its figures combine the original nine cases (42 of 43) and twelve of the new
+days. Fourteen cases (`22` to `35`, 76 requirements) are still to be measured; resume with
+`--from 22`. Its figures combine the original nine cases (42 of 43) and twelve of the later
 ones (66 of 77).
 
 An unsupported claim is a requirement reported as proven or partly proven when the label
@@ -138,6 +141,13 @@ says there is no evidence: the mistake that matters most here. Most come from te
 a technology the candidate has not used: a negation ("no production experience with
 Kubernetes") or other people's work ("worked alongside developers who used React"). The
 keyword engine reads those phrasings and does not count such a line as evidence.
+
+Where the keyword engine goes wrong, from the newest cases: it counts a line about a team the
+candidate managed ("managed a team building a Kafka-based platform") and course projects as
+evidence; it reads learning only in English ("вивчаю Next.js на курсах" counts as proven); it
+asks for every alternative in "Angular or React"; it does not know abbreviations such as TS or
+EKS, nor Go, which is too common a word to look for; and it cannot check a requirement that
+names no technology (leadership, on-call, GDPR). Those are the gaps the model engine exists for.
 
 Where the model goes wrong now:
 
@@ -147,7 +157,8 @@ Where the model goes wrong now:
   experience. 2 of 6 right.
 
 The set is written by one person. It is there to catch regressions and compare engines, not
-to stand as a benchmark. CI runs the keyword engine on every change and fails below 50%.
+to stand as a benchmark. CI runs the keyword engine on every change and fails below 50%. Add `--show-misses` to list every
+wrong verdict with its reason.
 
 ```bash
 cd backend && dotnet run --project evals/ProofFit.Evals

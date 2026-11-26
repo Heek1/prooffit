@@ -1,0 +1,48 @@
+{
+  "name": "data-analyst",
+  "resume": [
+    "Data analyst",
+    "Wrote SQL reports on a PostgreSQL warehouse for the sales team",
+    "Built Power BI dashboards used weekly by management",
+    "Cleaned and joined datasets in Python with pandas",
+    "Ran A/B test analyses and presented results"
+  ],
+  "requirements": [
+    {
+      "text": "Strong SQL",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 2."
+    },
+    {
+      "text": "Power BI or Tableau",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 3: Power BI."
+    },
+    {
+      "text": "Python for data analysis",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 4: pandas."
+    },
+    {
+      "text": "A/B testing and statistics",
+      "importance": "mustHave",
+      "expected": "confirmed",
+      "why": "Line 5."
+    },
+    {
+      "text": "dbt",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned."
+    },
+    {
+      "text": "Apache Spark",
+      "importance": "niceToHave",
+      "expected": "missing",
+      "why": "Not mentioned; pandas is not Spark."
+    }
+  ]
+}
