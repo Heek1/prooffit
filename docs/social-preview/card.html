@@ -1,0 +1,111 @@
+<!doctype html>
+<!-- The image shown when a link to ProofFit is shared. Rendered by render.mjs beside it. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Geologica';
+        src: url('../../frontend/node_modules/@fontsource-variable/geologica/files/geologica-latin-wght-normal.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: 'Literata';
+        src: url('../../frontend/node_modules/@fontsource-variable/literata/files/literata-latin-wght-normal.woff2') format('woff2');
+        font-weight: 200 900;
+      }
+      :root {
+        --desk: #e4e8ef;
+        --sheet: #ffffff;
+        --ink: #1d2b4f;
+        --ink-soft: #525d75;
+        --rule: #cdd3de;
+        --marker: #ffe14d;
+        --marker-deep: #f5cf00;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body { width: var(--w); height: var(--h); }
+      body {
+        background: var(--desk);
+        color: var(--ink);
+        font-family: 'Geologica', sans-serif;
+        padding: calc(var(--h) * 0.1) calc(var(--w) * 0.06);
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 56px;
+        align-items: center;
+        overflow: hidden;
+      }
+      .brand { display: flex; align-items: center; gap: 12px; font-size: 30px; font-weight: 600; }
+      h1 { margin-top: 36px; font-size: 62px; line-height: 1.04; font-weight: 500; letter-spacing: -0.02em; }
+      .marked { background: linear-gradient(var(--marker), var(--marker)) left 62% / 100% 74% no-repeat; padding: 0 4px; }
+      .lede { margin-top: 28px; font-size: 24px; line-height: 1.4; color: var(--ink-soft); font-weight: 300; }
+      .url { margin-top: 30px; font-size: 22px; font-weight: 500; text-decoration: underline; text-underline-offset: 6px; }
+
+      .scene { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+      .requirement {
+        background: var(--sheet); border-left: 4px solid var(--ink); padding: 18px 22px;
+        display: flex; justify-content: space-between; align-items: baseline; font-size: 23px; font-weight: 600;
+        width: 80%;
+      }
+      .requirement span { font-size: 18px; font-weight: 400; color: var(--ink-soft); }
+      .requirement.missing { border-left-color: var(--rule); font-weight: 500; color: var(--ink-soft); }
+      .resume {
+        align-self: flex-start; width: 80%; background: var(--sheet); border-radius: 4px;
+        box-shadow: 0 18px 40px rgb(29 43 79 / 0.14); padding: 18px 0; font-family: 'Literata', serif; font-size: 19px;
+      }
+      .resume li { list-style: none; display: grid; grid-template-columns: 44px 1fr; padding: 5px 22px 5px 0; color: var(--ink); }
+      .resume li b { font-family: 'Geologica', sans-serif; font-weight: 400; font-size: 14px; color: var(--ink-soft); text-align: right; padding-right: 14px; padding-top: 4px; }
+      .resume li.cited { background: var(--marker); }
+      .resume li.cited b { color: var(--ink); font-weight: 700; }
+      svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="brand">
+        <svg viewBox="0 0 20 20" width="30" height="30" style="position: static; width: 30px; height: 30px">
+          <rect x="1" y="2" width="18" height="3" fill="#1d2b4f" />
+          <rect x="1" y="7.5" width="18" height="5" fill="#f5cf00" />
+          <rect x="1" y="15" width="11" height="3" fill="#1d2b4f" />
+        </svg>
+        ProofFit
+      </div>
+      <h1>Does your resume <span class="marked">prove</span> what the vacancy asks for?</h1>
+      <p class="lede">Every requirement is checked against a line of the resume or public code on GitHub. A match is never a guess.</p>
+      <p class="url">prooffit.onrender.com</p>
+    </div>
+
+    <div class="scene">
+      <div class="requirement" id="req">ASP.NET Core and PostgreSQL <span>Proven</span></div>
+      <div class="requirement missing">Kubernetes <span>No evidence</span></div>
+      <ol class="resume">
+        <li><b>1</b>Olena Koval</li>
+        <li><b>2</b>Full-stack developer</li>
+        <li class="cited" id="line"><b>3</b>Payments API in ASP.NET Core, PostgreSQL</li>
+        <li><b>4</b>Admin console in React</li>
+        <li><b>5</b>Docker, GitHub Actions</li>
+      </ol>
+      <svg id="thread"></svg>
+    </div>
+
+    <script>
+      // Sized by the address (card.html?w=1200&h=630), so one design serves every size.
+      const size = new URLSearchParams(location.search)
+      document.documentElement.style.setProperty('--w', `${size.get('w') ?? 1200}px`)
+      document.documentElement.style.setProperty('--h', `${size.get('h') ?? 630}px`)
+
+      // The thread from the requirement to the line that proves it, as the report draws it.
+      const scene = document.querySelector('.scene').getBoundingClientRect()
+      const from = document.getElementById('req').getBoundingClientRect()
+      const to = document.getElementById('line').getBoundingClientRect()
+      const x1 = from.right - scene.left, y1 = from.top + from.height / 2 - scene.top
+      const x2 = to.right - scene.left - 4, y2 = to.top + to.height / 2 - scene.top
+      // Bows out to the right, clear of the cards in between.
+      const bow = Math.max(x1, x2) + 70
+      document.getElementById('thread').innerHTML =
+        `<path d="M ${x1} ${y1} C ${bow} ${y1}, ${bow} ${y2}, ${x2} ${y2}" fill="none" stroke="#1d2b4f" stroke-width="2.5" stroke-linecap="round"/>` +
+        `<circle cx="${x1}" cy="${y1}" r="5" fill="#1d2b4f"/><circle cx="${x2}" cy="${y2}" r="5" fill="#1d2b4f"/>`
+    </script>
+  </body>
+</html>
