@@ -260,6 +260,11 @@ The guarantees about evidence are also checked as properties (FsCheck): matcher 
 generated to be as wrong as a model can be, with invented ids, line numbers outside the resume
 and facts that were never gathered, and every verdict must still cite evidence that exists.
 
+Architecture tests (NetArchTest) keep dependencies pointing one way: the domain uses nothing
+else in the API, storage uses no feature, the matching core knows nothing of the database, the
+web or Gemini (only the model interface), and resumes, vacancies and the model client stand
+alone. GitHub reuses the skill catalogue but not the analysis pipeline.
+
 ```bash
 cd backend && dotnet test
 ```
