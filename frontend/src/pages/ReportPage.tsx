@@ -271,7 +271,8 @@ function ExportActions({ analysis }: { analysis: Analysis & { result: AnalysisRe
   )
 }
 
-function Lifetime({ analysis }: { analysis: Analysis }) {
+/** When the report is deleted, and a button to delete it now after a confirmation. */
+export function Lifetime({ analysis }: { analysis: Pick<Analysis, 'id' | 'expiresAt'> }) {
   const navigate = useNavigate()
   const [step, setStep] = useState<'idle' | 'confirming' | 'deleting' | 'failed'>('idle')
   const expires = new Date(analysis.expiresAt).toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short' })
