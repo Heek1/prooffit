@@ -1,0 +1,59 @@
+# The demo's hosting on Render, as a Blueprint: https://render.com/docs/blueprint-spec
+#
+# It describes the two services as they run today. Secrets are declared with `sync: false`:
+# Render asks for their values when the Blueprint is first applied and never reads them from
+# this file. The database is a Supabase project outside Render, reached through its session
+# pooler, so its connection string is one of those secrets.
+
+services:
+  # The API, built from its Dockerfile. The free plan sleeps after 15 minutes without
+  # requests; the keep-alive workflow wakes it once a day so the database is used too.
+  - type: web
+    name: prooffit-api
+    runtime: docker
+    repo: https://github.com/Heek1/prooffit
+    branch: main
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    # Ready means the API can reach its database, so a deploy that cannot is not switched to.
+    healthCheckPath: /health/ready
+    autoDeployTrigger: commit
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: Database__MigrateOnStartup
+        value: "true"
+      - key: Cors__AllowedOrigins__0
+        value: https://prooffit.onrender.com
+      # The lighter model leaves more of the free tier's daily quota for visitors.
+      - key: Llm__Model
+        value: gemini-3.5-flash-lite
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: Llm__ApiKey
+        sync: false
+      - key: GitHub__Token
+        sync: false
+
+  # The page, built once and served as static files.
+  - type: web
+    name: prooffit
+    runtime: static
+    repo: https://github.com/Heek1/prooffit
+    branch: main
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/dist
+    autoDeployTrigger: commit
+    # Every path is a page of the single-page app; the router reads it in the browser.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Read at build time: the page calls the API on its own host.
+      - key: VITE_API_URL
+        value: https://prooffit-api.onrender.com

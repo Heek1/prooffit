@@ -227,6 +227,11 @@ through the web server. Each commit to main publishes them to GitHub Container R
 `ghcr.io/heek1/prooffit-api` and `ghcr.io/heek1/prooffit-web`, tagged `sha-<commit>` and
 `latest`.
 
+The demo's hosting is described in [`render.yaml`](render.yaml), a Render Blueprint: the API
+from its Dockerfile in Frankfurt, checked at `/health/ready` before a deploy goes live, and
+the page as a static site. Secrets (the database, the Gemini and GitHub keys) are declared
+there without values and are entered in Render. CI checks the file against Render's schema.
+
 ## Configuration
 
 Everything is optional. With nothing set, analyses use the keyword engine and GitHub is read
