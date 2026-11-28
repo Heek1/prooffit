@@ -78,6 +78,42 @@ jobs:
       - uses: actions/checkout@v7
       - run: pipx run check-jsonschema==0.33.0 --schemafile https://render.com/schema/render.yaml.json render.yaml
 
+  # Brings the production database up to date before the new API is deployed. Render deploys
+  # a commit only once its checks pass, and this is one of them, so new code never starts on
+  # an old schema. Migrations must keep working for the version still running until then
+  # (add first, remove in a later release). See docs/decisions/0011.
+  migrate:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend, frontend, e2e, blueprint]
+    runs-on: ubuntu-latest
+    environment: production
+    # One migration at a time, and never cancelled halfway.
+    concurrency:
+      group: migrate-production
+      cancel-in-progress: false
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore
+      - run: dotnet tool restore
+      # A bundle is a single executable holding the migrations; it reads the connection string
+      # the way the API does, so a postgres:// URL works too.
+      - run: dotnet ef migrations bundle --project src/ProofFit.Api --self-contained -r linux-x64 -o efbundle
+      - name: Apply migrations
+        env:
+          ConnectionStrings__Default: ${{ secrets.DATABASE_CONNECTION_STRING }}
+        run: |
+          if [ -z "$ConnectionStrings__Default" ]; then
+            echo "::error::Set the DATABASE_CONNECTION_STRING secret to the production database."
+            exit 1
+          fi
+          ./efbundle
+
   e2e:
     runs-on: ubuntu-latest
     defaults:

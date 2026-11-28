@@ -19,12 +19,14 @@ services:
     dockerContext: ./backend
     # Ready means the API can reach its database, so a deploy that cannot is not switched to.
     healthCheckPath: /health/ready
-    autoDeployTrigger: commit
+    # CI migrates the database before this commit's checks pass, so deploying after them
+    # means the schema is always ready for the new code (docs/decisions/0011).
+    autoDeployTrigger: checksPass
     envVars:
       - key: PORT
         value: "8080"
       - key: Database__MigrateOnStartup
-        value: "true"
+        value: "false"
       - key: Cors__AllowedOrigins__0
         value: https://prooffit.onrender.com
       # The lighter model leaves more of the free tier's daily quota for visitors.

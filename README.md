@@ -232,6 +232,12 @@ from its Dockerfile in Frankfurt, checked at `/health/ready` before a deploy goe
 the page as a static site. Secrets (the database, the Gemini and GitHub keys) are declared
 there without values and are entered in Render. CI checks the file against Render's schema.
 
+Migrations are not applied by the running API in production. Each commit to main builds an
+EF Core migrations bundle in CI and applies it to the database once the tests pass, and
+Render deploys the commit only after its checks have passed, so new code always starts on a
+ready schema ([record 0011](docs/decisions/0011-migrations-run-before-deploy.md)). Locally and
+in Docker Compose the API still migrates on start.
+
 ## Configuration
 
 Everything is optional. With nothing set, analyses use the keyword engine and GitHub is read
