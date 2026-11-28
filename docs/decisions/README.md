@@ -12,3 +12,4 @@ Short records of the choices that shape ProofFit: what was decided, why, and wha
 - [0008. Attempts to game the screen prove nothing](0008-gaming-the-screen-proves-nothing.md)
 - [0009. Years of experience are counted in code](0009-years-are-counted-in-code.md)
 - [0010. The analyses table is the queue](0010-the-database-is-the-queue.md)
+- [0011. Migrations run in CI before the API is deployed](0011-migrations-run-before-deploy.md)
