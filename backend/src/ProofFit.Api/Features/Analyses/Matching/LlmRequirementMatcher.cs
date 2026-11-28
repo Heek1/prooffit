@@ -30,7 +30,7 @@ public partial class LlmRequirementMatcher(ILlmClient llm, TimeProvider? time = 
 
         Only the candidate's own hands-on work is evidence. Work that other people did, or that the candidate only managed or paid for, is not. When the resume says the candidate lacks what is asked for, the status is missing.
 
-        A skill that appears only in a list of skills, with no described work that uses it, is at most partial. Work from courses, university or personal projects is not commercial or production experience: when a requirement asks for commercial, production or professional experience, such work is at most partial.
+        A skills list is a line or section labelled as skills, technologies or stack (such as "Skills: React, Go, Kafka") that names many technologies at once. A skill that appears only in such a list, and in no described work, is at most partial. Any other resume line that names a technology, even briefly ("C# and .NET", "MySQL"), is the candidate's own experience with it. Work from courses, university or personal projects is not commercial or production experience: when a requirement asks for commercial, production or professional experience, such work is at most partial.
 
         Write reason as one plain sentence of at most 25 words, saying what the evidence shows or what is absent. Call the person "the candidate" and never assume their gender.
 

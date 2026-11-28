@@ -4,7 +4,8 @@
 //   dotnet run --project evals/ProofFit.Evals -- --engine model        model engine (needs LLM_API_KEY)
 //   dotnet run --project evals/ProofFit.Evals -- --min-accuracy 0.6    fail when accuracy drops below 60%
 //   dotnet run --project evals/ProofFit.Evals -- --from 10             start at the case file named 10-...
-//   dotnet run --project evals/ProofFit.Evals -- --show-misses         list every wrong verdict with its reason
+//   dotnet run --project evals/ProofFit.Evals -- --only 05,13,21       run only the case files named 05-..., 13-... and 21-...
+//   dotnet run --project evals/ProofFit.Evals -- --show-misses        list every wrong verdict with its reason
 //   dotnet run --project evals/ProofFit.Evals -- --suite extraction    measure reading requirements from vacancies
 //   ... --suite extraction --min-recall 0.7 --min-precision 0.8        fail below these
 //
@@ -30,6 +31,7 @@ CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 var engine = Option("--engine") ?? "keyword";
 var minAccuracy = double.Parse(Option("--min-accuracy") ?? "0", CultureInfo.InvariantCulture);
 var from = Option("--from");
+var only = Option("--only")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 var showMisses = args.Contains("--show-misses");
 var suite = Option("--suite") ?? "matching";
 
@@ -68,6 +70,7 @@ if (suite != "matching")
 var cases = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "cases"), "*.json")
     .Order(StringComparer.Ordinal)
     .Where(path => from is null || string.CompareOrdinal(Path.GetFileName(path), from) >= 0)
+    .Where(path => only is null || only.Any(prefix => Path.GetFileName(path).StartsWith(prefix + "-", StringComparison.Ordinal)))
     .Select(path => (File: Path.GetFileNameWithoutExtension(path), Case: JsonSerializer.Deserialize<EvalCase>(File.ReadAllText(path), ApiJson.Options)!))
     .ToList();
 string? stoppedAt = null;
