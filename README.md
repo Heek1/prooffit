@@ -222,6 +222,11 @@ To run everything in containers instead, with the app on http://localhost:8080:
 docker compose up --build
 ```
 
+CI builds both images on every pull request and checks that the page and the API answer
+through the web server. Each commit to main publishes them to GitHub Container Registry as
+`ghcr.io/heek1/prooffit-api` and `ghcr.io/heek1/prooffit-web`, tagged `sha-<commit>` and
+`latest`.
+
 ## Configuration
 
 Everything is optional. With nothing set, analyses use the keyword engine and GitHub is read
