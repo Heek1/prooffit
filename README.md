@@ -272,6 +272,10 @@ badge above current. To see it locally:
 cd backend && dotnet tool restore && dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
 ```
 
+The frontend's tests cover the report's logic as plain functions, and its components with
+Testing Library in jsdom: the requirement list with its verdicts and quoted evidence, editing
+requirements and comparing again, and deleting a report after a confirmation.
+
 ```bash
 cd frontend && npm run lint && npm test && npm run build
 ```
